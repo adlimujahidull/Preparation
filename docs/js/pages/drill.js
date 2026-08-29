@@ -34,7 +34,7 @@ const DrillPage = (() => {
     const progress = Store.getProgress();
 
     sessionCards = SRS.getDueCards(cards, progress, filters);
-    // Shuffle cards randomly for better recall
+    // Shuffle cards randomly
     sessionCards.sort(() => Math.random() - 0.5);
 
     currentIndex = 0;
@@ -54,7 +54,6 @@ const DrillPage = (() => {
     }
 
     if (sessionCards.length === 0 && !isSessionFinished) {
-      const filters = parseHashFilters();
       container.innerHTML = `
         <div class="page-container" style="max-width: 680px; margin: 0 auto; text-align: center; padding-top: 2rem;">
           <div class="card" style="padding: 2.5rem 1.5rem;">
@@ -97,9 +96,9 @@ const DrillPage = (() => {
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             <span class="badge badge-${currentCard.domain}">${currentCard.domain}</span>
             <span class="badge ${currentCard.type === 'decision' ? 'badge-article' : 'badge-lab'}">${currentCard.type.toUpperCase()}</span>
-            <span style="font-size: 0.75rem; color: var(--text-dim);">Kotak SRS: ${currentProgress.box || 1}/5</span>
+            <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">Kotak SRS: ${currentProgress.box || 1}/5</span>
           </div>
-          <div style="font-size: 0.85rem; font-weight: 600; color: var(--azure-light);">
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--azure-blue);">
             Kartu ${currentIndex + 1} dari ${sessionCards.length}
           </div>
         </div>
@@ -110,11 +109,11 @@ const DrillPage = (() => {
         </div>
 
         <!-- Flashcard View -->
-        <div class="card" style="min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem 1.5rem; background: linear-gradient(180deg, var(--bg-card), rgba(17, 24, 39, 0.95)); border-color: #374151;">
+        <div class="card" style="min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem 1.75rem;">
           
           <!-- Question -->
           <div>
-            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 0.75rem; font-weight: 700;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); margin-bottom: 0.75rem; font-weight: 700;">
               PERTANYAAN / SKENARIO
             </div>
             <div style="font-size: 1.15rem; font-weight: 600; line-height: 1.5; color: var(--text-main);">
@@ -125,10 +124,10 @@ const DrillPage = (() => {
           <!-- Answer Section -->
           ${isAnswerVisible ? `
             <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
-              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-green); margin-bottom: 0.5rem; font-weight: 700;">
+              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent-green); margin-bottom: 0.5rem; font-weight: 700;">
                 JAWABAN
               </div>
-              <div style="font-size: 1rem; line-height: 1.6; color: #e5e7eb; white-space: pre-line;">
+              <div style="font-size: 1rem; line-height: 1.6; color: var(--text-main); white-space: pre-line;">
                 ${escapeHtml(currentCard.answer)}
               </div>
             </div>
@@ -142,10 +141,10 @@ const DrillPage = (() => {
               </button>
             ` : `
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <button class="btn btn-danger" style="padding: 0.8rem; font-size: 1rem;" onclick="DrillPage.rateCard(false)">
+                <button class="btn btn-danger" style="padding: 0.8rem; font-size: 0.95rem;" onclick="DrillPage.rateCard(false)">
                   ❌ Salah (Kembali ke Box 1)
                 </button>
-                <button class="btn btn-primary" style="background-color: var(--accent-green); border-color: var(--accent-green); padding: 0.8rem; font-size: 1rem;" onclick="DrillPage.rateCard(true)">
+                <button class="btn btn-primary" style="background-color: var(--accent-green); border-color: var(--accent-green); padding: 0.8rem; font-size: 0.95rem;" onclick="DrillPage.rateCard(true)">
                   ✅ Benar (Naik Box)
                 </button>
               </div>
@@ -185,7 +184,6 @@ const DrillPage = (() => {
 
     if (currentIndex >= sessionCards.length) {
       isSessionFinished = true;
-      // Auto flush to GitHub
       Store.flush(`drill: ${sessionStats.total} kartu, ${sessionStats.right} benar`);
     }
 
@@ -202,23 +200,23 @@ const DrillPage = (() => {
           <div style="font-size: 3rem; margin-bottom: 0.75rem;">
             ${rightPercent >= 80 ? '🎯' : '💪'}
           </div>
-          <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem;">Sesi Drill Selesai!</h2>
+          <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.25rem;">Sesi Drill Selesai!</h2>
           <div class="card-subtitle" style="margin-bottom: 1.5rem;">
             Hasil sesi telah otomatis disimpan dan diperbarui di sistem Leitner.
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-            <div style="background-color: var(--bg-main); padding: 1rem; border-radius: var(--radius-md);">
+            <div style="background-color: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Total Kartu</div>
               <div class="card-value" style="font-size: 1.5rem;">${sessionStats.total}</div>
             </div>
-            <div style="background-color: var(--bg-main); padding: 1rem; border-radius: var(--radius-md);">
+            <div style="background-color: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Benar</div>
               <div class="card-value" style="font-size: 1.5rem; color: var(--accent-green);">${sessionStats.right}</div>
             </div>
-            <div style="background-color: var(--bg-main); padding: 1rem; border-radius: var(--radius-md);">
+            <div style="background-color: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Akurasi</div>
-              <div class="card-value" style="font-size: 1.5rem; color: var(--azure-light);">${rightPercent}%</div>
+              <div class="card-value" style="font-size: 1.5rem; color: var(--azure-blue);">${rightPercent}%</div>
             </div>
           </div>
 
@@ -235,20 +233,20 @@ const DrillPage = (() => {
         <!-- Failed Cards Review -->
         ${sessionStats.failedCards.length > 0 ? `
           <div class="card">
-            <h3 style="font-size: 1.1rem; font-weight: 700; color: #fca5a5; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-red); margin-bottom: 1rem;">
               Daftar Kartu yang Perlu Diingat Kembali (${sessionStats.failedCards.length})
             </h3>
             <div style="display: flex; flex-direction: column; gap: 1rem;">
               ${sessionStats.failedCards.map(c => `
-                <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+                <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
                   <div style="display: flex; gap: 0.4rem; margin-bottom: 0.4rem;">
                     <span class="badge badge-${c.domain}">${c.domain}</span>
                     <span class="badge badge-lab">${c.type}</span>
                   </div>
-                  <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">
+                  <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: var(--text-main);">
                     ${escapeHtml(c.question)}
                   </div>
-                  <div style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; white-space: pre-line; border-top: 1px solid var(--border-subtle); padding-top: 0.4rem;">
+                  <div style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; white-space: pre-line; border-top: 1px solid var(--border-color); padding-top: 0.4rem;">
                     ${escapeHtml(c.answer)}
                   </div>
                 </div>

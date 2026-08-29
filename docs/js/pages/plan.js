@@ -7,7 +7,6 @@ const PlanPage = (() => {
     const plan = Store.getPlan();
     const weeks = plan.weeks || [];
 
-    // Calculate total plan statistics
     let totalTasks = 0;
     let totalDone = 0;
     weeks.forEach(w => {
@@ -27,11 +26,11 @@ const PlanPage = (() => {
         <div class="card" style="margin-bottom: 1.5rem;">
           <div class="card-title-row" style="margin-bottom: 0.5rem;">
             <div>
-              <h2 style="font-size: 1.15rem; font-weight: 700;">Minggu ${w.n}: ${escapeHtml(w.title)}</h2>
+              <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Minggu ${w.n}: ${escapeHtml(w.title)}</h2>
               <div class="card-subtitle">${w.dates}</div>
             </div>
             <div style="text-align: right;">
-              <span style="font-weight: 700; font-size: 0.95rem; color: var(--azure-light);">${weekDone}/${weekTotal}</span>
+              <span style="font-weight: 700; font-size: 0.95rem; color: var(--azure-blue);">${weekDone}/${weekTotal}</span>
               <span style="font-size: 0.8rem; color: var(--text-dim);">(${weekPercent}%)</span>
             </div>
           </div>
@@ -70,14 +69,14 @@ const PlanPage = (() => {
     container.innerHTML = `
       <div class="page-container">
         <!-- Plan Header Summary -->
-        <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(0, 120, 212, 0.1), rgba(17, 24, 39, 0.8));">
+        <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #f0f9ff, #ffffff); border-color: #bae6fd;">
           <div class="card-title-row">
             <div>
-              <h1 style="font-size: 1.35rem; font-weight: 800;">Rencana Belajar 6 Minggu AI-200</h1>
+              <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">Rencana Belajar 6 Minggu AI-200</h1>
               <div class="card-subtitle">Kurikulum terstruktur berbasis Microsoft Learn dan Skills Measured resmi</div>
             </div>
             <div style="text-align: right;">
-              <div style="font-size: 1.75rem; font-weight: 800; color: var(--azure-light);">${overallPercent}%</div>
+              <div style="font-size: 1.75rem; font-weight: 800; color: var(--azure-blue);">${overallPercent}%</div>
               <div class="card-subtitle">${totalDone} dari ${totalTasks} task selesai</div>
             </div>
           </div>

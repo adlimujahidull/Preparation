@@ -12,7 +12,7 @@ const DecisionsPage = (() => {
     const headerActionsHtml = `
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
         <div>
-          <h1 style="font-size: 1.35rem; font-weight: 800;">Tabel Keputusan Arsitektur</h1>
+          <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">Tabel Keputusan Arsitektur</h1>
           <div class="card-subtitle">Aset paling berharga: kriteria pemilihan layanan Azure untuk soal skenario ujian</div>
         </div>
 
@@ -44,9 +44,9 @@ const DecisionsPage = (() => {
 
       return `
         <div class="card" style="margin-bottom: 1.5rem;">
-          <div class="card-title-row" style="margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+          <div class="card-title-row" style="margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
             <div>
-              <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--azure-light);">⚖️ ${escapeHtml(d.title)}</h2>
+              <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--azure-blue);">⚖️ ${escapeHtml(d.title)}</h2>
               <div class="card-subtitle">Terakhir diupdate: ${d.updated || '—'}</div>
             </div>
             <div style="display: flex; gap: 0.4rem;">
@@ -61,7 +61,7 @@ const DecisionsPage = (() => {
 
           ${isQuizMode && !isRevealed ? `
             <!-- Mode Kuis: Hidden Content -->
-            <div style="text-align: center; padding: 2rem 1rem; background-color: var(--bg-main); border-radius: var(--radius-md);">
+            <div style="text-align: center; padding: 2rem 1rem; background-color: #f8fafc; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
                 Sebutkan pemicu (triggers) & kapan memilih masing-masing opsi dari ingatan Anda!
               </div>
@@ -77,8 +77,8 @@ const DecisionsPage = (() => {
             ${d.options && d.options.length > 0 ? `
               <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 ${d.options.map(opt => `
-                  <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
-                    <div style="font-weight: 700; font-size: 0.95rem; color: #93c5fd; margin-bottom: 0.35rem;">
+                  <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
+                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--azure-blue); margin-bottom: 0.35rem;">
                       🔹 ${escapeHtml(opt.name)}
                     </div>
                     <div style="font-size: 0.875rem; color: var(--text-main); line-height: 1.5; white-space: pre-line;">
@@ -88,7 +88,7 @@ const DecisionsPage = (() => {
                 `).join('')}
               </div>
             ` : `
-              <div style="padding: 1.5rem; text-align: center; color: var(--text-dim); font-size: 0.875rem; background-color: var(--bg-main); border-radius: var(--radius-md);">
+              <div style="padding: 1.5rem; text-align: center; color: var(--text-dim); font-size: 0.875rem; background-color: #f8fafc; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
                 Opsi perbandingan masih kosong. Klik "Edit" untuk menambahkan pilihan layanan dan pemicunya.
               </div>
             `}
@@ -169,7 +169,6 @@ const DecisionsPage = (() => {
     const modalContainer = document.getElementById('global-modal-content');
     if (!modalBackdrop || !modalContainer) return;
 
-    // Convert options to lines
     const optionsText = (target.options || []).map(o => `${o.name} | ${o.pick_when}`).join('\n');
 
     modalContainer.innerHTML = `

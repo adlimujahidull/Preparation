@@ -113,13 +113,13 @@ const ResourcesPage = (() => {
 
     container.innerHTML = `
       <div class="page-container">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
-            <h1 style="font-size: 1.35rem; font-weight: 800;">Perpustakaan Sumber Belajar</h1>
+            <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">Perpustakaan Sumber Belajar</h1>
             <div class="card-subtitle">Semua lab resmi Microsoft Learn, materi video, dan dokumentasi ujian</div>
           </div>
-          <div style="font-size: 0.875rem; color: var(--text-muted);">
-            Menampilkan ${filtered.length} dari ${resources.length} sumber
+          <div style="font-size: 0.85rem; color: var(--text-muted);">
+            Menampilkan <strong>${filtered.length}</strong> dari <strong>${resources.length}</strong> sumber
           </div>
         </div>
 
@@ -132,10 +132,10 @@ const ResourcesPage = (() => {
   function renderGroupSection(title, items) {
     return `
       <div class="card" style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-light);">${title}</h2>
-        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-blue);">${title}</h2>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
           ${items.map(r => `
-            <div class="task-item" style="flex-direction: column; align-items: stretch; gap: 0.5rem; background-color: rgba(17, 24, 39, 0.6);">
+            <div class="task-item" style="flex-direction: column; align-items: stretch; gap: 0.5rem; background-color: #f8fafc;">
               <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
                 <div>
                   <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.25rem;">
@@ -179,7 +179,7 @@ const ResourcesPage = (() => {
                 <input 
                   type="text" 
                   class="input-field" 
-                  style="font-size: 0.8rem; padding: 0.35rem 0.6rem; background-color: var(--bg-main);" 
+                  style="font-size: 0.8rem; padding: 0.35rem 0.6rem; background-color: #ffffff;" 
                   placeholder="Catatan singkat (misal: review bagian 3 lagi)..." 
                   value="${escapeHtml(r.note || '')}" 
                   onchange="ResourcesPage.updateNote('${r.id}', this.value)"

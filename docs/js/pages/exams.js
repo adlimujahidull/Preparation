@@ -5,7 +5,7 @@
 const ExamsPage = (() => {
   let activeExamKey = null;
   let activeExam = null;
-  let userAnswers = {};   // { [qId]: 'a' | 'b' | 'c' | 'd' }
+  let userAnswers = {};
   let flaggedQuestions = new Set();
   let currentQIndex = 0;
   let timerInterval = null;
@@ -20,7 +20,6 @@ const ExamsPage = (() => {
     const config = Store.getConfig();
 
     if (!activeExam) {
-      // Exam selection and History view
       renderSelection(container, exams, examKeys, history, config);
       return;
     }
@@ -34,24 +33,23 @@ const ExamsPage = (() => {
   }
 
   function renderSelection(container, exams, examKeys, history, config) {
-    // Score History Trend
     let historyHtml = '';
     if (history.length > 0) {
       historyHtml = `
         <div class="card" style="margin-top: 1.5rem;">
-          <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-light);">
+          <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-blue);">
             📈 Riwayat Skor Ujian Latihan
           </h2>
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
             ${history.slice().reverse().map(h => {
               const isPass = h.score >= (config.passingScore || 700);
               return `
-                <div style="display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-main); padding: 0.75rem 1rem; border-radius: var(--radius-md); border-left: 4px solid ${isPass ? 'var(--accent-green)' : 'var(--accent-red)'};">
+                <div style="display: flex; align-items: center; justify-content: space-between; background-color: #f8fafc; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); border-left: 4px solid ${isPass ? 'var(--accent-green)' : 'var(--accent-red)'};">
                   <div>
-                    <div style="font-weight: 600; font-size: 0.95rem;">${escapeHtml(h.set)}</div>
+                    <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">${escapeHtml(h.set)}</div>
                     <div class="card-subtitle">${h.date} • Durasi: ${h.minutes}m • Total Soal: ${h.total}</div>
                     ${h.wrong_domains && h.wrong_domains.length > 0 ? `
-                      <div style="font-size: 0.75rem; color: #fca5a5; margin-top: 0.2rem;">
+                      <div style="font-size: 0.75rem; color: var(--accent-red); margin-top: 0.2rem;">
                         Domain perlu perbaikan: ${h.wrong_domains.join(', ')}
                       </div>
                     ` : ''}
@@ -87,11 +85,11 @@ const ExamsPage = (() => {
               <div class="card">
                 <div class="card-title-row">
                   <span class="badge badge-lab">${k.toUpperCase()}</span>
-                  <span style="font-size: 0.8rem; color: var(--text-dim);">⏱️ ${ex.minutes || 30} Menit</span>
+                  <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">⏱️ ${ex.minutes || 30} Menit</span>
                 </div>
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0.5rem 0;">${escapeHtml(ex.title)}</h3>
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0.5rem 0; color: var(--text-main);">${escapeHtml(ex.title)}</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-                  Jumlah soal: <strong>${qCount} butir</strong>. Meniru suasana dan format ujian sertifikasi Microsoft.
+                  Jumlah soal: <strong>${qCount} butir</strong>. Meniru format ujian resmi Microsoft.
                 </p>
                 <button class="btn btn-primary btn-block" onclick="ExamsPage.startExam('${k}')">
                   🚀 Mulai Simulasi Ujian
@@ -160,15 +158,15 @@ const ExamsPage = (() => {
       const isFlg = flaggedQuestions.has(item.id);
       const isCurr = idx === currentQIndex;
 
-      let btnClass = 'btn-secondary';
-      if (isCurr) btnClass = 'btn-primary';
-      else if (isFlg) btnClass = 'btn-danger';
-      else if (isAns) btnClass = 'btn-secondary' + ' status-saved';
+      let style = 'background-color: #ffffff; color: var(--text-main); border: 1px solid var(--border-color);';
+      if (isCurr) style = 'background-color: var(--azure-blue); color: #ffffff; border-color: var(--azure-blue);';
+      else if (isFlg) style = 'background-color: #fee2e2; color: #991b1b; border-color: #fca5a5;';
+      else if (isAns) style = 'background-color: #d1fae5; color: #065f46; border-color: #a7f3d0;';
 
       return `
         <button 
-          class="btn ${btnClass}" 
-          style="width: 32px; height: 32px; padding: 0; font-size: 0.75rem; border-radius: var(--radius-sm);"
+          class="btn" 
+          style="width: 34px; height: 34px; padding: 0; font-size: 0.75rem; border-radius: var(--radius-sm); ${style}"
           onclick="ExamsPage.goToQuestion(${idx})"
           title="Soal ${idx + 1}${isFlg ? ' (Ditandai)' : ''}${isAns ? ' (Dijawab)' : ''}"
         >
@@ -183,12 +181,12 @@ const ExamsPage = (() => {
         <!-- Exam Top Bar -->
         <div class="card" style="margin-bottom: 1rem; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
           <div>
-            <strong style="font-size: 0.95rem;">${escapeHtml(activeExam.title)}</strong>
+            <strong style="font-size: 0.95rem; color: var(--text-main);">${escapeHtml(activeExam.title)}</strong>
             <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 0.5rem;">Soal ${currentQIndex + 1} dari ${totalQ}</span>
           </div>
 
           <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="font-size: 1.15rem; font-weight: 800; font-family: var(--font-mono); color: ${secondsRemaining < 300 ? 'var(--accent-red)' : 'var(--azure-light)'};">
+            <div style="font-size: 1.15rem; font-weight: 800; font-family: var(--font-mono); color: ${secondsRemaining < 300 ? 'var(--accent-red)' : 'var(--azure-blue)'};">
               ⏱️ <span id="exam-timer-display">${timerStr}</span>
             </div>
             <button class="btn btn-danger btn-sm" onclick="ExamsPage.confirmFinishExam()">
@@ -198,16 +196,16 @@ const ExamsPage = (() => {
         </div>
 
         <!-- Question Palette -->
-        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; padding: 0.5rem; background-color: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; padding: 0.6rem; background-color: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
           ${paletteHtml}
         </div>
 
         <!-- Main Question Card -->
-        <div class="card" style="padding: 1.5rem; margin-bottom: 1.25rem;">
+        <div class="card" style="padding: 1.75rem; margin-bottom: 1.25rem;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
             <span class="badge badge-${q.domain || 'containers'}">${(q.domain || 'containers').toUpperCase()}</span>
             
-            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; cursor: pointer; color: ${isFlagged ? 'var(--accent-red)' : 'var(--text-muted)'};">
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; cursor: pointer; color: ${isFlagged ? 'var(--accent-red)' : 'var(--text-muted)'}; font-weight: 500;">
               <input type="checkbox" ${isFlagged ? 'checked' : ''} onchange="ExamsPage.toggleFlag('${q.id}')">
               🚩 Tandai untuk ditinjau
             </label>
@@ -224,7 +222,7 @@ const ExamsPage = (() => {
               const isSelected = selectedAns === optKey;
               return `
                 <label 
-                  style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid ${isSelected ? 'var(--azure-light)' : 'var(--border-color)'}; background-color: ${isSelected ? 'rgba(0, 120, 212, 0.15)' : 'var(--bg-main)'}; cursor: pointer; transition: var(--transition);"
+                  style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid ${isSelected ? 'var(--azure-blue)' : 'var(--border-color)'}; background-color: ${isSelected ? '#f0f9ff' : '#f8fafc'}; cursor: pointer; transition: var(--transition);"
                 >
                   <input 
                     type="radio" 
@@ -235,7 +233,7 @@ const ExamsPage = (() => {
                     style="margin-top: 0.2rem; accent-color: var(--azure-blue);"
                   >
                   <div style="font-size: 0.9rem; line-height: 1.5; color: var(--text-main);">
-                    <strong>${optKey.toUpperCase()}.</strong> ${escapeHtml(optText)}
+                    <strong style="color: var(--azure-blue);">${optKey.toUpperCase()}.</strong> ${escapeHtml(optText)}
                   </div>
                 </label>
               `;
@@ -317,7 +315,6 @@ const ExamsPage = (() => {
     if (timerInterval) clearInterval(timerInterval);
     isExamFinished = true;
 
-    // Calculate score scaled to 1000
     let correctCount = 0;
     const wrongQuestions = [];
     const wrongDomainSet = new Set();
@@ -350,7 +347,6 @@ const ExamsPage = (() => {
       wrongQuestions
     };
 
-    // Save to Store
     Store.recordExamResult({
       set: examResult.set,
       date: examResult.date,
@@ -360,7 +356,6 @@ const ExamsPage = (() => {
       wrong_domains: examResult.wrong_domains
     });
 
-    // Flush to GitHub
     Store.flush(`exam: score ${scaledScore}/1000 for ${examResult.set}`);
 
     const container = document.getElementById('main-content');
@@ -374,11 +369,11 @@ const ExamsPage = (() => {
       <div class="page-container" style="max-width: 820px; margin: 0 auto;">
         
         <!-- Score Card Banner -->
-        <div class="card" style="text-align: center; padding: 2.5rem 1.5rem; margin-bottom: 1.5rem; border-color: ${isPass ? 'var(--accent-green)' : 'var(--accent-red)'}; background: linear-gradient(180deg, var(--bg-card), rgba(17, 24, 39, 0.95));">
+        <div class="card" style="text-align: center; padding: 2.5rem 1.5rem; margin-bottom: 1.5rem; border-color: ${isPass ? 'var(--accent-green-border)' : 'var(--accent-red-border)'}; background: ${isPass ? 'linear-gradient(180deg, #ffffff, #f0fdf4)' : 'linear-gradient(180deg, #ffffff, #fef2f2)'};">
           <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">
             ${isPass ? '🏆' : '📚'}
           </div>
-          <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.25rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.25rem; color: ${isPass ? 'var(--accent-green)' : 'var(--accent-red)'};">
             ${isPass ? 'SELAMAT! ANDA LULUS' : 'BELUM LULUS (Terus Belajar)'}
           </h2>
           <div class="card-subtitle" style="margin-bottom: 1.5rem;">
@@ -390,17 +385,17 @@ const ExamsPage = (() => {
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 500px; margin: 0 auto 1.5rem auto;">
-            <div style="background-color: var(--bg-main); padding: 0.75rem; border-radius: var(--radius-md);">
+            <div style="background-color: #ffffff; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Benar</div>
               <div style="font-size: 1.25rem; font-weight: 700; color: var(--accent-green);">${examResult.correct}/${examResult.total}</div>
             </div>
-            <div style="background-color: var(--bg-main); padding: 0.75rem; border-radius: var(--radius-md);">
+            <div style="background-color: #ffffff; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Salah</div>
               <div style="font-size: 1.25rem; font-weight: 700; color: var(--accent-red);">${examResult.total - examResult.correct}</div>
             </div>
-            <div style="background-color: var(--bg-main); padding: 0.75rem; border-radius: var(--radius-md);">
+            <div style="background-color: #ffffff; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Durasi</div>
-              <div style="font-size: 1.25rem; font-weight: 700; color: var(--azure-light);">${examResult.minutes}m</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: var(--azure-blue);">${examResult.minutes}m</div>
             </div>
           </div>
 
@@ -417,14 +412,14 @@ const ExamsPage = (() => {
         <!-- Wrong Answers Review & Explanations -->
         ${examResult.wrongQuestions.length > 0 ? `
           <div class="card">
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: #fca5a5; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--accent-red); margin-bottom: 1rem;">
               Pembahasan Soal yang Salah (${examResult.wrongQuestions.length})
             </h3>
             <div style="display: flex; flex-direction: column; gap: 1.25rem;">
               ${examResult.wrongQuestions.map((item, idx) => {
                 const q = item.question;
                 return `
-                  <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+                  <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                       <span class="badge badge-${q.domain}">${q.domain}</span>
                       <span style="font-size: 0.8rem; color: var(--accent-red); font-weight: 600;">Jawaban Anda: ${item.userChoice.toUpperCase()}</span>
@@ -434,14 +429,14 @@ const ExamsPage = (() => {
                       ${escapeHtml(q.stem)}
                     </div>
 
-                    <div style="background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 0.75rem;">
+                    <div style="background-color: var(--accent-green-bg); border: 1px solid var(--accent-green-border); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 0.75rem;">
                       <div style="font-size: 0.85rem; font-weight: 700; color: var(--accent-green); margin-bottom: 0.25rem;">
                         ✓ Jawaban Benar: ${q.answer.toUpperCase()}. ${escapeHtml(q.options[q.answer] || '')}
                       </div>
                     </div>
 
-                    <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
-                      <strong style="color: var(--azure-light);">Penjelasan:</strong> ${escapeHtml(q.explain || 'Tidak ada penjelasan tambahan.')}
+                    <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                      <strong style="color: var(--azure-blue);">Penjelasan:</strong> ${escapeHtml(q.explain || 'Tidak ada penjelasan tambahan.')}
                     </div>
                   </div>
                 `;

@@ -8,8 +8,6 @@ const StatsPage = (() => {
     const progress = Store.getProgress();
     const resources = Store.getResources();
     const labs = Store.getLabs();
-    const examHistory = Store.getExamHistory();
-    const config = Store.getConfig();
 
     // 1. Rasio Self vs Seed Cards
     let selfCardsCount = 0;
@@ -26,7 +24,6 @@ const StatsPage = (() => {
 
     const totalCards = cards.length;
     const selfPercent = totalCards > 0 ? Math.round((selfCardsCount / totalCards) * 100) : 0;
-    const seedPercent = totalCards > 0 ? 100 - selfPercent : 0;
 
     // 2. SRS Box Distribution (Box 1-5)
     const boxCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -36,7 +33,7 @@ const StatsPage = (() => {
       boxCounts[box] = (boxCounts[box] || 0) + 1;
     });
 
-    // 3. Top 10 Failed Cards (Rasio Salah Tertinggi)
+    // 3. Top 10 Failed Cards
     const cardsWithFailRatio = [];
     cards.forEach(c => {
       const p = progress[c.id];
@@ -52,14 +49,13 @@ const StatsPage = (() => {
       }
     });
 
-    // Sort by highest fail ratio descending
     cardsWithFailRatio.sort((a, b) => b.failRatio - a.failRatio || b.progress.wrong - a.progress.wrong);
     const top10Failed = cardsWithFailRatio.slice(0, 10);
 
     // 4. Lab Hours & Resources Per Week
     const weekStats = {};
     for (let w = 1; w <= 6; w++) {
-      weekStats[w] = { totalMinutes: 0, totalRes: 0, doneRes: 0 };
+      weekStats[w] = { totalRes: 0, doneRes: 0 };
     }
 
     resources.forEach(r => {
@@ -72,19 +68,12 @@ const StatsPage = (() => {
       }
     });
 
-    labs.forEach(l => {
-      // Sum all lab minutes
-      // Match lab to week or accumulate
-      const m = Number(l.minutes) || 0;
-      // Default accumulate to week 1 or distribute
-    });
-
     let totalLabMinutes = labs.reduce((acc, l) => acc + (Number(l.minutes) || 0), 0);
     let totalLabHours = (totalLabMinutes / 60).toFixed(1);
 
     container.innerHTML = `
       <div class="page-container" style="max-width: 900px; margin: 0 auto;">
-        <h1 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Statistik & Metrik Belajar</h1>
+        <h1 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Statistik & Metrik Belajar</h1>
         <div class="card-subtitle" style="margin-bottom: 1.5rem;">
           Pantau progres hafalan, rasio kartu buatan sendiri, dan akumulasi jam lab.
         </div>
@@ -105,7 +94,7 @@ const StatsPage = (() => {
               ${selfCardsCount === 0 ? '⚠️ Belum ada kartu buatan sendiri. Buat kartu dari kebingungan saat lab (Alt+N).' : 'Bagus! Kartu mandiri terus bertambah seiring pengerjaan lab.'}
             </div>
             <div class="progress-bar-container" style="margin-top: 0.75rem;">
-              <div class="progress-bar-fill" style="width: ${selfPercent}%; background: linear-gradient(90deg, var(--accent-green), var(--azure-light));"></div>
+              <div class="progress-bar-fill" style="width: ${selfPercent}%; background: linear-gradient(90deg, var(--accent-green), var(--azure-blue));"></div>
             </div>
           </div>
 
@@ -115,7 +104,7 @@ const StatsPage = (() => {
               <span class="card-title">Total Waktu Hands-on Lab</span>
               <span class="badge badge-lab">${labs.length} Sesi Lab</span>
             </div>
-            <div class="card-value" style="color: var(--azure-light); margin-top: 0.5rem;">
+            <div class="card-value" style="color: var(--azure-blue); margin-top: 0.5rem;">
               ${totalLabHours} <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-dim);">Jam</span>
             </div>
             <div class="card-subtitle" style="margin-top: 0.5rem;">
@@ -132,7 +121,7 @@ const StatsPage = (() => {
 
         <!-- SRS Box Distribution -->
         <div class="card" style="margin-bottom: 1.5rem;">
-          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-light);">
+          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-blue);">
             🧠 Distribusi Spaced Repetition (Leitner 5 Box)
           </h2>
           <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; text-align: center;">
@@ -140,10 +129,10 @@ const StatsPage = (() => {
               const cnt = boxCounts[b] || 0;
               const pct = totalCards > 0 ? Math.round((cnt / totalCards) * 100) : 0;
               return `
-                <div style="background-color: var(--bg-main); padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border-top: 3px solid ${b === 5 ? 'var(--accent-green)' : b >= 3 ? 'var(--azure-light)' : 'var(--accent-yellow)'};">
+                <div style="background-color: #f8fafc; padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); border-top: 3px solid ${b === 5 ? 'var(--accent-green)' : b >= 3 ? 'var(--azure-blue)' : 'var(--accent-yellow)'};">
                   <div style="font-size: 0.75rem; color: var(--text-dim); font-weight: 700;">BOX ${b}</div>
-                  <div style="font-size: 1.35rem; font-weight: 800; margin: 0.2rem 0;">${cnt}</div>
-                  <div style="font-size: 0.7rem; color: var(--text-muted);">${pct}%</div>
+                  <div style="font-size: 1.35rem; font-weight: 800; margin: 0.2rem 0; color: var(--text-main);">${cnt}</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">${pct}%</div>
                 </div>
               `;
             }).join('')}
@@ -152,7 +141,7 @@ const StatsPage = (() => {
 
         <!-- Resources Completion Per Week -->
         <div class="card" style="margin-bottom: 1.5rem;">
-          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-light);">
+          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-blue);">
             📚 Progres Sumber Selesai per Minggu
           </h2>
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -176,7 +165,7 @@ const StatsPage = (() => {
 
         <!-- Top 10 Cards with Highest Failure Ratio -->
         <div class="card">
-          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #fca5a5;">
+          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-red);">
             ⚠️ 10 Kartu dengan Tingkat Kesalahan Tertinggi
           </h2>
           <div class="card-subtitle" style="margin-bottom: 1rem;">
@@ -188,7 +177,7 @@ const StatsPage = (() => {
               ${top10Failed.map((item, idx) => {
                 const failPercent = Math.round(item.failRatio * 100);
                 return `
-                  <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
+                  <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
                       <div style="display: flex; gap: 0.4rem;">
                         <span class="badge badge-${item.card.domain}">${item.card.domain}</span>

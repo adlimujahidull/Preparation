@@ -18,28 +18,19 @@ const App = (() => {
   };
 
   async function init() {
-    // 1. Setup Status Indicator Listener
     Store.onStatusChange(updateStatusIndicator);
-
-    // 2. Initialize Store (local cache first + GitHub background refresh)
     await Store.init();
 
-    // 3. Check if GitHub Token is configured; if not, show setup modal
     if (!GitHubAPI.hasConfig()) {
       showSetupModal();
     }
 
-    // 4. Register Keyboard Shortcuts
     setupShortcuts();
-
-    // 5. Register Search Input
     setupSearch();
 
-    // 6. Router Setup
     window.addEventListener('hashchange', handleRouting);
     handleRouting();
 
-    // 7. Network Online/Offline Listeners
     window.addEventListener('online', () => {
       Store.flush('online: sync queued offline changes');
     });
@@ -53,7 +44,6 @@ const App = (() => {
     const routeKey = hash.split('?')[0] || 'today';
     activeRoute = routes[routeKey] ? routeKey : 'today';
 
-    // Update Nav links
     document.querySelectorAll('.nav-link').forEach(link => {
       const href = link.getAttribute('href');
       if (href === `#${activeRoute}`) {
@@ -63,7 +53,6 @@ const App = (() => {
       }
     });
 
-    // Render page
     const container = document.getElementById('main-content');
     if (container && routes[activeRoute]) {
       routes[activeRoute].render(container);
@@ -94,9 +83,8 @@ const App = (() => {
     }
   }
 
-  // Setup Modal (First-time / Edit)
   function showSetupModal() {
-    const existing = GitHubAPI.getConfig() || { owner: '', repo: 'ai-200-prep', branch: 'main', token: '' };
+    const existing = GitHubAPI.getConfig() || { owner: 'adlimujahidull', repo: 'ai-200-prep', branch: 'main', token: '' };
     const modalBackdrop = document.getElementById('global-modal-backdrop');
     const modalContainer = document.getElementById('global-modal-content');
     if (!modalBackdrop || !modalContainer) return;
@@ -110,22 +98,22 @@ const App = (() => {
         Aplikasi ini serverless dan menggunakan repo GitHub Anda sebagai database. Masukkan Fine-Grained Personal Access Token (PAT) Anda.
       </div>
 
-      <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: #cbd5e1;">
-        <strong style="color: var(--azure-light);">Panduan Membuat Token:</strong>
-        <ol style="margin-left: 1.25rem; margin-top: 0.25rem;">
+      <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.25rem; font-size: 0.825rem; color: var(--text-main); line-height: 1.5;">
+        <strong style="color: var(--azure-blue);">Panduan Membuat Token:</strong>
+        <ol style="margin-left: 1.25rem; margin-top: 0.35rem;">
           <li>Buka <em>GitHub &rarr; Settings &rarr; Developer Settings &rarr; Personal access tokens &rarr; Fine-grained tokens</em>.</li>
-          <li>Repository access: <strong>Only select repositories</strong> (pilih repo ini).</li>
-          <li>Permissions: <strong>Contents: Read and write</strong>.</li>
+          <li>Repository access: <strong>Only select repositories</strong> (pilih <code>ai-200-prep</code>).</li>
+          <li>Permissions: Buka <strong>Repository permissions</strong> &rarr; cari <strong>Contents</strong> &rarr; pilih <strong>Read and write</strong>.</li>
           <li>Masa berlaku: <strong>90 hari</strong>.</li>
         </ol>
       </div>
 
-      <div id="setup-error-msg" style="display: none; background-color: var(--accent-red-bg); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.8rem; margin-bottom: 1rem;"></div>
+      <div id="setup-error-msg" style="display: none; background-color: var(--accent-red-bg); color: #991b1b; border: 1px solid var(--accent-red-border); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.825rem; margin-bottom: 1rem;"></div>
 
       <form id="setup-gh-form" onsubmit="App.handleSetupSubmit(event)">
         <div class="form-group">
           <label class="form-label">GitHub Owner / Username *</label>
-          <input type="text" id="setup-owner" class="input-field" required placeholder="Contoh: octocat" value="${escapeHtml(existing.owner)}">
+          <input type="text" id="setup-owner" class="input-field" required placeholder="Contoh: adlimujahidull" value="${escapeHtml(existing.owner)}">
         </div>
         <div class="form-group">
           <label class="form-label">Nama Repository *</label>
@@ -174,14 +162,12 @@ const App = (() => {
       return;
     }
 
-    // Save config and initialize
     GitHubAPI.setConfig({ owner, repo, branch, token });
     closeModal();
     await Store.refreshFromGitHub();
     handleRouting();
   }
 
-  // Quick Log Lab Modal (Alt+L)
   function openQuickLabModal() {
     const modalBackdrop = document.getElementById('global-modal-backdrop');
     const modalContainer = document.getElementById('global-modal-content');
@@ -191,7 +177,7 @@ const App = (() => {
 
     modalContainer.innerHTML = `
       <div class="modal-header">
-        <h3 class="modal-title">⚡ Catat Aktivitas Lab Cepat (Alt+L)</h3>
+        <h3 class="modal-title">🧪 Catat Aktivitas Lab Cepat (Alt+L)</h3>
         <button class="modal-close" onclick="App.closeModal()">&times;</button>
       </div>
       <form onsubmit="App.handleQuickLabSubmit(event)">
@@ -215,7 +201,7 @@ const App = (() => {
           <div class="form-hint">PENTING: Jangan lupa hapus RG setelah lab agar tidak terkena tagihan per jam.</div>
         </div>
         <div class="form-group">
-          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text-main);">
             <input type="checkbox" id="qlab-deleted" class="task-checkbox">
             Resource Group sudah langsung dihapus saat lab selesai
           </label>
@@ -266,7 +252,6 @@ const App = (() => {
     handleRouting();
   }
 
-  // Quick Add Card Modal (Alt+N)
   function openQuickCardModal() {
     const modalBackdrop = document.getElementById('global-modal-backdrop');
     const modalContainer = document.getElementById('global-modal-content');
@@ -274,7 +259,7 @@ const App = (() => {
 
     modalContainer.innerHTML = `
       <div class="modal-header">
-        <h3 class="modal-title">⚡ Tambah Kartu Hafalan Cepat (Alt+N)</h3>
+        <h3 class="modal-title">💡 Tambah Kartu Hafalan Cepat (Alt+N)</h3>
         <button class="modal-close" onclick="App.closeModal()">&times;</button>
       </div>
       <form onsubmit="App.handleQuickCardSubmit(event)">
@@ -335,7 +320,6 @@ const App = (() => {
     if (modalBackdrop) modalBackdrop.classList.remove('active');
   }
 
-  // Keyboard Shortcuts (Alt+L, Alt+N, Esc)
   function setupShortcuts() {
     window.addEventListener('keydown', (e) => {
       if (e.altKey && (e.key === 'l' || e.key === 'L')) {
@@ -350,7 +334,6 @@ const App = (() => {
     });
   }
 
-  // Substring Search Setup
   function setupSearch() {
     const searchInput = document.getElementById('global-search-input');
     if (!searchInput) return;
@@ -396,18 +379,18 @@ const App = (() => {
         <button class="modal-close" onclick="App.closeModal()">&times;</button>
       </div>
       <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Ditemukan ${totalMatches} hasil di seluruh materi belajar.
+        Ditemukan <strong>${totalMatches}</strong> hasil di seluruh materi belajar.
       </div>
       <div style="display: flex; flex-direction: column; gap: 1rem; max-height: 60vh; overflow-y: auto;">
         
         <!-- Sumber -->
         ${matchedResources.length > 0 ? `
           <div>
-            <h4 style="font-size: 0.9rem; color: var(--azure-light); margin-bottom: 0.4rem;">Perpustakaan Sumber (${matchedResources.length})</h4>
+            <h4 style="font-size: 0.85rem; color: var(--azure-blue); margin-bottom: 0.4rem; text-transform: uppercase; font-weight: 700;">Perpustakaan Sumber (${matchedResources.length})</h4>
             <div style="display: flex; flex-direction: column; gap: 0.4rem;">
               ${matchedResources.map(r => `
-                <div style="background-color: var(--bg-main); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
-                  <div style="font-weight: 600;">${escapeHtml(r.title)}</div>
+                <div style="background-color: #f8fafc; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem;">
+                  <div style="font-weight: 600; color: var(--text-main);">${escapeHtml(r.title)}</div>
                   ${r.url ? `<a href="${r.url}" target="_blank" class="task-link" style="font-size: 0.75rem;">Buka Tautan &rarr;</a>` : ''}
                 </div>
               `).join('')}
@@ -418,11 +401,11 @@ const App = (() => {
         <!-- Kartu -->
         ${matchedCards.length > 0 ? `
           <div>
-            <h4 style="font-size: 0.9rem; color: var(--azure-light); margin-bottom: 0.4rem;">Kartu Hafalan (${matchedCards.length})</h4>
+            <h4 style="font-size: 0.85rem; color: var(--azure-blue); margin-bottom: 0.4rem; text-transform: uppercase; font-weight: 700;">Kartu Hafalan (${matchedCards.length})</h4>
             <div style="display: flex; flex-direction: column; gap: 0.4rem;">
               ${matchedCards.map(c => `
-                <div style="background-color: var(--bg-main); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
-                  <div style="font-weight: 600; color: #93c5fd;">${escapeHtml(c.question)}</div>
+                <div style="background-color: #f8fafc; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem;">
+                  <div style="font-weight: 600; color: var(--text-main);">${escapeHtml(c.question)}</div>
                   <div style="color: var(--text-dim); font-size: 0.8rem; margin-top: 0.2rem;">${escapeHtml(c.answer.slice(0, 100))}...</div>
                 </div>
               `).join('')}
@@ -433,11 +416,11 @@ const App = (() => {
         <!-- Keputusan -->
         ${matchedDecisions.length > 0 ? `
           <div>
-            <h4 style="font-size: 0.9rem; color: var(--azure-light); margin-bottom: 0.4rem;">Tabel Keputusan (${matchedDecisions.length})</h4>
+            <h4 style="font-size: 0.85rem; color: var(--azure-blue); margin-bottom: 0.4rem; text-transform: uppercase; font-weight: 700;">Tabel Keputusan (${matchedDecisions.length})</h4>
             <div style="display: flex; flex-direction: column; gap: 0.4rem;">
               ${matchedDecisions.map(d => `
-                <div style="background-color: var(--bg-main); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
-                  <a href="#decisions" onclick="App.closeModal()" style="color: var(--text-main); font-weight: 600; text-decoration: none;">${escapeHtml(d.title)} &rarr;</a>
+                <div style="background-color: #f8fafc; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem;">
+                  <a href="#decisions" onclick="App.closeModal()" style="color: var(--azure-blue); font-weight: 600; text-decoration: none;">${escapeHtml(d.title)} &rarr;</a>
                 </div>
               `).join('')}
             </div>
@@ -447,11 +430,11 @@ const App = (() => {
         <!-- Catatan -->
         ${matchedNotes.length > 0 ? `
           <div>
-            <h4 style="font-size: 0.9rem; color: var(--azure-light); margin-bottom: 0.4rem;">Catatan (${matchedNotes.length})</h4>
+            <h4 style="font-size: 0.85rem; color: var(--azure-blue); margin-bottom: 0.4rem; text-transform: uppercase; font-weight: 700;">Catatan (${matchedNotes.length})</h4>
             <div style="display: flex; flex-direction: column; gap: 0.4rem;">
               ${matchedNotes.map(n => `
-                <div style="background-color: var(--bg-main); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem;">
-                  <a href="#notes" onclick="App.closeModal()" style="color: var(--text-main); font-weight: 600; text-decoration: none;">${escapeHtml(n.name)} &rarr;</a>
+                <div style="background-color: #f8fafc; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem;">
+                  <a href="#notes" onclick="App.closeModal()" style="color: var(--azure-blue); font-weight: 600; text-decoration: none;">${escapeHtml(n.name)} &rarr;</a>
                 </div>
               `).join('')}
             </div>
