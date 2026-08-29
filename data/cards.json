@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "id": "c001",
+      "domain": "containers",
+      "type": "recall",
+      "question": "What are the four trigger types supported by Azure Container Registry (ACR) Tasks to automate container image builds?",
+      "answer": "1. Quick tasks (manual on-demand in Azure)\n2. Source code commit / PR triggers (Git integration)\n3. Base image update triggers (OS/framework patching)\n4. Scheduled / timer-based triggers (cron).",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c002",
+      "domain": "containers",
+      "type": "recall",
+      "question": "In Azure App Service with sidecar container support (e.g. main API container + local Phi-3 model inference sidecar), how do containers communicate with each other?",
+      "answer": "Containers in the same App Service multi-container/sidecar deployment share the same network namespace and communicate via localhost (127.0.0.1) on their respective exposed ports.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c003",
+      "domain": "containers",
+      "type": "decision",
+      "question": "Decision: When should you choose Azure Container Apps (ACA) instead of Azure Kubernetes Service (AKS)?",
+      "answer": "Choose Azure Container Apps (ACA) when you need serverless microservices, scale-to-zero, built-in KEDA event-driven autoscaling, and Dapr integration without the complexity of managing Kubernetes control planes, cluster nodes, and complex cluster networking.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c004",
+      "domain": "containers",
+      "type": "recall",
+      "question": "How does KEDA (Kubernetes Event-driven Autoscaling) in Azure Container Apps scale container replicas from and to zero?",
+      "answer": "KEDA monitors external event metrics (such as Azure Service Bus queue depth, HTTP requests, or Redis stream length). When no events/requests exist, it scales replicas to 0. When events arrive, KEDA activates pods and hands scaling over to the HPA.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c005",
+      "domain": "containers",
+      "type": "recall",
+      "question": "What is the operational difference between a Kubernetes livenessProbe and a readinessProbe in AKS / Container Apps?",
+      "answer": "• livenessProbe: Checks if container is alive. If it fails, Kubernetes kills and restarts the container (fixes deadlocks).\n• readinessProbe: Checks if container is ready to accept traffic. If it fails, the container IP is removed from Service endpoints (no traffic sent, container is NOT restarted).",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c006",
+      "domain": "data",
+      "type": "recall",
+      "question": "What are the two vector indexing types available in Azure Cosmos DB for NoSQL, and when is each used?",
+      "answer": "1. quantizedFlat: Compresses vector embeddings using quantization before flat indexing. Best for smaller datasets, lower memory usage, and exact high-speed matching.\n2. DiskANN: Graph-based approximate nearest neighbor algorithm developed by Microsoft Research. Best for large-scale datasets (millions of vectors) with high recall and low RU costs.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c007",
+      "domain": "data",
+      "type": "recall",
+      "question": "List the 5 consistency levels of Azure Cosmos DB in order from strongest to weakest.",
+      "answer": "1. Strong\n2. Bounded Staleness\n3. Session (default, consistency within single client session)\n4. Consistent Prefix\n5. Eventual (lowest latency, lowest RU cost, least consistency guarantee).",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c008",
+      "domain": "data",
+      "type": "decision",
+      "question": "Decision: When should you choose Cosmos DB vs Azure Database for PostgreSQL (pgvector) vs Azure Managed Redis for vector embeddings storage?",
+      "answer": "• Cosmos DB: When building multi-region, horizontally partitioned NoSQL JSON document stores with integrated vector search.\n• PostgreSQL (pgvector): When your application requires relational integrity, SQL joins, ACID transactions, and rich metadata filtering alongside embeddings.\n• Azure Managed Redis: When sub-millisecond in-memory vector search, caching, and real-time short-term memory / session indexing are needed.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c009",
+      "domain": "data",
+      "type": "recall",
+      "question": "In PostgreSQL with the pgvector extension, what are the differences between HNSW and IVFFlat vector index types?",
+      "answer": "• IVFFlat (Inverted File Flat): Faster index build time and less RAM usage, but lower recall and slower query speed; requires training on populated data.\n• HNSW (Hierarchical Navigable Small World): Slower build time and higher memory footprint, but delivers significantly higher recall and much faster similarity search queries.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c010",
+      "domain": "data",
+      "type": "recall",
+      "question": "What are the required components of an Azure Cosmos DB Change Feed Processor implementation?",
+      "answer": "1. Monitored Container: The container holding data from which the change feed is generated.\n2. Lease Container: Manages state across multiple workers/partitions.\n3. Host: The compute instance listening for changes.\n4. Delegate: The code/callback function handling each batch of changes.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c011",
+      "domain": "data",
+      "type": "recall",
+      "question": "In Azure Managed Redis with RediSearch, which distance metrics can be configured for vector similarity search fields?",
+      "answer": "1. COSINE (Cosine distance — best for normalized embeddings)\n2. IP (Inner Product / Dot Product)\n3. L2 (Euclidean distance)",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c012",
+      "domain": "integration",
+      "type": "decision",
+      "question": "Decision: When should you choose Azure Service Bus over Azure Event Grid for AI backend integration?",
+      "answer": "Choose Azure Service Bus when you need enterprise message queuing, strict FIFO ordering (sessions), transactions, duplicate detection, peek-lock message leasing, and dead-letter queueing. Choose Event Grid for lightweight, reactive event routing and fanout.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c013",
+      "domain": "integration",
+      "type": "recall",
+      "question": "Under what conditions are messages automatically moved to the Dead-Letter Queue (DLQ) in Azure Service Bus?",
+      "answer": "1. Exceeding maxDeliveryCount (repeated processing failure)\n2. Time To Live (TTL) expiration when deadLetteringOnMessageExpiration is true\n3. Header evaluation errors or explicit DeadLetterAsync() invocation by consumer code.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c014",
+      "domain": "integration",
+      "type": "recall",
+      "question": "What types of event filtering does Azure Event Grid support for event subscriptions?",
+      "answer": "1. Event Type filtering (e.g. Microsoft.Storage.BlobCreated)\n2. Subject filtering (beginsWith, endsWith, case-sensitive/insensitive)\n3. Advanced payload filtering (StringIn, NumberGreaterThan, BoolEquals on JSON fields).",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c015",
+      "domain": "integration",
+      "type": "recall",
+      "question": "In Azure Functions, what is the fundamental conceptual difference between a Trigger and an Input/Output Binding?",
+      "answer": "• Trigger: Defines HOW and WHEN a function runs (e.g. HTTP request, Service Bus message); a function has exactly ONE trigger.\n• Binding: Declaratively connects external data sources/destinations (e.g. Cosmos DB output, Blob input) without writing SDK client connection boilerplate.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c016",
+      "domain": "integration",
+      "type": "recall",
+      "question": "What is the Model Context Protocol (MCP) in the context of Azure Functions AI backend development?",
+      "answer": "An open protocol enabling AI models/agents to dynamically discover available tools, inspect tool schemas/parameters, and invoke tool functions over standard JSON-RPC/HTTP endpoints hosted serverlessly.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c017",
+      "domain": "ops",
+      "type": "recall",
+      "question": "How should an Azure AI Python backend retrieve secrets from Azure Key Vault securely without hardcoded credentials?",
+      "answer": "Use DefaultAzureCredential from azure-identity (which resolves Managed Identity in Azure and developer credentials locally) passed into SecretClient(vault_url, credential=DefaultAzureCredential()).",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c018",
+      "domain": "ops",
+      "type": "recall",
+      "question": "How does dynamic configuration refresh work with Azure App Configuration in Python apps?",
+      "answer": "The app configures a sentinel key with a cache expiration interval (e.g. 30s). When configuration changes in Azure, updating the sentinel key version signals the app SDK on the next refresh() call to reload modified settings without application restart.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c019",
+      "domain": "ops",
+      "type": "recall",
+      "question": "What OpenTelemetry SDK components are configured in Python to export telemetry to Azure Application Insights?",
+      "answer": "1. AzureMonitorTraceExporter / AzureMonitorMetricExporter (from azure-monitor-opentelemetry-exporter)\n2. TracerProvider with BatchSpanProcessor\n3. Connection string provided via APPLICATIONINSIGHTS_CONNECTION_STRING environment variable.",
+      "source": "seed",
+      "created": "2026-08-29"
+    },
+    {
+      "id": "c020",
+      "domain": "ops",
+      "type": "recall",
+      "question": "Write a KQL query pattern to find the top 5 slowest dependency calls in Application Insights over the past 24 hours.",
+      "answer": "dependencies\n| where timestamp > ago(24h)\n| summarize avgDuration = avg(duration), count() by target, name\n| top 5 by avgDuration desc",
+      "source": "seed",
+      "created": "2026-08-29"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Latihan Soal Contoh AI-200",
+  "minutes": 15,
+  "questions": [
+    {
+      "id": "q1",
+      "domain": "containers",
+      "stem": "You are designing an AI inference application that needs to scale from zero to many instances based on HTTP traffic and queue length, without managing complex Kubernetes infrastructure. Which compute service should you select?",
+      "options": {
+        "a": "Azure Virtual Machines",
+        "b": "Azure Container Apps",
+        "c": "Azure App Service Basic Tier",
+        "d": "Azure Batch"
+      },
+      "answer": "b",
+      "explain": "Azure Container Apps is built on top of AKS and KEDA, supporting scale-to-zero and event-driven autoscaling based on HTTP or queue triggers without requiring Kubernetes cluster management."
+    },
+    {
+      "id": "q2",
+      "domain": "data",
+      "stem": "You are implementing semantic search over a catalog of support tickets using Azure Cosmos DB for NoSQL. You need to store vector embeddings for each document and perform similarity search with the lowest latency and RU consumption. What indexing policy should you configure?",
+      "options": {
+        "a": "Standard range index on the embedding property",
+        "b": "Spatial index on the embedding array",
+        "c": "Vector index (quantizedFlat or diskANN) under vectorIndexes in the container indexing policy",
+        "d": "Composite index combining ticketId and embedding"
+      },
+      "answer": "c",
+      "explain": "Azure Cosmos DB for NoSQL supports dedicated vector indexing policies (such as quantizedFlat or diskANN) defined under vectorIndexes and vectorEmbeddings in container definition to optimize vector search performance and minimize RU consumption."
+    },
+    {
+      "id": "q3",
+      "domain": "ops",
+      "stem": "Your Python AI application deployed on Azure Container Apps needs to securely load database connection strings and API keys. The keys must be dynamically refreshed without restarting the container when updated in the cloud. Which architecture should you use?",
+      "options": {
+        "a": "Hardcode secrets in the Dockerfile",
+        "b": "Use Azure App Configuration with Key Vault references and enable dynamic refresh with the Azure App Configuration Python SDK",
+        "c": "Store secrets as plain text in an Azure Storage Blob",
+        "d": "Pass secrets only as build arguments during docker build"
+      },
+      "answer": "b",
+      "explain": "Azure App Configuration combined with Key Vault references allows centralizing configuration and secrets, with dynamic refresh supported by the SDK via sentinel keys or polling intervals."
+    }
+  ]
+}

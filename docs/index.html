@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-200 Prep — Microsoft Azure AI Cloud Developer Associate</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-top">
+      <a href="#today" class="brand-section">
+        <span class="brand-badge">AI-200</span>
+        <span class="brand-title">Study Hub</span>
+      </a>
+
+      <!-- Global Search Box -->
+      <div class="header-search">
+        <span class="header-search-icon">🔍</span>
+        <input type="text" id="global-search-input" placeholder="Cari catatan, kartu, lab, atau keputusan..." autocomplete="off">
+      </div>
+
+      <!-- Quick Action Buttons & Status -->
+      <div class="header-actions">
+        <button class="btn-quick" onclick="App.openQuickLabModal()" title="Catat Lab Cepat (Alt+L)">
+          🧪 <span style="display:inline-block;">Lab</span> <span class="kbd-shortcut">Alt+L</span>
+        </button>
+
+        <button class="btn-quick" onclick="App.openQuickCardModal()" title="Tambah Kartu Hafalan Cepat (Alt+N)">
+          💡 <span style="display:inline-block;">Kartu</span> <span class="kbd-shortcut">Alt+N</span>
+        </button>
+
+        <!-- Save Indicator -->
+        <div id="save-status-pill" class="status-pill status-saved" onclick="Store.flush('manual save: sync all dirty files')">
+          <span class="status-dot"></span>
+          <span id="save-status-label">Tersimpan</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scrollable Navigation Tabs -->
+    <nav class="nav-scroll">
+      <a href="#today" class="nav-link active">📅 Hari Ini</a>
+      <a href="#plan" class="nav-link">📋 Rencana</a>
+      <a href="#resources" class="nav-link">📚 Sumber</a>
+      <a href="#notes" class="nav-link">📝 Catatan</a>
+      <a href="#drill" class="nav-link">⚡ Drill</a>
+      <a href="#exams" class="nav-link">🎯 Ujian</a>
+      <a href="#decisions" class="nav-link">⚖️ Keputusan</a>
+      <a href="#stats" class="nav-link">📊 Statistik</a>
+      <a href="#settings" class="nav-link">⚙️ Pengaturan</a>
+    </nav>
+  </header>
+
+  <!-- Main View Container -->
+  <main id="main-content" class="app-main">
+    <!-- Rendered dynamically by Router -->
+  </main>
+
+  <!-- Global Modal Dialog Container -->
+  <div id="global-modal-backdrop" class="modal-backdrop" onclick="if (event.target === this) App.closeModal()">
+    <div id="global-modal-content" class="modal-content">
+      <!-- Injected dynamically by App / Page modals -->
+    </div>
+  </div>
+
+  <!-- Vendor Libraries (Zero npm / Zero CDN) -->
+  <script src="vendor/marked.min.js"></script>
+
+  <!-- Application Modules -->
+  <script src="js/github.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/srs.js"></script>
+  
+  <!-- Pages -->
+  <script src="js/pages/today.js"></script>
+  <script src="js/pages/plan.js"></script>
+  <script src="js/pages/resources.js"></script>
+  <script src="js/pages/notes.js"></script>
+  <script src="js/pages/drill.js"></script>
+  <script src="js/pages/exams.js"></script>
+  <script src="js/pages/decisions.js"></script>
+  <script src="js/pages/stats.js"></script>
+  <script src="js/pages/settings.js"></script>
+  
+  <!-- Bootstrap -->
+  <script src="js/app.js"></script>
+</body>
+</html>

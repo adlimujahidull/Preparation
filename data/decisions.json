@@ -1,0 +1,22 @@
+{
+  "decisions": [
+    {
+      "id": "d1",
+      "title": "App Service vs Container Apps vs AKS",
+      "options": [],
+      "updated": "2026-08-29"
+    },
+    {
+      "id": "d2",
+      "title": "Cosmos DB vs PostgreSQL/pgvector vs Redis",
+      "options": [],
+      "updated": "2026-08-29"
+    },
+    {
+      "id": "d3",
+      "title": "Service Bus vs Event Grid",
+      "options": [],
+      "updated": "2026-08-29"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+﻿# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor & IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python cache & logs
+__pycache__/
+*.py[cod]
+*.log
+*.tmp
+.env

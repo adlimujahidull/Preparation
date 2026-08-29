@@ -1,0 +1,364 @@
+{
+  "weeks": [
+    {
+      "n": 1,
+      "title": "Fondasi container, belum sentuh Azure",
+      "dates": "29 Agu – 6 Sep",
+      "tasks": [
+        {
+          "id": "w1_1",
+          "text": "Cetak study guide resmi AI-200, jadikan checklist utama",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200",
+          "done": false
+        },
+        {
+          "id": "w1_2",
+          "text": "Install Docker di laptop. Pahami: image, layer, Dockerfile, tag, registry",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w1_3",
+          "text": "Build dan jalankan satu container Python sederhana secara lokal",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w1_4",
+          "text": "Konsep Kubernetes (belum praktik): pod, deployment, service, manifest YAML, readiness/liveness probe",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w1_5",
+          "text": "Tonton bagian compute dari study cram AZ-204 (masih relevan)",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w1_6",
+          "text": "Buat file catatan kosong berjudul \"Tabel Keputusan\" — mulai isi minggu depan",
+          "url": "",
+          "done": false
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Container di Azure — AKTIFKAN KREDIT AZURE",
+      "dates": "7–13 Sep",
+      "tasks": [
+        {
+          "id": "w2_1",
+          "text": "Lab: Build and run a container image with ACR Tasks",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/container-hosting/01-acr-tasks.html",
+          "done": false
+        },
+        {
+          "id": "w2_2",
+          "text": "Lab: Deploy a container to Azure App Service",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/container-hosting/02-app-svc-container.html",
+          "done": false
+        },
+        {
+          "id": "w2_3",
+          "text": "Lab: Deploy an AI API with a local model-serving sidecar",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/container-hosting/03-app-svc-sidecar.html",
+          "done": false
+        },
+        {
+          "id": "w2_4",
+          "text": "Lab: Deploy a containerized backend API to Container Apps",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-container-apps/01-aca-deploy-containers.html",
+          "done": false
+        },
+        {
+          "id": "w2_5",
+          "text": "Lab: Diagnose and fix a failing deployment",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-container-apps/02-aca-manage-containers.html",
+          "done": false
+        },
+        {
+          "id": "w2_6",
+          "text": "Lab: Configure autoscaling for an API using KEDA",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-container-apps/03-aca-scale-containers.html",
+          "done": false
+        },
+        {
+          "id": "w2_7",
+          "text": "Lab: Deploy an AI inference API to Azure Kubernetes Service",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-kubernetes-service/01-aks-deploy-container.html",
+          "done": false
+        },
+        {
+          "id": "w2_8",
+          "text": "Lab: Configure apps on Azure Kubernetes Service",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-kubernetes-service/02-aks-configure-container.html",
+          "done": false
+        },
+        {
+          "id": "w2_9",
+          "text": "Lab: Troubleshoot apps on AKS",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-kubernetes-service/03-aks-troubleshoot-container.html",
+          "done": false
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Cosmos DB",
+      "dates": "14–20 Sep",
+      "tasks": [
+        {
+          "id": "w3_1",
+          "text": "Modul: Cosmos DB for NoSQL — koneksi via Python SDK, menjalankan query",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w3_2",
+          "text": "Pahami Request Units (RU): apa yang membuatnya mahal, cara menekannya",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w3_3",
+          "text": "Indexing policy dan consistency level — hafal trade-off tiap level",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w3_4",
+          "text": "Change feed processor: kapan dipakai, cara kerjanya",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w3_5",
+          "text": "Lab: Build a RAG document store on Cosmos DB for NoSQL",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/cosmosdb/01-build-rag-document-store.html",
+          "done": false
+        },
+        {
+          "id": "w3_6",
+          "text": "Lab: Build a semantic search application with Cosmos DB",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/cosmosdb/02-build-semantic-search.html",
+          "done": false
+        },
+        {
+          "id": "w3_7",
+          "text": "Lab: Optimize query performance with vector indexes",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/cosmosdb/03-optimize-query-performance.html",
+          "done": false
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "PostgreSQL + Redis",
+      "dates": "21–27 Sep",
+      "tasks": [
+        {
+          "id": "w4_1",
+          "text": "pgvector: cara kerja, tipe index (HNSW vs IVFFlat), kapan pilih yang mana",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w4_2",
+          "text": "Sizing compute/memory/storage untuk beban vector",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w4_3",
+          "text": "Connection pooling dan optimasi throughput",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w4_4",
+          "text": "Pola RAG dengan metadata filtering",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w4_5",
+          "text": "Lab: Build an agent tool backend on Azure Database for PostgreSQL",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-database-postgresql/01-build-agent-tool-backend.html",
+          "done": false
+        },
+        {
+          "id": "w4_6",
+          "text": "Lab: Implement vector search on Azure Database for PostgreSQL",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-database-postgresql/02-implement-vector-search.html",
+          "done": false
+        },
+        {
+          "id": "w4_7",
+          "text": "Lab: Optimize vector search performance",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-database-postgresql/03-optimize-vector-search.html",
+          "done": false
+        },
+        {
+          "id": "w4_8",
+          "text": "Azure Managed Redis: caching, expiration, invalidation",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w4_9",
+          "text": "Lab: Perform data operations in Azure Managed Redis",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-managed-redis/01-amr-data-operations.html",
+          "done": false
+        },
+        {
+          "id": "w4_10",
+          "text": "Lab: Publish and subscribe to events in Azure Managed Redis",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-managed-redis/02-amr-pub-sub.html",
+          "done": false
+        },
+        {
+          "id": "w4_11",
+          "text": "Lab: Implement semantic search in Azure Managed Redis",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/azure-managed-redis/03-amr-vector-storage.html",
+          "done": false
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "title": "Integrasi, keamanan, observability",
+      "dates": "28 Sep – 4 Okt",
+      "tasks": [
+        {
+          "id": "w5_1",
+          "text": "Service Bus: queue, topic, subscription, dead-letter queue",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w5_2",
+          "text": "Event Grid: filter, custom event, retry policy",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w5_3",
+          "text": "Azure Functions: trigger dan binding, deploy function app",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w5_4",
+          "text": "Lab: Process messages with Azure Service Bus",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/integrate-services/01-svcbus-process-messages.html",
+          "done": false
+        },
+        {
+          "id": "w5_5",
+          "text": "Lab: Publish and receive events with Azure Event Grid",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/integrate-services/02-eventgrid-publish-receive-events.html",
+          "done": false
+        },
+        {
+          "id": "w5_6",
+          "text": "Lab: Create an MCP server with Azure Functions",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/integrate-services/03-azure-functions-mcp-server.html",
+          "done": false
+        },
+        {
+          "id": "w5_7",
+          "text": "Key Vault: penyimpanan, retrieval, rotation",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w5_8",
+          "text": "App Configuration: setting dinamis, refresh",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w5_9",
+          "text": "OpenTelemetry: span, atribut, export ke Application Insights",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w5_10",
+          "text": "KQL: query requests, exceptions, dependencies",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w5_11",
+          "text": "Lab: Manage secrets with Azure Key Vault",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/app-sec-config/01-aks-retrieve-secrets.html",
+          "done": false
+        },
+        {
+          "id": "w5_12",
+          "text": "Lab: Retrieve settings and secrets from Azure App Configuration",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/app-sec-config/02-exercise-retrieve-settings.html",
+          "done": false
+        },
+        {
+          "id": "w5_13",
+          "text": "Lab: Instrument an app with the OpenTelemetry SDK",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/instrument-observe/01-instrument-app-opentelemetry.html",
+          "done": false
+        },
+        {
+          "id": "w5_14",
+          "text": "Lab: Query logs with KQL",
+          "url": "https://microsoftlearning.github.io/mslearn-azure-ai/instructions/instrument-observe/02-query-logs-kql.html",
+          "done": false
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "title": "Konsolidasi",
+      "dates": "5–11 Okt",
+      "tasks": [
+        {
+          "id": "w6_1",
+          "text": "Coba exam sandbox Microsoft untuk membiasakan antarmuka dan tipe soal",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2226877",
+          "done": false
+        },
+        {
+          "id": "w6_2",
+          "text": "Ulangi 3 lab tersulit **tanpa membuka instruksi** — ini tes kesiapan sesungguhnya",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w6_3",
+          "text": "Kerjakan bank soal, tapi fokus pada *alasan* jawaban salah, bukan menghafal",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w6_4",
+          "text": "Baca ulang Tabel Keputusanmu sampai refleks",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w6_5",
+          "text": "Latih membaca soal skenario: identifikasi constraint mana yang menentukan (biaya? latensi? throughput? skala?)",
+          "url": "",
+          "done": false
+        },
+        {
+          "id": "w6_6",
+          "text": "Hapus semua resource Azure yang tersisa",
+          "url": "",
+          "done": false
+        }
+      ]
+    }
+  ]
+}
