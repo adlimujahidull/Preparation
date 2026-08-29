@@ -26,7 +26,7 @@ Aplikasi membutuhkan GitHub Token untuk membaca dan menulis data progress, catat
 4. Isi informasi token:
    - **Token name**: `ai-200-study-app`
    - **Expiration**: Pilih **90 days** (atau sesuai kebutuhan).
-   - **Repository access**: Pilih **Only select repositories**, lalu pilih repositori `ai-200-prep` ini.
+   - **Repository access**: Pilih **Only select repositories**, lalu pilih repositori `Preparation` ini.
    - **Repository permissions**:
      - Cari **Contents** > ubah access level menjadi **Read and write**.
 5. Klik **Generate token** di bagian bawah, lalu **salin token** (`github_pat_...`).
@@ -41,7 +41,7 @@ Aplikasi membutuhkan GitHub Token untuk membaca dan menulis data progress, catat
 2. Pada kunjungan pertama, layar **Setup Konfigurasi GitHub** akan otomatis muncul.
 3. Masukkan data:
    - **Owner**: Username GitHub Anda (misal: `octocat`).
-   - **Repo**: Nama repositori ini (misal: `ai-200-prep`).
+   - **Repo**: Nama repositori ini (misal: `Preparation`).
    - **Branch**: `main`.
    - **GitHub Personal Access Token**: Tempelkan token fine-grained PAT yang telah dibuat.
 4. Klik **Simpan & Hubungkan**.

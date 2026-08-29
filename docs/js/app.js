@@ -84,7 +84,7 @@ const App = (() => {
   }
 
   function showSetupModal() {
-    const existing = GitHubAPI.getConfig() || { owner: 'adlimujahidull', repo: 'ai-200-prep', branch: 'main', token: '' };
+    const existing = GitHubAPI.getConfig() || { owner: 'adlimujahidull', repo: 'Preparation', branch: 'main', token: '' };
     const modalBackdrop = document.getElementById('global-modal-backdrop');
     const modalContainer = document.getElementById('global-modal-content');
     if (!modalBackdrop || !modalContainer) return;
@@ -102,7 +102,7 @@ const App = (() => {
         <strong style="color: var(--azure-blue);">Panduan Membuat Token:</strong>
         <ol style="margin-left: 1.25rem; margin-top: 0.35rem;">
           <li>Buka <em>GitHub &rarr; Settings &rarr; Developer Settings &rarr; Personal access tokens &rarr; Fine-grained tokens</em>.</li>
-          <li>Repository access: <strong>Only select repositories</strong> (pilih <code>ai-200-prep</code>).</li>
+          <li>Repository access: <strong>Only select repositories</strong> (pilih <code>Preparation</code>).</li>
           <li>Permissions: Buka <strong>Repository permissions</strong> &rarr; cari <strong>Contents</strong> &rarr; pilih <strong>Read and write</strong>.</li>
           <li>Masa berlaku: <strong>90 hari</strong>.</li>
         </ol>
@@ -117,7 +117,7 @@ const App = (() => {
         </div>
         <div class="form-group">
           <label class="form-label">Nama Repository *</label>
-          <input type="text" id="setup-repo" class="input-field" required placeholder="ai-200-prep" value="${escapeHtml(existing.repo)}">
+          <input type="text" id="setup-repo" class="input-field" required placeholder="Preparation" value="${escapeHtml(existing.repo)}">
         </div>
         <div class="form-group">
           <label class="form-label">Branch *</label>
