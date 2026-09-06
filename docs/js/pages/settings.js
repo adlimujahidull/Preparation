@@ -3,6 +3,8 @@
  */
 
 const SettingsPage = (() => {
+  let isTokenVisible = false;
+
   function render(container) {
     const ghConfig = GitHubAPI.getConfig() || { owner: '', repo: '', branch: 'main' };
     const maskedToken = GitHubAPI.getMaskedToken();
@@ -57,7 +59,17 @@ const SettingsPage = (() => {
             </div>
             <div>
               <div class="form-label">Personal Access Token (PAT)</div>
-              <div style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">${maskedToken || 'Belum diatur'}</div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <span id="setting-token-display" style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted); word-break: break-all;">${isTokenVisible && ghConfig.token ? escapeHtml(ghConfig.token) : (maskedToken || 'Belum diatur')}</span>
+                ${ghConfig && ghConfig.token ? `
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.55rem; font-size: 0.75rem;" onclick="SettingsPage.toggleShowToken()">
+                    👁️ <span id="btn-toggle-token-text">${isTokenVisible ? 'Sembunyikan' : 'Tampilkan'}</span>
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.55rem; font-size: 0.75rem;" onclick="SettingsPage.copyToken()">
+                    📋 Salin
+                  </button>
+                ` : ''}
+              </div>
             </div>
           </div>
 
@@ -208,6 +220,38 @@ const SettingsPage = (() => {
     }
   }
 
+  function toggleShowToken() {
+    isTokenVisible = !isTokenVisible;
+    const disp = document.getElementById('setting-token-display');
+    const btnText = document.getElementById('btn-toggle-token-text');
+    const cfg = GitHubAPI.getConfig();
+    if (!cfg || !cfg.token) return;
+
+    if (isTokenVisible) {
+      if (disp) disp.textContent = cfg.token;
+      if (btnText) btnText.textContent = 'Sembunyikan';
+    } else {
+      if (disp) disp.textContent = GitHubAPI.getMaskedToken();
+      if (btnText) btnText.textContent = 'Tampilkan';
+    }
+  }
+
+  function copyToken() {
+    const cfg = GitHubAPI.getConfig();
+    if (!cfg || !cfg.token) {
+      App.toast('Token belum diatur.', 'warning');
+      return;
+    }
+    navigator.clipboard.writeText(cfg.token).then(() => {
+      App.toast('✓ Token berhasil disalin ke clipboard!', 'success');
+    }).catch(() => {
+      isTokenVisible = true;
+      const disp = document.getElementById('setting-token-display');
+      if (disp) disp.textContent = cfg.token;
+      App.toast('Silakan salin token yang tampil di layar.', 'info');
+    });
+  }
+
   function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -223,7 +267,9 @@ const SettingsPage = (() => {
     testConnection,
     handleRemoveToken,
     exportBackup,
-    importBackupFile
+    importBackupFile,
+    toggleShowToken,
+    copyToken
   };
 })();
 
