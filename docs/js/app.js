@@ -126,7 +126,6 @@ const App = (() => {
   }
 
   function setupMultiDeviceSync() {
-    // When returning to tab from another app/window, check for remote changes
     window.addEventListener('focus', async () => {
       if (!Store.isDirty() && GitHubAPI.hasConfig() && navigator.onLine) {
         try {
@@ -269,7 +268,7 @@ const App = (() => {
 
     modalContainer.innerHTML = `
       <div class="modal-header">
-        <h3 class="modal-title">🧪 Catat Aktivitas Lab Cepat (Alt+L)</h3>
+        <h3 class="modal-title">🧪 Catat Aktivitas Lab Cepat</h3>
         <button class="modal-close" onclick="App.closeModal()">&times;</button>
       </div>
       <form onsubmit="App.handleQuickLabSubmit(event)">
@@ -352,7 +351,7 @@ const App = (() => {
 
     modalContainer.innerHTML = `
       <div class="modal-header">
-        <h3 class="modal-title">💡 Tambah Kartu Hafalan Cepat (Alt+N)</h3>
+        <h3 class="modal-title">💡 Tambah Kartu Hafalan Cepat</h3>
         <button class="modal-close" onclick="App.closeModal()">&times;</button>
       </div>
       <form onsubmit="App.handleQuickCardSubmit(event)">
@@ -409,6 +408,91 @@ const App = (() => {
     handleRouting();
   }
 
+  // =========================================================================
+  // Keyboard Shortcuts Cheatsheet Modal
+  // =========================================================================
+  function openShortcutsModal() {
+    const modalBackdrop = document.getElementById('global-modal-backdrop');
+    const modalContainer = document.getElementById('global-modal-content');
+    if (!modalBackdrop || !modalContainer) return;
+
+    modalContainer.innerHTML = `
+      <div class="modal-header">
+        <h3 class="modal-title">⌨️ Panduan Pintasan Keyboard (Shortcuts)</h3>
+        <button class="modal-close" onclick="App.closeModal()">&times;</button>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Belajar lebih cepat tanpa perlu menyentuh mouse. Gunakan kombinasi tombol praktis berikut:
+      </div>
+
+      <!-- Akses Cepat Global -->
+      <div class="shortcut-group">
+        <div class="shortcut-group-title">🌐 Navigasi & Akses Global</div>
+        <div class="shortcut-row">
+          <span>Catat Aktivitas Hands-on Lab & RG Azure</span>
+          <div><kbd>Alt</kbd> + <kbd>L</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Tambah Kartu Hafalan Baru (Flashcard)</span>
+          <div><kbd>Alt</kbd> + <kbd>N</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Fokus ke Pencarian Global Seluruh Materi</span>
+          <div><kbd>/</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Buka Panduan Pintasan Keyboard Ini</span>
+          <div><kbd>?</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Tutup Jendela Pop-up / Modal</span>
+          <div><kbd>Esc</kbd></div>
+        </div>
+      </div>
+
+      <!-- Saat Sesi Drill Kartu -->
+      <div class="shortcut-group">
+        <div class="shortcut-group-title">⚡ Saat Sesi Drill Hafalan (#drill)</div>
+        <div class="shortcut-row">
+          <span>Buka / Tampilkan Jawaban Kartu</span>
+          <div><kbd>Spasi</kbd> atau <kbd>Enter</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Tandai SALAH (Kembali ke Box 1)</span>
+          <div><kbd>1</kbd> atau <kbd>←</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Tandai BENAR (Naik Box Leitner)</span>
+          <div><kbd>2</kbd> atau <kbd>→</kbd></div>
+        </div>
+      </div>
+
+      <!-- Saat Simulasi Ujian -->
+      <div class="shortcut-group">
+        <div class="shortcut-group-title">🎯 Saat Simulasi Ujian (#exams)</div>
+        <div class="shortcut-row">
+          <span>Pilih Opsi Jawaban</span>
+          <div><kbd>A</kbd> / <kbd>B</kbd> / <kbd>C</kbd> / <kbd>D</kbd> atau <kbd>1-4</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Tandai (Flag) Soal untuk Ditinjau</span>
+          <div><kbd>F</kbd></div>
+        </div>
+        <div class="shortcut-row">
+          <span>Pindah ke Soal Berikutnya / Sebelumnya</span>
+          <div><kbd>→</kbd> / <kbd>←</kbd></div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="margin-top: 1rem; justify-content: space-between;">
+        <span style="font-size: 0.75rem; color: var(--text-dim);">💡 Tombol ⌨️ di header selalu siap dibuka kapan saja</span>
+        <button type="button" class="btn btn-primary btn-sm" onclick="App.closeModal()">Mengerti & Tutup</button>
+      </div>
+    `;
+
+    modalBackdrop.classList.add('active');
+  }
+
   function closeModal() {
     const modalBackdrop = document.getElementById('global-modal-backdrop');
     if (modalBackdrop) modalBackdrop.classList.remove('active');
@@ -416,7 +500,6 @@ const App = (() => {
 
   function setupShortcuts() {
     window.addEventListener('keydown', (e) => {
-      // Don't trigger if typing in an input or textarea
       const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
       const isInput = tag === 'input' || tag === 'textarea';
 
@@ -428,13 +511,16 @@ const App = (() => {
         openQuickCardModal();
       } else if (e.key === 'Escape') {
         closeModal();
-      } else if (!isInput && e.key === '/' && !e.ctrlKey && !e.metaKey) {
+      } else if (!isInput && e.key === '/') {
         e.preventDefault();
         const si = document.getElementById('global-search-input');
         if (si) {
           si.focus();
           si.select();
         }
+      } else if (!isInput && (e.key === '?' || (e.shiftKey && e.key === '/'))) {
+        e.preventDefault();
+        openShortcutsModal();
       }
     });
   }
@@ -575,6 +661,7 @@ const App = (() => {
     handleQuickLabSubmit,
     openQuickCardModal,
     handleQuickCardSubmit,
+    openShortcutsModal,
     closeModal,
     syncData,
     toast

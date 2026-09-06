@@ -123,7 +123,7 @@ body {
 
 .header-search input {
   width: 100%;
-  padding: 0.45rem 0.75rem 0.45rem 2.25rem;
+  padding: 0.45rem 2.2rem 0.45rem 2.25rem;
   background-color: #f1f5f9;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -149,10 +149,19 @@ body {
   font-size: 0.85rem;
 }
 
+.search-kbd-hint {
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.75;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
 /* Save Status Indicator */
@@ -239,14 +248,32 @@ body {
   border-color: #cbd5e1;
 }
 
+/* Keyboard Badges & Native Key Styling */
+kbd, .kbd-key {
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-bottom: 2px solid #94a3b8;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  color: #1e293b;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.725rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2rem 0.45rem;
+  white-space: nowrap;
+}
+
 .kbd-shortcut {
   background-color: #f1f5f9;
-  padding: 0.1rem 0.3rem;
+  padding: 0.12rem 0.35rem;
   border-radius: 3px;
   font-size: 0.65rem;
   font-family: var(--font-mono);
   color: var(--text-dim);
   border: 1px solid var(--border-color);
+  font-weight: 600;
 }
 
 /* Spin animation for sync button */
@@ -263,7 +290,7 @@ body {
 .nav-scroll {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0.25rem 1rem 0.35rem 1rem;
   display: flex;
   gap: 0.35rem;
   overflow-x: auto;
@@ -275,23 +302,24 @@ body {
 }
 
 .nav-link {
-  padding: 0.6rem 0.85rem;
+  padding: 0.45rem 0.85rem;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
+  border-radius: var(--radius-sm);
   transition: var(--transition);
 }
 
 .nav-link:hover {
   color: var(--text-main);
+  background-color: #f1f5f9;
 }
 
 .nav-link.active {
   color: var(--azure-blue);
-  border-bottom-color: var(--azure-blue);
+  background-color: #eff6ff;
   font-weight: 600;
 }
 
@@ -305,6 +333,84 @@ body {
   width: 100%;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem 1rem;
+}
+
+/* ==========================================================================
+   Week Journey Roadmap Tracker
+   ========================================================================== */
+
+.week-journey-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.week-step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  min-width: 130px;
+}
+
+.week-step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 2px solid var(--border-color);
+  background-color: #f8fafc;
+  color: var(--text-dim);
+  transition: var(--transition);
+}
+
+.week-step.active .week-step-circle {
+  background-color: var(--azure-blue);
+  color: #ffffff;
+  border-color: var(--azure-blue);
+  box-shadow: 0 0 0 3px var(--azure-glow);
+}
+
+.week-step.completed .week-step-circle {
+  background-color: var(--accent-green-bg);
+  color: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+.week-step-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.week-step-title {
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.week-step-status {
+  font-size: 0.675rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.week-step.active .week-step-title {
+  color: var(--azure-blue);
 }
 
 /* ==========================================================================
@@ -338,6 +444,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  user-select: none;
 }
 
 .chip:hover {
@@ -766,7 +873,7 @@ body {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  max-width: 540px;
+  max-width: 580px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -812,6 +919,35 @@ body {
   justify-content: flex-end;
   gap: 0.75rem;
   margin-top: 1.5rem;
+}
+
+/* Shortcut Table in Modal */
+.shortcut-group {
+  margin-bottom: 1.25rem;
+}
+
+.shortcut-group-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--azure-blue);
+  margin-bottom: 0.5rem;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background-color: #f8fafc;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.shortcut-row:hover {
+  background-color: #f1f5f9;
 }
 
 /* Markdown preview typography */
@@ -947,8 +1083,8 @@ body {
 @media (max-width: 600px) {
   .header-top {
     flex-wrap: wrap;
-    gap: 0.6rem;
-    padding: 0.6rem 0.75rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
   }
   
   .header-search {
@@ -957,12 +1093,21 @@ body {
     width: 100%;
   }
   
+  .btn-text-desktop {
+    display: none;
+  }
+  
   .header-actions {
     margin-left: auto;
+    gap: 0.3rem;
+  }
+
+  .btn-quick {
+    padding: 0.35rem 0.5rem;
   }
   
   .app-main {
-    padding: 1rem 0.6rem 2.5rem 0.6rem;
+    padding: 0.85rem 0.6rem 2.5rem 0.6rem;
   }
   
   .dashboard-grid {
@@ -1001,5 +1146,9 @@ body {
     right: 0.5rem;
     left: 0.5rem;
     width: auto;
+  }
+
+  .week-journey-tracker {
+    padding: 0.65rem 0.85rem;
   }
 }

@@ -1,5 +1,5 @@
 ﻿/**
- * pages/today.js — Halaman "Hari ini" (Dashboard Ringkasan Belajar & Peringatan Azure RG)
+ * pages/today.js — Halaman "Hari ini" (Dashboard Ringkasan Belajar, 6-Week Roadmap, & Peringatan Azure RG)
  */
 
 const TodayPage = (() => {
@@ -112,11 +112,45 @@ const TodayPage = (() => {
       }).join('');
     }
 
+    // 6-Week Roadmap Tracker Bar
+    const weeksTrackerHtml = `
+      <div class="week-journey-tracker">
+        ${(plan.weeks || []).map(w => {
+          const wTotal = w.tasks.length;
+          const wDone = w.tasks.filter(t => t.done).length;
+          const isDone = wTotal > 0 && wDone === wTotal;
+          const isActive = w.n === currentWeekNum;
+
+          let stepClass = '';
+          let icon = w.n;
+          if (isDone) {
+            stepClass = 'completed';
+            icon = '✓';
+          } else if (isActive) {
+            stepClass = 'active';
+          }
+
+          return `
+            <a href="#plan" class="week-step ${stepClass}" title="Minggu ${w.n}: ${escapeHtml(w.title)} (${wDone}/${wTotal} selesai)">
+              <div class="week-step-circle">${icon}</div>
+              <div class="week-step-info">
+                <div class="week-step-title">M${w.n}: ${escapeHtml(w.title.slice(0, 15))}...</div>
+                <div class="week-step-status">${isDone ? 'Selesai' : (isActive ? `${wDone}/${wTotal} task` : 'Menunggu')}</div>
+              </div>
+            </a>
+          `;
+        }).join('')}
+      </div>
+    `;
+
     container.innerHTML = `
       <div class="page-container">
         
         <!-- Azure RG Cost Alert Banner if any -->
         ${rgAlertHtml}
+
+        <!-- 6-Week Roadmap Tracker -->
+        ${weeksTrackerHtml}
 
         <!-- Quick Action Bar -->
         <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
@@ -128,6 +162,9 @@ const TodayPage = (() => {
           </a>
           <button class="btn btn-secondary btn-sm" onclick="App.openQuickLabModal()">
             🧪 Catat Sesi Lab (Alt+L)
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="App.openShortcutsModal()" style="margin-left: auto;">
+            ⌨️ Pintasan Keyboard (?)
           </button>
         </div>
 

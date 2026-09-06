@@ -12,6 +12,7 @@ const ExamsPage = (() => {
   let secondsRemaining = 0;
   let isExamFinished = false;
   let examResult = null;
+  let keyHandler = null;
 
   function render(container) {
     const exams = Store.getExams();
@@ -20,16 +21,82 @@ const ExamsPage = (() => {
     const config = Store.getConfig();
 
     if (!activeExam) {
+      cleanupKeys();
       renderSelection(container, exams, examKeys, history, config);
       return;
     }
 
     if (isExamFinished) {
+      cleanupKeys();
       renderResult(container, config);
       return;
     }
 
+    setupKeyboardControls();
     renderActiveExam(container);
+  }
+
+  function setupKeyboardControls() {
+    if (keyHandler) {
+      window.removeEventListener('keydown', keyHandler);
+    }
+
+    keyHandler = (e) => {
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea') return;
+      if (!activeExam || isExamFinished) return;
+      if (window.location.hash.split('?')[0] !== '#exams') return;
+
+      const q = activeExam.questions[currentQIndex];
+      if (!q) return;
+
+      const optKeys = Object.keys(q.options || {});
+
+      // 1-4 or A-D to select option
+      if (e.key === '1' && optKeys[0]) {
+        e.preventDefault();
+        selectOption(q.id, optKeys[0]);
+      } else if (e.key === '2' && optKeys[1]) {
+        e.preventDefault();
+        selectOption(q.id, optKeys[1]);
+      } else if (e.key === '3' && optKeys[2]) {
+        e.preventDefault();
+        selectOption(q.id, optKeys[2]);
+      } else if (e.key === '4' && optKeys[3]) {
+        e.preventDefault();
+        selectOption(q.id, optKeys[3]);
+      } else if (e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        selectOption(q.id, 'a');
+      } else if (e.key === 'b' || e.key === 'B') {
+        e.preventDefault();
+        selectOption(q.id, 'b');
+      } else if (e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
+        selectOption(q.id, 'c');
+      } else if (e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        selectOption(q.id, 'd');
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFlag(q.id);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextQuestion();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevQuestion();
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+  }
+
+  function cleanupKeys() {
+    if (keyHandler) {
+      window.removeEventListener('keydown', keyHandler);
+      keyHandler = null;
+    }
   }
 
   function renderSelection(container, exams, examKeys, history, config) {
@@ -72,7 +139,7 @@ const ExamsPage = (() => {
 
     container.innerHTML = `
       <div class="page-container" style="max-width: 820px; margin: 0 auto;">
-        <h1 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Simulasi Ujian Sertifikasi AI-200</h1>
+        <h1 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Simulasi Ujian Sertifikasi AI-200</h1>
         <div class="card-subtitle" style="margin-bottom: 1.5rem;">
           Latihan format multiple choice dengan timer mundur, question navigation, dan passing mark 700/1000.
         </div>
@@ -109,7 +176,7 @@ const ExamsPage = (() => {
     activeExamKey = examKey;
     activeExam = exams[examKey];
     if (!activeExam || !activeExam.questions || activeExam.questions.length === 0) {
-      alert('Paket soal ujian tidak ditemukan atau kosong.');
+      App.toast('Paket soal ujian tidak ditemukan atau kosong.', 'warning');
       return;
     }
 
@@ -122,6 +189,8 @@ const ExamsPage = (() => {
     secondsRemaining = (activeExam.minutes || 30) * 60;
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(updateTimer, 1000);
+
+    setupKeyboardControls();
 
     const container = document.getElementById('main-content');
     if (container) renderActiveExam(container);
@@ -138,7 +207,7 @@ const ExamsPage = (() => {
 
     if (secondsRemaining <= 0) {
       clearInterval(timerInterval);
-      alert('Waktu ujian telah habis! Jawaban Anda akan dihitung secara otomatis.');
+      App.toast('Waktu ujian telah habis! Menghitung skor...', 'warning', 4000);
       finishExam();
     }
   }
@@ -159,7 +228,7 @@ const ExamsPage = (() => {
       const isCurr = idx === currentQIndex;
 
       let style = 'background-color: #ffffff; color: var(--text-main); border: 1px solid var(--border-color);';
-      if (isCurr) style = 'background-color: var(--azure-blue); color: #ffffff; border-color: var(--azure-blue);';
+      if (isCurr) style = 'background-color: var(--azure-blue); color: #ffffff; border-color: var(--azure-blue); font-weight: 700; box-shadow: 0 0 0 2px var(--azure-glow);';
       else if (isFlg) style = 'background-color: #fee2e2; color: #991b1b; border-color: #fca5a5;';
       else if (isAns) style = 'background-color: #d1fae5; color: #065f46; border-color: #a7f3d0;';
 
@@ -207,7 +276,7 @@ const ExamsPage = (() => {
             
             <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; cursor: pointer; color: ${isFlagged ? 'var(--accent-red)' : 'var(--text-muted)'}; font-weight: 500;">
               <input type="checkbox" ${isFlagged ? 'checked' : ''} onchange="ExamsPage.toggleFlag('${q.id}')">
-              🚩 Tandai untuk ditinjau
+              🚩 Tandai untuk ditinjau <kbd style="margin-left: 0.25rem;">F</kbd>
             </label>
           </div>
 
@@ -217,7 +286,7 @@ const ExamsPage = (() => {
 
           <!-- Options -->
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            ${Object.keys(q.options).map(optKey => {
+            ${Object.keys(q.options).map((optKey, idx) => {
               const optText = q.options[optKey];
               const isSelected = selectedAns === optKey;
               return `
@@ -232,12 +301,20 @@ const ExamsPage = (() => {
                     onchange="ExamsPage.selectOption('${q.id}', '${optKey}')"
                     style="margin-top: 0.2rem; accent-color: var(--azure-blue);"
                   >
-                  <div style="font-size: 0.9rem; line-height: 1.5; color: var(--text-main);">
+                  <div style="font-size: 0.9rem; line-height: 1.5; color: var(--text-main); flex: 1;">
                     <strong style="color: var(--azure-blue);">${optKey.toUpperCase()}.</strong> ${escapeHtml(optText)}
                   </div>
+                  <kbd style="opacity: 0.7; font-size: 0.65rem;">${optKey.toUpperCase()}</kbd>
                 </label>
               `;
             }).join('')}
+          </div>
+
+          <!-- Keyboard Shortcuts Hint for Exam -->
+          <div class="drill-keys-hint" style="margin-top: 1.25rem; justify-content: flex-start;">
+            <span class="drill-key-item">⌨️ <kbd>A-D</kbd> atau <kbd>1-4</kbd> Pilih Opsi</span>
+            <span class="drill-key-item"><kbd>F</kbd> Flag</span>
+            <span class="drill-key-item"><kbd>→</kbd> / <kbd>←</kbd> Pindah Soal</span>
           </div>
         </div>
 
@@ -313,6 +390,7 @@ const ExamsPage = (() => {
 
   function finishExam() {
     if (timerInterval) clearInterval(timerInterval);
+    cleanupKeys();
     isExamFinished = true;
 
     let correctCount = 0;
@@ -357,6 +435,7 @@ const ExamsPage = (() => {
     });
 
     Store.flush(`exam: score ${scaledScore}/1000 for ${examResult.set}`);
+    App.toast(`✓ Hasil ujian tersimpan! Skor Anda: ${scaledScore}/1000`, 'success', 4000);
 
     const container = document.getElementById('main-content');
     if (container) renderResult(container, Store.getConfig());
@@ -454,6 +533,7 @@ const ExamsPage = (() => {
     activeExamKey = null;
     isExamFinished = false;
     examResult = null;
+    cleanupKeys();
     const container = document.getElementById('main-content');
     if (container) render(container);
   }
