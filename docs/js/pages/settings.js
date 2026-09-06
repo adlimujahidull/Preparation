@@ -68,6 +68,9 @@ const SettingsPage = (() => {
             <button class="btn btn-secondary btn-sm" onclick="App.showSetupModal()">
               ✏️ Ubah Konfigurasi / Token
             </button>
+            <button class="btn btn-primary btn-sm" onclick="App.syncData()">
+              🔄 Sinkronkan Data Sekarang
+            </button>
           </div>
         </div>
 
@@ -92,13 +95,13 @@ const SettingsPage = (() => {
     const passingScore = Number(document.getElementById('setting-passing-score').value) || 700;
 
     Store.setConfig({ examDate, passingScore });
-    alert('Konfigurasi target ujian berhasil diperbarui dan siap disinkronkan ke repo!');
+    App.toast('✓ Konfigurasi target ujian berhasil diperbarui dan siap disinkronkan ke repo!', 'success');
   }
 
   async function testConnection(btn) {
     const cfg = GitHubAPI.getConfig();
     if (!cfg) {
-      alert('Konfigurasi token belum ada.');
+      App.toast('Konfigurasi token belum ada.', 'warning');
       return;
     }
     const orig = btn.textContent;
@@ -110,9 +113,9 @@ const SettingsPage = (() => {
     btn.disabled = false;
 
     if (res.ok) {
-      alert(`Koneksi Berhasil! Terhubung ke repositori ${cfg.owner}/${cfg.repo} (branch: ${cfg.branch}).`);
+      App.toast(`✓ Koneksi Berhasil! Terhubung ke repositori ${cfg.owner}/${cfg.repo} (branch: ${cfg.branch}).`, 'success', 4000);
     } else {
-      alert(`Koneksi Gagal: ${res.error}`);
+      App.toast(`Koneksi Gagal: ${res.error}`, 'error', 4000);
     }
   }
 

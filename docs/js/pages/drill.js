@@ -13,6 +13,7 @@ const DrillPage = (() => {
     failedCards: []
   };
   let isSessionFinished = false;
+  let keydownHandler = null;
 
   function parseHashFilters() {
     const hash = window.location.hash;
@@ -48,7 +49,43 @@ const DrillPage = (() => {
     isSessionFinished = false;
   }
 
+  function setupKeyboardControls() {
+    if (keydownHandler) {
+      window.removeEventListener('keydown', keydownHandler);
+    }
+
+    keydownHandler = (e) => {
+      // Ignore if user is inside an input/textarea or modal
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea') return;
+      const modal = document.getElementById('global-modal-backdrop');
+      if (modal && modal.classList.contains('active')) return;
+      if (window.location.hash.split('?')[0] !== '#drill') return;
+
+      if (isSessionFinished) return;
+
+      if (!isAnswerVisible) {
+        if (e.code === 'Space' || e.key === 'Enter') {
+          e.preventDefault();
+          showAnswer();
+        }
+      } else {
+        if (e.key === '1' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          rateCard(false);
+        } else if (e.key === '2' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          rateCard(true);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', keydownHandler);
+  }
+
   function render(container) {
+    setupKeyboardControls();
+
     if (sessionCards.length === 0 && !isSessionFinished) {
       startSession();
     }
@@ -93,7 +130,7 @@ const DrillPage = (() => {
       <div class="page-container" style="max-width: 720px; margin: 0 auto;">
         <!-- Header Drill Session -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-          <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
             <span class="badge badge-${currentCard.domain}">${currentCard.domain}</span>
             <span class="badge ${currentCard.type === 'decision' ? 'badge-article' : 'badge-lab'}">${currentCard.type.toUpperCase()}</span>
             <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">Kotak SRS: ${currentProgress.box || 1}/5</span>
@@ -109,7 +146,7 @@ const DrillPage = (() => {
         </div>
 
         <!-- Flashcard View -->
-        <div class="card" style="min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem 1.75rem;">
+        <div class="card" style="min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem 1.75rem; box-shadow: var(--shadow-md);">
           
           <!-- Question -->
           <div>
@@ -136,16 +173,16 @@ const DrillPage = (() => {
           <!-- Action Buttons -->
           <div style="margin-top: 2rem;">
             ${!isAnswerVisible ? `
-              <button class="btn btn-primary btn-block" style="padding: 0.8rem;" onclick="DrillPage.showAnswer()">
-                👁️ Lihat Jawaban
+              <button class="btn btn-primary btn-block" style="padding: 0.8rem; font-size: 0.95rem;" onclick="DrillPage.showAnswer()">
+                👁️ Lihat Jawaban <span class="kbd-shortcut" style="margin-left: 0.5rem; background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.4);">Spasi</span>
               </button>
             ` : `
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <button class="btn btn-danger" style="padding: 0.8rem; font-size: 0.95rem;" onclick="DrillPage.rateCard(false)">
-                  ❌ Salah (Kembali ke Box 1)
+                  ❌ Salah <span class="kbd-shortcut" style="margin-left: 0.4rem; background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.4);">[1]</span>
                 </button>
                 <button class="btn btn-primary" style="background-color: var(--accent-green); border-color: var(--accent-green); padding: 0.8rem; font-size: 0.95rem;" onclick="DrillPage.rateCard(true)">
-                  ✅ Benar (Naik Box)
+                  ✅ Benar <span class="kbd-shortcut" style="margin-left: 0.4rem; background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.4);">[2]</span>
                 </button>
               </div>
             `}
@@ -153,8 +190,19 @@ const DrillPage = (() => {
 
         </div>
 
+        <!-- Keyboard Shortcuts Hint -->
+        <div class="drill-keys-hint">
+          <span class="drill-key-item">⌨️ Pintasan Cepat:</span>
+          ${!isAnswerVisible ? `
+            <span class="drill-key-item"><span class="kbd-shortcut">Spasi</span> atau <span class="kbd-shortcut">Enter</span> Buka Jawaban</span>
+          ` : `
+            <span class="drill-key-item"><span class="kbd-shortcut">1</span> / <span class="kbd-shortcut">←</span> Salah</span>
+            <span class="drill-key-item"><span class="kbd-shortcut">2</span> / <span class="kbd-shortcut">→</span> Benar</span>
+          `}
+        </div>
+
         <!-- Quick filter / reset link -->
-        <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.8rem;">
+        <div style="display: flex; justify-content: space-between; margin-top: 1.25rem; font-size: 0.8rem;">
           <a href="#today" style="color: var(--text-muted); text-decoration: none;">&larr; Keluar dari Sesi</a>
           <span style="color: var(--text-dim);">Pintasan: <code>Alt+N</code> tambah kartu baru</span>
         </div>
@@ -185,6 +233,7 @@ const DrillPage = (() => {
     if (currentIndex >= sessionCards.length) {
       isSessionFinished = true;
       Store.flush(`drill: ${sessionStats.total} kartu, ${sessionStats.right} benar`);
+      App.toast('✓ Sesi drill selesai & progres tersimpan ke GitHub!', 'success');
     }
 
     const container = document.getElementById('main-content');

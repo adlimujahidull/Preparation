@@ -7,7 +7,9 @@ const ResourcesPage = (() => {
     type: 'all',
     domain: 'all',
     week: 'all',
-    status: 'all'
+    status: 'all',
+    search: '',
+    chip: 'all'
   };
 
   function render(container) {
@@ -15,10 +17,27 @@ const ResourcesPage = (() => {
 
     // Apply filters
     const filtered = resources.filter(r => {
+      // Quick Chip Filter
+      if (filters.chip === 'lab' && r.type !== 'lab') return false;
+      if (filters.chip === 'doc' && r.type !== 'doc') return false;
+      if (filters.chip === 'belum' && r.status !== 'belum') return false;
+      if (filters.chip === 'sedang' && r.status !== 'sedang') return false;
+      if (filters.chip === 'selesai' && r.status !== 'selesai') return false;
+
+      // Dropdown filters
       if (filters.type !== 'all' && r.type !== filters.type) return false;
       if (filters.domain !== 'all' && r.domain !== filters.domain) return false;
       if (filters.week !== 'all' && String(r.week) !== String(filters.week)) return false;
       if (filters.status !== 'all' && r.status !== filters.status) return false;
+
+      // Search filter
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        const titleMatch = r.title.toLowerCase().includes(q);
+        const noteMatch = r.note && r.note.toLowerCase().includes(q);
+        if (!titleMatch && !noteMatch) return false;
+      }
+
       return true;
     });
 
@@ -35,22 +54,46 @@ const ResourcesPage = (() => {
       grouped[w].push(r);
     });
 
+    const chipsHtml = `
+      <div class="filter-chips">
+        <button class="chip ${filters.chip === 'all' ? 'active' : ''}" onclick="ResourcesPage.setChip('all')">
+          Semua (${resources.length})
+        </button>
+        <button class="chip ${filters.chip === 'lab' ? 'active' : ''}" onclick="ResourcesPage.setChip('lab')">
+          🧪 Lab Praktik (${resources.filter(r => r.type === 'lab').length})
+        </button>
+        <button class="chip ${filters.chip === 'doc' ? 'active' : ''}" onclick="ResourcesPage.setChip('doc')">
+          📖 Panduan & Docs (${resources.filter(r => r.type === 'doc').length})
+        </button>
+        <button class="chip ${filters.chip === 'belum' ? 'active' : ''}" onclick="ResourcesPage.setChip('belum')">
+          ⏳ Belum Dikerjakan (${resources.filter(r => r.status === 'belum').length})
+        </button>
+        <button class="chip ${filters.chip === 'sedang' ? 'active' : ''}" onclick="ResourcesPage.setChip('sedang')">
+          🔥 Sedang Dipelajari (${resources.filter(r => r.status === 'sedang').length})
+        </button>
+        <button class="chip ${filters.chip === 'selesai' ? 'active' : ''}" onclick="ResourcesPage.setChip('selesai')">
+          ✅ Selesai (${resources.filter(r => r.status === 'selesai').length})
+        </button>
+      </div>
+    `;
+
     const filterBarHtml = `
       <div class="filter-bar">
-        <div class="filter-group">
-          <label class="form-label" style="margin:0;">Tipe:</label>
-          <select class="select-field" style="width: auto; padding: 0.3rem 0.6rem;" onchange="ResourcesPage.setFilter('type', this.value)">
-            <option value="all" ${filters.type === 'all' ? 'selected' : ''}>Semua Tipe</option>
-            <option value="lab" ${filters.type === 'lab' ? 'selected' : ''}>Lab</option>
-            <option value="doc" ${filters.type === 'doc' ? 'selected' : ''}>Dokumentasi</option>
-            <option value="video" ${filters.type === 'video' ? 'selected' : ''}>Video</option>
-            <option value="article" ${filters.type === 'article' ? 'selected' : ''}>Artikel</option>
-          </select>
+        <!-- In-page resource search -->
+        <div style="flex: 1; min-width: 180px;">
+          <input 
+            type="text" 
+            class="input-field" 
+            style="padding: 0.35rem 0.65rem; font-size: 0.8rem;" 
+            placeholder="Filter nama lab / catatan..." 
+            value="${escapeHtml(filters.search)}" 
+            oninput="ResourcesPage.setSearch(this.value)"
+          >
         </div>
 
         <div class="filter-group">
           <label class="form-label" style="margin:0;">Domain:</label>
-          <select class="select-field" style="width: auto; padding: 0.3rem 0.6rem;" onchange="ResourcesPage.setFilter('domain', this.value)">
+          <select class="select-field" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem;" onchange="ResourcesPage.setFilter('domain', this.value)">
             <option value="all" ${filters.domain === 'all' ? 'selected' : ''}>Semua Domain</option>
             <option value="containers" ${filters.domain === 'containers' ? 'selected' : ''}>Containers</option>
             <option value="data" ${filters.domain === 'data' ? 'selected' : ''}>Data Management</option>
@@ -62,7 +105,7 @@ const ResourcesPage = (() => {
 
         <div class="filter-group">
           <label class="form-label" style="margin:0;">Minggu:</label>
-          <select class="select-field" style="width: auto; padding: 0.3rem 0.6rem;" onchange="ResourcesPage.setFilter('week', this.value)">
+          <select class="select-field" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem;" onchange="ResourcesPage.setFilter('week', this.value)">
             <option value="all" ${filters.week === 'all' ? 'selected' : ''}>Semua Minggu</option>
             <option value="1" ${filters.week === '1' ? 'selected' : ''}>Minggu 1</option>
             <option value="2" ${filters.week === '2' ? 'selected' : ''}>Minggu 2</option>
@@ -70,16 +113,6 @@ const ResourcesPage = (() => {
             <option value="4" ${filters.week === '4' ? 'selected' : ''}>Minggu 4</option>
             <option value="5" ${filters.week === '5' ? 'selected' : ''}>Minggu 5</option>
             <option value="6" ${filters.week === '6' ? 'selected' : ''}>Minggu 6</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="form-label" style="margin:0;">Status:</label>
-          <select class="select-field" style="width: auto; padding: 0.3rem 0.6rem;" onchange="ResourcesPage.setFilter('status', this.value)">
-            <option value="all" ${filters.status === 'all' ? 'selected' : ''}>Semua Status</option>
-            <option value="belum" ${filters.status === 'belum' ? 'selected' : ''}>Belum</option>
-            <option value="sedang" ${filters.status === 'sedang' ? 'selected' : ''}>Sedang</option>
-            <option value="selesai" ${filters.status === 'selesai' ? 'selected' : ''}>Selesai</option>
           </select>
         </div>
 
@@ -100,7 +133,7 @@ const ResourcesPage = (() => {
       }
     }
     if (grouped['umum'] && grouped['umum'].length > 0) {
-      groupsHtml += renderGroupSection('Materi Umum & Rujukan', grouped['umum']);
+      groupsHtml += renderGroupSection('Materi Rujukan & Panduan Arsitektur', grouped['umum']);
     }
 
     if (!groupsHtml) {
@@ -113,16 +146,17 @@ const ResourcesPage = (() => {
 
     container.innerHTML = `
       <div class="page-container">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
             <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">Perpustakaan Sumber Belajar</h1>
-            <div class="card-subtitle">Semua lab resmi Microsoft Learn, materi video, dan dokumentasi ujian</div>
+            <div class="card-subtitle">Lab hands-on Microsoft Learn terverifikasi, materi resmi, dan dokumen arsitektur</div>
           </div>
           <div style="font-size: 0.85rem; color: var(--text-muted);">
             Menampilkan <strong>${filtered.length}</strong> dari <strong>${resources.length}</strong> sumber
           </div>
         </div>
 
+        ${chipsHtml}
         ${filterBarHtml}
         ${groupsHtml}
       </div>
@@ -192,23 +226,38 @@ const ResourcesPage = (() => {
     `;
   }
 
+  function setChip(chipKey) {
+    filters.chip = chipKey;
+    const container = document.getElementById('main-content');
+    if (container) render(container);
+  }
+
   function setFilter(key, val) {
     filters[key] = val;
     const container = document.getElementById('main-content');
     if (container) render(container);
   }
 
+  function setSearch(query) {
+    filters.search = query;
+    const container = document.getElementById('main-content');
+    if (container) render(container);
+  }
+
   function updateStatus(id, status) {
     Store.updateResource(id, { status });
+    App.toast('✓ Status sumber berhasil diperbarui', 'success', 1800);
   }
 
   function updateRating(id, ratingVal) {
     const rating = ratingVal ? Number(ratingVal) : null;
     Store.updateResource(id, { rating });
+    App.toast('✓ Rating berhasil disimpan', 'success', 1800);
   }
 
   function updateNote(id, note) {
     Store.updateResource(id, { note });
+    App.toast('✓ Catatan singkat tersimpan', 'success', 1800);
   }
 
   function openAddModal() {
@@ -261,6 +310,7 @@ const ResourcesPage = (() => {
               <option value="4">Minggu 4</option>
               <option value="5">Minggu 5</option>
               <option value="6">Minggu 6</option>
+              <option value="umum">Umum / Rujukan</option>
             </select>
           </div>
           <div class="form-group">
@@ -288,7 +338,8 @@ const ResourcesPage = (() => {
     const url = document.getElementById('new-res-url').value;
     const type = document.getElementById('new-res-type').value;
     const domain = document.getElementById('new-res-domain').value;
-    const week = Number(document.getElementById('new-res-week').value);
+    const weekVal = document.getElementById('new-res-week').value;
+    const week = weekVal === 'umum' ? 'umum' : Number(weekVal);
     const minutes = Number(document.getElementById('new-res-minutes').value);
     const note = document.getElementById('new-res-note').value;
 
@@ -304,6 +355,7 @@ const ResourcesPage = (() => {
     });
 
     App.closeModal();
+    App.toast('✓ Sumber belajar baru berhasil ditambahkan!', 'success');
     const container = document.getElementById('main-content');
     if (container) render(container);
   }
@@ -319,7 +371,9 @@ const ResourcesPage = (() => {
 
   return {
     render,
+    setChip,
     setFilter,
+    setSearch,
     updateStatus,
     updateRating,
     updateNote,

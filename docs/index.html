@@ -33,8 +33,13 @@
           💡 <span style="display:inline-block;">Kartu</span> <span class="kbd-shortcut">Alt+N</span>
         </button>
 
+        <!-- Multi-device Sync Pull Button -->
+        <button id="header-sync-btn" class="btn-quick" onclick="App.syncData()" title="Tarik data terbaru dari GitHub">
+          <span id="sync-spinner-icon" style="display: inline-block;">🔄</span> <span>Sinkron</span>
+        </button>
+
         <!-- Save Indicator -->
-        <div id="save-status-pill" class="status-pill status-saved" onclick="Store.flush('manual save: sync all dirty files')">
+        <div id="save-status-pill" class="status-pill status-saved" onclick="Store.flush('manual save: sync all dirty files')" title="Klik untuk menyimpan sekarang">
           <span class="status-dot"></span>
           <span id="save-status-label">Tersimpan</span>
         </div>
@@ -66,6 +71,9 @@
       <!-- Injected dynamically by App / Page modals -->
     </div>
   </div>
+
+  <!-- Floating Toast Notifications Container -->
+  <div id="toast-container" class="toast-container"></div>
 
   <!-- Vendor Libraries (Zero npm / Zero CDN) -->
   <script src="vendor/marked.min.js"></script>

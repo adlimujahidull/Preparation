@@ -1,9 +1,10 @@
 ﻿/**
- * app.js — Router, Global Modals, Shortcuts, & Application Bootstrap
+ * app.js — Router, Global Modals, Shortcuts, Toast, & Multi-Device Sync
  */
 
 const App = (() => {
   let activeRoute = 'today';
+  let isSyncing = false;
 
   const routes = {
     'today': TodayPage,
@@ -27,15 +28,27 @@ const App = (() => {
 
     setupShortcuts();
     setupSearch();
+    setupMultiDeviceSync();
 
     window.addEventListener('hashchange', handleRouting);
     handleRouting();
 
     window.addEventListener('online', () => {
+      toast('Koneksi internet kembali. Menyinkronkan perubahan...', 'info');
       Store.flush('online: sync queued offline changes');
     });
+
     window.addEventListener('offline', () => {
       updateStatusIndicator('offline', 'Koneksi internet terputus.');
+      toast('Mode offline aktif. Perubahan disimpan di perangkat ini.', 'warning');
+    });
+
+    // Protect against leaving with unsaved changes
+    window.addEventListener('beforeunload', (e) => {
+      if (Store.isDirty()) {
+        e.preventDefault();
+        e.returnValue = 'Masih ada perubahan yang belum tersimpan ke GitHub. Yakin ingin keluar?';
+      }
     });
   }
 
@@ -69,8 +82,8 @@ const App = (() => {
       label.textContent = 'Tersimpan';
       pill.title = 'Semua perubahan tersimpan di repositori GitHub';
     } else if (status === 'dirty') {
-      label.textContent = 'Ada perubahan belum tersimpan';
-      pill.title = 'Klik untuk menyimpan perubahan ke repositori sekarang';
+      label.textContent = 'Ada perubahan';
+      pill.title = 'Ada perubahan belum tersimpan. Klik untuk simpan sekarang.';
     } else if (status === 'saving') {
       label.textContent = detail || 'Menyimpan...';
       pill.title = 'Sedang menyinkronkan dengan GitHub API...';
@@ -78,11 +91,89 @@ const App = (() => {
       label.textContent = 'Offline';
       pill.title = 'Mode offline. Perubahan disimpan di perangkat dan akan dikirim saat online.';
     } else if (status === 'conflict') {
-      label.textContent = 'Konflik Sinkronisasi';
+      label.textContent = 'Konflik Data';
       pill.title = detail || 'Data telah diubah dari perangkat lain.';
     }
   }
 
+  // =========================================================================
+  // Multi-Device Sync
+  // =========================================================================
+  async function syncData() {
+    if (isSyncing) return;
+    isSyncing = true;
+
+    const spinner = document.getElementById('sync-spinner-icon');
+    if (spinner) spinner.classList.add('spin-animate');
+
+    try {
+      if (Store.isDirty()) {
+        toast('Menyimpan perubahan lokal ke GitHub sebelum sinkronisasi...', 'info', 2000);
+        await Store.flush('sync: flush before pull');
+      }
+
+      toast('Menarik data terbaru dari repositori...', 'info', 2000);
+      await Store.refreshFromGitHub();
+      handleRouting();
+      toast('✓ Data berhasil disinkronkan dengan GitHub!', 'success');
+    } catch (err) {
+      console.error('Sync failed:', err);
+      toast(`Gagal sinkron: ${err.message}`, 'error');
+    } finally {
+      isSyncing = false;
+      if (spinner) spinner.classList.remove('spin-animate');
+    }
+  }
+
+  function setupMultiDeviceSync() {
+    // When returning to tab from another app/window, check for remote changes
+    window.addEventListener('focus', async () => {
+      if (!Store.isDirty() && GitHubAPI.hasConfig() && navigator.onLine) {
+        try {
+          await Store.refreshFromGitHub();
+          handleRouting();
+        } catch (e) {
+          // Quiet background check
+        }
+      }
+    });
+  }
+
+  // =========================================================================
+  // Toast Notifications
+  // =========================================================================
+  function toast(message, type = 'info', duration = 3200) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✓';
+    else if (type === 'warning') icon = '⚠️';
+    else if (type === 'error') icon = '✕';
+
+    el.innerHTML = `
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span style="font-weight:700;">${icon}</span>
+        <span>${escapeHtml(message)}</span>
+      </div>
+      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    `;
+
+    container.appendChild(el);
+    setTimeout(() => el.classList.add('show'), 20);
+
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 300);
+    }, duration);
+  }
+
+  // =========================================================================
+  // Modals & Setup
+  // =========================================================================
   function showSetupModal() {
     const existing = GitHubAPI.getConfig() || { owner: 'adlimujahidull', repo: 'Preparation', branch: 'main', token: '' };
     const modalBackdrop = document.getElementById('global-modal-backdrop');
@@ -126,7 +217,7 @@ const App = (() => {
         <div class="form-group">
           <label class="form-label">Fine-Grained Personal Access Token (PAT) *</label>
           <input type="password" id="setup-token" class="input-field" required placeholder="github_pat_..." value="${escapeHtml(existing.token)}">
-          <div class="form-hint">Token disimpan secara aman di <code>localStorage</code> perangkat ini dan tidak pernah di-commit.</div>
+          <div class="form-hint">Token disimpan secara aman di <code>localStorage</code> perangkat ini dan tidak pernah di-commit ke repositori.</div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Tutup</button>
@@ -164,6 +255,7 @@ const App = (() => {
 
     GitHubAPI.setConfig({ owner, repo, branch, token });
     closeModal();
+    toast('✓ Berhasil terhubung ke repositori!', 'success');
     await Store.refreshFromGitHub();
     handleRouting();
   }
@@ -249,6 +341,7 @@ const App = (() => {
     });
 
     closeModal();
+    toast('✓ Log aktivitas lab berhasil disimpan!', 'success');
     handleRouting();
   }
 
@@ -312,6 +405,7 @@ const App = (() => {
 
     Store.addCard({ domain, type, question, answer });
     closeModal();
+    toast('✓ Kartu hafalan baru berhasil dibuat!', 'success');
     handleRouting();
   }
 
@@ -322,6 +416,10 @@ const App = (() => {
 
   function setupShortcuts() {
     window.addEventListener('keydown', (e) => {
+      // Don't trigger if typing in an input or textarea
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      const isInput = tag === 'input' || tag === 'textarea';
+
       if (e.altKey && (e.key === 'l' || e.key === 'L')) {
         e.preventDefault();
         openQuickLabModal();
@@ -330,6 +428,13 @@ const App = (() => {
         openQuickCardModal();
       } else if (e.key === 'Escape') {
         closeModal();
+      } else if (!isInput && e.key === '/' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        const si = document.getElementById('global-search-input');
+        if (si) {
+          si.focus();
+          si.select();
+        }
       }
     });
   }
@@ -470,7 +575,9 @@ const App = (() => {
     handleQuickLabSubmit,
     openQuickCardModal,
     handleQuickCardSubmit,
-    closeModal
+    closeModal,
+    syncData,
+    toast
   };
 })();
 

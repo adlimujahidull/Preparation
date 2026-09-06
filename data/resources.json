@@ -359,6 +359,78 @@
       "status": "belum",
       "rating": null,
       "note": ""
+    },
+    {
+      "id": "r031",
+      "title": "RAG Architecture Overview & Patterns on Azure",
+      "type": "doc",
+      "url": "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview",
+      "domain": "integration",
+      "week": "umum",
+      "minutes": 25,
+      "status": "belum",
+      "rating": null,
+      "note": "Konsep dasar RAG, chunking, indexing, dan retrieval untuk AI solutions"
+    },
+    {
+      "id": "r032",
+      "title": "Azure Pricing Calculator (Estimasi Biaya AKS, ACA, & Cosmos DB)",
+      "type": "doc",
+      "url": "https://azure.microsoft.com/en-us/pricing/calculator/",
+      "domain": "ops",
+      "week": "umum",
+      "minutes": 15,
+      "status": "belum",
+      "rating": null,
+      "note": "Sangat penting untuk skenario penekanan biaya (RU/s Cosmos DB vs VM tiers)"
+    },
+    {
+      "id": "r033",
+      "title": "Azure Container Apps: Containers & Sidecar Configuration",
+      "type": "doc",
+      "url": "https://learn.microsoft.com/en-us/azure/container-apps/containers",
+      "domain": "containers",
+      "week": 2,
+      "minutes": 20,
+      "status": "belum",
+      "rating": null,
+      "note": "Konsep multi-container apps, sidecar pattern, dan environment"
+    },
+    {
+      "id": "r034",
+      "title": "Azure Cosmos DB: Vector Search & NoSQL Best Practices",
+      "type": "doc",
+      "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/vector-search",
+      "domain": "data",
+      "week": 3,
+      "minutes": 20,
+      "status": "belum",
+      "rating": null,
+      "note": "Panduan resmi vector indexing diskANN, distance metrics, dan index policy"
+    },
+    {
+      "id": "r035",
+      "title": "Azure Database for PostgreSQL: pgvector Extension Tuning",
+      "type": "doc",
+      "url": "https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-use-pgvector",
+      "domain": "data",
+      "week": 4,
+      "minutes": 25,
+      "status": "belum",
+      "rating": null,
+      "note": "Panduan tuning index HNSW vs IVFFlat, m & ef_construction parameters"
+    },
+    {
+      "id": "r036",
+      "title": "Microsoft Learn: AI-200 Official Exam Sandbox",
+      "type": "doc",
+      "url": "https://go.microsoft.com/fwlink/?linkid=2226877",
+      "domain": "umum",
+      "week": 6,
+      "minutes": 30,
+      "status": "belum",
+      "rating": null,
+      "note": "Simulasi antarmuka ujian resmi Microsoft sebelum hari H ujian"
     }
   ]
 }

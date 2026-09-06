@@ -19,12 +19,12 @@ const TodayPage = (() => {
     let countdownHtml = '';
     if (!config.examDate) {
       countdownHtml = `
-        <div class="card-title">Target Ujian</div>
-        <div style="font-size: 1rem; color: var(--accent-yellow); margin-top: 0.5rem;">
+        <div class="card-title">Target Tanggal Ujian</div>
+        <div style="font-size: 1.15rem; font-weight: 700; color: var(--accent-yellow); margin-top: 0.4rem;">
           Belum diatur
         </div>
         <div class="card-subtitle">
-          <a href="#settings" style="color: var(--azure-light); text-decoration: underline;">Atur tanggal ujian di Pengaturan &rarr;</a>
+          <a href="#settings" style="color: var(--azure-blue); text-decoration: underline;">Atur tanggal ujian di Pengaturan &rarr;</a>
         </div>
       `;
     } else {
@@ -34,19 +34,20 @@ const TodayPage = (() => {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
       let dayDisplay = diffDays >= 0 ? `${diffDays} Hari Lagi` : `Sudah Lewat ${Math.abs(diffDays)} Hari`;
+      let motivator = diffDays > 30 ? 'Waktu persiapan ideal. Konsisten 1-2 jam per hari.' : (diffDays > 7 ? 'Mulai perbanyak drill dan tabel keputusan!' : 'Fokus simulasi ujian & latihan constraint.');
       countdownHtml = `
-        <div class="card-title">Target Ujian (${config.examDate})</div>
+        <div class="card-title-row">
+          <span class="card-title">Target Ujian AI-200</span>
+          <span class="badge badge-lab">${config.examDate}</span>
+        </div>
         <div class="card-value">${dayDisplay}</div>
-        <div class="card-subtitle">Passing Score: ${config.passingScore || 700}/1000</div>
+        <div class="card-subtitle">${motivator} • Passing score: ${config.passingScore || 700}/1000</div>
       `;
     }
 
     // 2. Active Week & Tasks
-    // Default to week 1 if no date match, or determine current week by date
     let currentWeekNum = 1;
     if (plan.weeks && plan.weeks.length > 0) {
-      currentWeekNum = 1; // Default
-      // Check if user has ongoing tasks
       for (const w of plan.weeks) {
         const hasUndone = w.tasks.some(t => !t.done);
         if (hasUndone) {
@@ -56,6 +57,9 @@ const TodayPage = (() => {
       }
     }
     const currentWeek = plan.weeks ? plan.weeks.find(w => w.n === currentWeekNum) : null;
+    const currentWeekTotal = currentWeek ? currentWeek.tasks.length : 0;
+    const currentWeekDone = currentWeek ? currentWeek.tasks.filter(t => t.done).length : 0;
+    const currentWeekPercent = currentWeekTotal > 0 ? Math.round((currentWeekDone / currentWeekTotal) * 100) : 0;
     const currentWeekTasks = currentWeek ? currentWeek.tasks.filter(t => !t.done) : [];
 
     // 3. Due Cards Count
@@ -94,13 +98,13 @@ const TodayPage = (() => {
                 ✓ Tandai Sudah Dihapus
               </button>
             </div>
-            <div style="font-size: 0.875rem; color: #fecaca;">
+            <div style="font-size: 0.875rem; color: #991b1b;">
               Lab <strong>${escapeHtml(rg.lab)}</strong> menyisakan Resource Group <code>${escapeHtml(rg.resource_group)}</code> yang belum dihapus. Azure terus menagih per jam!
             </div>
             <div class="rg-alert-cmd-box">
               <span>${cmd}</span>
               <button class="btn-copy-cmd" onclick="TodayPage.copyCommand('${cmd}', this)">
-                Salin Perintah
+                Salin Perintah CLI
               </button>
             </div>
           </div>
@@ -110,159 +114,210 @@ const TodayPage = (() => {
 
     container.innerHTML = `
       <div class="page-container">
-        <!-- Resource Group Alert -->
+        
+        <!-- Azure RG Cost Alert Banner if any -->
         ${rgAlertHtml}
 
-        <!-- Top Stats Grid -->
+        <!-- Quick Action Bar -->
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+          <a href="#drill" class="btn btn-primary btn-sm">
+            ⚡ Mulai Drill Hari Ini (${dueCards.length} Jatuh Tempo)
+          </a>
+          <a href="#plan" class="btn btn-secondary btn-sm">
+            📋 Lihat Kurikulum Minggu ${currentWeekNum}
+          </a>
+          <button class="btn btn-secondary btn-sm" onclick="App.openQuickLabModal()">
+            🧪 Catat Sesi Lab (Alt+L)
+          </button>
+        </div>
+
+        <!-- Dashboard Stat Cards -->
         <div class="dashboard-grid">
+          
+          <!-- Exam Countdown Card -->
           <div class="card card-countdown">
             ${countdownHtml}
           </div>
 
+          <!-- Flashcard SRS Due Card -->
           <div class="card">
             <div class="card-title-row">
               <span class="card-title">Drill Kartu Hari Ini</span>
-              <span class="badge badge-lab">${dueCards.length} Kartu</span>
+              <span class="badge ${dueCards.length > 0 ? 'badge-article' : 'badge-lab'}">
+                ${dueCards.length > 0 ? 'Siap Di-review' : 'Tuntas'}
+              </span>
             </div>
-            <div class="card-value">${dueCards.length}</div>
-            <div class="card-subtitle" style="margin-bottom: 0.75rem;">
-              ${dueCards.length > 0 ? 'Kartu jatuh tempo untuk review Leitner' : 'Semua kartu sudah dipelajari hari ini!'}
+            <div class="card-value" style="color: ${dueCards.length > 0 ? 'var(--accent-green)' : 'var(--text-main)'};">
+              ${dueCards.length} <span style="font-size: 1rem; font-weight: 600; color: var(--text-dim);">Kartu</span>
             </div>
-            ${dueCards.length > 0 ? `
+            <div class="card-subtitle">
+              ${dueCards.length > 0 ? 'Interval Leitner jatuh tempo hari ini.' : 'Semua kartu sudah dipelajari sesuai jadwal.'}
+            </div>
+            <div style="margin-top: 0.75rem;">
               <a href="#drill" class="btn btn-primary btn-sm btn-block">
-                ⚡ Mulai Drill Sekarang
+                ${dueCards.length > 0 ? 'Mulai Sesi Drill Sekarang &rarr;' : 'Latihan Bebas (Semua Kartu) &rarr;'}
               </a>
+            </div>
+          </div>
+
+          <!-- Active Week Progress -->
+          <div class="card">
+            <div class="card-title-row">
+              <span class="card-title">Progres Minggu Ini</span>
+              <span class="badge badge-lab">Minggu ${currentWeekNum}</span>
+            </div>
+            <div class="card-value" style="color: var(--azure-blue);">
+              ${currentWeekDone} / ${currentWeekTotal} <span style="font-size: 1rem; font-weight: 600; color: var(--text-dim);">Task (${currentWeekPercent}%)</span>
+            </div>
+            <div class="progress-bar-container" style="margin-top: 0.5rem;">
+              <div class="progress-bar-fill" style="width: ${currentWeekPercent}%;"></div>
+            </div>
+            <div class="card-subtitle" style="margin-top: 0.4rem;">
+              ${currentWeek ? escapeHtml(currentWeek.title) : 'Kurikulum 6 Minggu'}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Main Content Split: Tasks of the Week & In-Progress Resources -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+          
+          <!-- Current Week Tasks Checklist -->
+          <div class="card">
+            <div class="card-title-row">
+              <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
+                Checklist Minggu ${currentWeekNum}: ${currentWeek ? escapeHtml(currentWeek.title) : ''}
+              </h2>
+              <a href="#plan" style="font-size: 0.8rem; color: var(--azure-blue); text-decoration: none;">Semua Minggu &rarr;</a>
+            </div>
+
+            ${currentWeekTasks.length > 0 ? `
+              <div class="task-list">
+                ${currentWeekTasks.slice(0, 6).map(t => `
+                  <div class="task-item">
+                    <input 
+                      type="checkbox" 
+                      class="task-checkbox" 
+                      id="today_task_${t.id}" 
+                      ${t.done ? 'checked' : ''} 
+                      onchange="TodayPage.toggleTask('${t.id}', this.checked)"
+                    >
+                    <div class="task-content">
+                      <label for="today_task_${t.id}" class="task-text">${escapeHtml(t.text)}</label>
+                      ${t.url ? `
+                        <div>
+                          <a href="${t.url}" target="_blank" rel="noopener noreferrer" class="task-link">
+                            🔗 Instruksi Lab Resmi &rarr;
+                          </a>
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
             ` : `
-              <a href="#drill?all=1" class="btn btn-secondary btn-sm btn-block">
-                Tinjau Semua Kartu
-              </a>
+              <div style="padding: 2rem 1rem; text-align: center; color: var(--text-dim); font-size: 0.9rem;">
+                🎉 Semua task Minggu ${currentWeekNum} sudah selesai! Silakan lanjut ke minggu berikutnya di menu Rencana.
+              </div>
             `}
           </div>
 
-          <div class="card">
-            <div class="card-title-row">
-              <span class="card-title">Ujian Latihan Terakhir</span>
-              ${latestExam ? `<span class="badge ${latestExam.score >= (config.passingScore || 700) ? 'badge-article' : 'badge-ops'}">${latestExam.score}/1000</span>` : ''}
-            </div>
-            <div class="card-value">
-              ${latestExam ? `${latestExam.score}` : '<span style="font-size: 1.25rem; color: var(--text-dim);">Belum ada</span>'}
-            </div>
-            <div class="card-subtitle" style="margin-bottom: 0.75rem;">
-              ${latestExam ? `${latestExam.set} • ${latestExam.date}` : 'Uji kesiapan dengan simulasi ujian'}
-            </div>
-            <a href="#exams" class="btn btn-secondary btn-sm btn-block">
-              ${latestExam ? 'Mulai Ujian Baru' : 'Coba Ujian Contoh'}
-            </a>
-          </div>
-        </div>
-
-        <!-- Two Column Main Layout -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
-          
-          <!-- Current Week Incomplete Tasks -->
-          <div class="card">
-            <div class="card-title-row">
-              <div>
-                <h2 style="font-size: 1.1rem; font-weight: 700;">Minggu ${currentWeek ? currentWeek.n : 1}: ${currentWeek ? escapeHtml(currentWeek.title) : ''}</h2>
-                <div class="card-subtitle">${currentWeek ? currentWeek.dates : ''} • ${currentWeekTasks.length} task tersisa</div>
+          <!-- Side Section: Resources in Progress & Recent Exams -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- In Progress Resources -->
+            <div class="card">
+              <div class="card-title-row">
+                <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main);">Materi Sedang Berjalan</h3>
+                <a href="#resources" style="font-size: 0.8rem; color: var(--azure-blue); text-decoration: none;">Perpustakaan &rarr;</a>
               </div>
-              <a href="#plan" style="font-size: 0.8rem; color: var(--azure-light); text-decoration: none;">Lihat Rencana &rarr;</a>
-            </div>
 
-            <div class="task-list">
-              ${currentWeekTasks.length > 0 ? currentWeekTasks.map(t => `
-                <div class="task-item">
-                  <input type="checkbox" class="task-checkbox" id="task_${t.id}" onchange="TodayPage.toggleTask('${t.id}', this.checked)">
-                  <div class="task-content">
-                    <label for="task_${t.id}" class="task-text">${escapeHtml(t.text)}</label>
-                    ${t.url ? `
-                      <div>
-                        <a href="${t.url}" target="_blank" rel="noopener noreferrer" class="task-link">
-                          🔗 Buka Materi / Lab &rarr;
-                        </a>
+              ${inProgressResources.length > 0 ? `
+                <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem;">
+                  ${inProgressResources.map(r => `
+                    <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem;">
+                      <div style="display: flex; gap: 0.4rem; margin-bottom: 0.25rem;">
+                        <span class="badge badge-${r.type}">${r.type.toUpperCase()}</span>
+                        <span class="badge badge-${r.domain}">${r.domain}</span>
                       </div>
-                    ` : ''}
-                  </div>
-                </div>
-              `).join('') : `
-                <div style="padding: 1.5rem; text-align: center; color: var(--text-dim); font-size: 0.875rem;">
-                  🎉 Hebat! Semua task minggu ini telah selesai.
-                </div>
-              `}
-            </div>
-          </div>
-
-          <!-- Resources In Progress -->
-          <div class="card">
-            <div class="card-title-row">
-              <h2 style="font-size: 1.1rem; font-weight: 700;">Sumber Sedang Dipelajari</h2>
-              <a href="#resources" style="font-size: 0.8rem; color: var(--azure-light); text-decoration: none;">Semua Sumber &rarr;</a>
-            </div>
-
-            <div class="task-list">
-              ${inProgressResources.length > 0 ? inProgressResources.map(r => `
-                <div class="task-item">
-                  <div class="task-content">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;">
-                      <span class="badge badge-${r.type}">${r.type.toUpperCase()}</span>
-                      <span class="badge badge-${r.domain}">${r.domain}</span>
-                    </div>
-                    <div class="task-text" style="font-weight: 600;">${escapeHtml(r.title)}</div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.4rem;">
+                      <div style="font-weight: 600; font-size: 0.875rem; color: var(--text-main);">
+                        ${escapeHtml(r.title)}
+                      </div>
                       ${r.url ? `
-                        <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="task-link">
-                          Buka Link (${r.minutes}m) &rarr;
-                        </a>
-                      ` : `<span>${r.minutes}m</span>`}
-                      <select class="status-select" onchange="TodayPage.updateResourceStatus('${r.id}', this.value)">
-                        <option value="belum">Belum</option>
-                        <option value="sedang" selected>Sedang</option>
-                        <option value="selesai">Selesai</option>
-                      </select>
+                        <div style="margin-top: 0.35rem;">
+                          <a href="${r.url}" target="_blank" class="task-link" style="font-size: 0.75rem;">
+                            Buka Materi &rarr;
+                          </a>
+                        </div>
+                      ` : ''}
                     </div>
-                  </div>
+                  `).join('')}
                 </div>
-              `).join('') : `
-                <div style="padding: 1.5rem; text-align: center; color: var(--text-dim); font-size: 0.875rem;">
-                  Tidak ada sumber dengan status "Sedang".
-                  <br>
-                  <a href="#resources" style="color: var(--azure-light); display: inline-block; margin-top: 0.5rem;">Pilih dari daftar sumber &rarr;</a>
+              ` : `
+                <div style="padding: 1.5rem 1rem; text-align: center; color: var(--text-dim); font-size: 0.85rem;">
+                  Tidak ada materi dengan status "Sedang". Buka menu <strong>Sumber</strong> untuk memilih materi berikutnya.
                 </div>
               `}
             </div>
+
+            <!-- Latest Exam Simulator Result -->
+            <div class="card">
+              <div class="card-title-row">
+                <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main);">Hasil Ujian Terakhir</h3>
+                <a href="#exams" style="font-size: 0.8rem; color: var(--azure-blue); text-decoration: none;">Mulai Simulasi &rarr;</a>
+              </div>
+
+              ${latestExam ? `
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; background-color: #f8fafc; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-main);">${escapeHtml(latestExam.set)}</div>
+                    <div class="card-subtitle">${latestExam.date} • ${latestExam.minutes} menit</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 1.25rem; font-weight: 800; color: ${latestExam.score >= (config.passingScore || 700) ? 'var(--accent-green)' : 'var(--accent-red)'};">
+                      ${latestExam.score}/1000
+                    </div>
+                    <span class="badge ${latestExam.score >= (config.passingScore || 700) ? 'badge-article' : 'badge-ops'}">
+                      ${latestExam.score >= (config.passingScore || 700) ? 'LULUS' : 'PERLU REVIEW'}
+                    </span>
+                  </div>
+                </div>
+              ` : `
+                <div style="padding: 1.5rem 1rem; text-align: center; color: var(--text-dim); font-size: 0.85rem;">
+                  Belum pernah melakukan simulasi ujian. Uji kemampuan Anda di menu <strong>Ujian</strong>.
+                </div>
+              `}
+            </div>
+
           </div>
 
         </div>
+
       </div>
     `;
   }
 
   function toggleTask(taskId, isDone) {
     Store.toggleTask(taskId, isDone);
+    App.toast(isDone ? '✓ Task ditandai selesai' : 'Task dibuka kembali', 'info', 1500);
     const container = document.getElementById('main-content');
     if (container) render(container);
   }
 
-  function updateResourceStatus(resId, status) {
-    Store.updateResource(resId, { status });
-    const container = document.getElementById('main-content');
-    if (container) render(container);
+  function copyCommand(cmd, btn) {
+    navigator.clipboard.writeText(cmd).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Tersalin!';
+      setTimeout(() => btn.textContent = orig, 2000);
+      App.toast('✓ Perintah az CLI berhasil disalin ke clipboard', 'success', 2000);
+    });
   }
 
   function markRgCleaned(labIndex) {
-    if (confirm('Tandai Resource Group ini sudah dihapus di portal/CLI Azure?')) {
-      Store.markLabRgDeleted(labIndex);
-      const container = document.getElementById('main-content');
-      if (container) render(container);
-    }
-  }
-
-  function copyCommand(text, btnElem) {
-    navigator.clipboard.writeText(text).then(() => {
-      const orig = btnElem.textContent;
-      btnElem.textContent = 'Tersalin!';
-      setTimeout(() => { btnElem.textContent = orig; }, 2000);
-    });
+    Store.updateLab(labIndex, { deleted: true });
+    App.toast('✓ Resource Group ditandai sudah dihapus', 'success', 2000);
+    const container = document.getElementById('main-content');
+    if (container) render(container);
   }
 
   function escapeHtml(str) {
@@ -277,9 +332,8 @@ const TodayPage = (() => {
   return {
     render,
     toggleTask,
-    updateResourceStatus,
-    markRgCleaned,
-    copyCommand
+    copyCommand,
+    markRgCleaned
   };
 })();
 
