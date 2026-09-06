@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pages/decisions.js — Halaman "Keputusan" (Tabel Arsitektur & Mode Kuis Recall)
  */
 
@@ -61,7 +61,7 @@ const DecisionsPage = (() => {
 
           ${isQuizMode && !isRevealed ? `
             <!-- Mode Kuis: Hidden Content -->
-            <div style="text-align: center; padding: 2rem 1rem; background-color: #f8fafc; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="text-align: center; padding: 2rem 1rem; background-color: var(--bg-main); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
                 Sebutkan pemicu (triggers) & kapan memilih masing-masing opsi dari ingatan Anda!
               </div>
@@ -77,7 +77,7 @@ const DecisionsPage = (() => {
             ${d.options && d.options.length > 0 ? `
               <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 ${d.options.map(opt => `
-                  <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
+                  <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
                     <div style="font-weight: 700; font-size: 0.95rem; color: var(--azure-blue); margin-bottom: 0.35rem;">
                       🔹 ${escapeHtml(opt.name)}
                     </div>
@@ -88,7 +88,7 @@ const DecisionsPage = (() => {
                 `).join('')}
               </div>
             ` : `
-              <div style="padding: 1.5rem; text-align: center; color: var(--text-dim); font-size: 0.875rem; background-color: #f8fafc; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="padding: 1.5rem; text-align: center; color: var(--text-dim); font-size: 0.875rem; background-color: var(--bg-main); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
                 Opsi perbandingan masih kosong. Klik "Edit" untuk menambahkan pilihan layanan dan pemicunya.
               </div>
             `}

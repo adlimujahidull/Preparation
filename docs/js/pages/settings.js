@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pages/settings.js — Halaman "Pengaturan" (Target Tanggal Ujian, Status PAT, & Hapus Kredensial)
  */
 
@@ -74,10 +74,34 @@ const SettingsPage = (() => {
           </div>
         </div>
 
+        <!-- Data Backup & Restore Section -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--azure-blue);">Cadangan & Pemulihan Data (Offline Backup)</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5;">
+            Unduh seluruh database persiapan (rencana, sumber belajar, kartu hafalan SRS, log lab, tabel keputusan, riwayat ujian, dan catatan) ke dalam satu file JSON lokal sebagai arsip mandiri.
+          </p>
+
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <button class="btn btn-secondary btn-sm" onclick="SettingsPage.exportBackup()">
+              📥 Ekspor Cadangan Data (.json)
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('backup-file-input').click()">
+              📤 Impor & Pulihkan Data (.json)
+            </button>
+            <input 
+              type="file" 
+              id="backup-file-input" 
+              accept=".json,application/json" 
+              style="display: none;" 
+              onchange="SettingsPage.importBackupFile(event)"
+            >
+          </div>
+        </div>
+
         <!-- Danger Zone: Remove Token -->
         <div class="card" style="border-color: var(--accent-red-border); background-color: var(--accent-red-bg);">
-          <h2 style="font-size: 1.1rem; font-weight: 700; color: #991b1b; margin-bottom: 0.5rem;">Zona Bahaya & Keamanan</h2>
-          <p style="font-size: 0.85rem; color: #7f1d1d; margin-bottom: 1rem; line-height: 1.4;">
+          <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-red); margin-bottom: 0.5rem;">Zona Bahaya & Keamanan</h2>
+          <p style="font-size: 0.85rem; color: var(--accent-red); opacity: 0.9; margin-bottom: 1rem; line-height: 1.4;">
             Gunakan tombol di bawah ini jika Anda menggunakan laptop kantor atau perangkat bersama dan ingin membersihkan seluruh kredensial token dari <code>localStorage</code> perangkat ini.
           </p>
 
@@ -96,6 +120,63 @@ const SettingsPage = (() => {
 
     Store.setConfig({ examDate, passingScore });
     App.toast('✓ Konfigurasi target ujian berhasil diperbarui dan siap disinkronkan ke repo!', 'success');
+  }
+
+  function exportBackup() {
+    try {
+      const backupObj = Store.exportBackup();
+      const dateStr = new Date().toISOString().split('T')[0];
+      const jsonStr = JSON.stringify(backupObj, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ai200-study-backup-${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      App.toast('✓ File cadangan data (.json) berhasil diunduh!', 'success');
+    } catch (err) {
+      console.error('Gagal ekspor cadangan:', err);
+      App.toast(`Gagal mengekspor data: ${err.message}`, 'error');
+    }
+  }
+
+  function importBackupFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    if (!confirm(`Apakah Anda yakin ingin memulihkan data dari file "${file.name}"? Data lokal saat ini akan digabungkan/diperbarui.`)) {
+      e.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        Store.importBackup(parsed);
+        App.toast('✓ Data cadangan berhasil dipulihkan! Menyinkronkan ke GitHub...', 'success', 4000);
+        Store.flush('restore: import full backup json');
+        
+        // Re-render settings page to reflect any config changes
+        const container = document.getElementById('main-content');
+        if (container) render(container);
+      } catch (err) {
+        console.error('Gagal memproses file backup:', err);
+        App.toast(`Gagal memulihkan file: ${err.message}`, 'error', 5000);
+      } finally {
+        e.target.value = '';
+      }
+    };
+    reader.onerror = () => {
+      App.toast('Gagal membaca file dari disk.', 'error');
+      e.target.value = '';
+    };
+    reader.readAsText(file);
   }
 
   async function testConnection(btn) {
@@ -140,7 +221,9 @@ const SettingsPage = (() => {
     render,
     handleSaveExamConfig,
     testConnection,
-    handleRemoveToken
+    handleRemoveToken,
+    exportBackup,
+    importBackupFile
   };
 })();
 

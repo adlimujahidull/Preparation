@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pages/today.js — Halaman "Hari ini" (Dashboard Ringkasan Belajar, 6-Week Roadmap, & Peringatan Azure RG)
  */
 
@@ -272,7 +272,7 @@ const TodayPage = (() => {
               ${inProgressResources.length > 0 ? `
                 <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem;">
                   ${inProgressResources.map(r => `
-                    <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem;">
+                    <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.75rem;">
                       <div style="display: flex; gap: 0.4rem; margin-bottom: 0.25rem;">
                         <span class="badge badge-${r.type}">${r.type.toUpperCase()}</span>
                         <span class="badge badge-${r.domain}">${r.domain}</span>
@@ -305,7 +305,7 @@ const TodayPage = (() => {
               </div>
 
               ${latestExam ? `
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; background-color: #f8fafc; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; background-color: var(--bg-main); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
                   <div>
                     <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-main);">${escapeHtml(latestExam.set)}</div>
                     <div class="card-subtitle">${latestExam.date} • ${latestExam.minutes} menit</div>

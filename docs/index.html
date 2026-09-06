@@ -24,7 +24,7 @@
         <span class="search-kbd-hint" title="Tekan / untuk mencari langsung"><kbd>/</kbd></span>
       </div>
 
-      <!-- Quick Action Buttons, Keyboard Help, & Status -->
+      <!-- Quick Action Buttons, Theme Toggle, & Status -->
       <div class="header-actions">
         <button class="btn-quick" onclick="App.openQuickLabModal()" title="Catat Lab Cepat (Alt+L)">
           🧪 <span class="btn-text-desktop">Lab</span> <span class="kbd-shortcut">Alt+L</span>
@@ -37,6 +37,11 @@
         <!-- Keyboard Shortcuts Help Button -->
         <button class="btn-quick" onclick="App.openShortcutsModal()" title="Daftar Pintasan Keyboard Lengkap (Tekan ?)">
           ⌨️ <span class="kbd-shortcut">?</span>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle-btn" class="btn-quick" onclick="App.toggleTheme()" title="Ganti Mode Terang / Gelap">
+          ☀️
         </button>
 
         <!-- Multi-device Sync Pull Button -->
@@ -80,6 +85,9 @@
 
   <!-- Floating Toast Notifications Container -->
   <div id="toast-container" class="toast-container"></div>
+
+  <!-- Celebration Confetti Canvas Overlay -->
+  <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
 
   <!-- Vendor Libraries (Zero npm / Zero CDN) -->
   <script src="vendor/marked.min.js"></script>

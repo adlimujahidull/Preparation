@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pages/stats.js — Halaman "Statistik" (Analisis Rasio Self/Seed, Top Failed Cards, Lab Hours, & SRS Box)
  */
 
@@ -129,7 +129,7 @@ const StatsPage = (() => {
               const cnt = boxCounts[b] || 0;
               const pct = totalCards > 0 ? Math.round((cnt / totalCards) * 100) : 0;
               return `
-                <div style="background-color: #f8fafc; padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); border-top: 3px solid ${b === 5 ? 'var(--accent-green)' : b >= 3 ? 'var(--azure-blue)' : 'var(--accent-yellow)'};">
+                <div style="background-color: var(--bg-main); padding: 0.85rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); border-top: 3px solid ${b === 5 ? 'var(--accent-green)' : b >= 3 ? 'var(--azure-blue)' : 'var(--accent-yellow)'};">
                   <div style="font-size: 0.75rem; color: var(--text-dim); font-weight: 700;">BOX ${b}</div>
                   <div style="font-size: 1.35rem; font-weight: 800; margin: 0.2rem 0; color: var(--text-main);">${cnt}</div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">${pct}%</div>
@@ -177,7 +177,7 @@ const StatsPage = (() => {
               ${top10Failed.map((item, idx) => {
                 const failPercent = Math.round(item.failRatio * 100);
                 return `
-                  <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
+                  <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
                       <div style="display: flex; gap: 0.4rem;">
                         <span class="badge badge-${item.card.domain}">${item.card.domain}</span>

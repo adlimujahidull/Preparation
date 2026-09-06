@@ -1,4 +1,4 @@
-﻿/**
+/**
  * store.js — Satu-satunya modul yang tahu bentuk data aplikasi AI-200.
  * Mengelola state lokal di memori, caching localStorage (offline-first),
  * dirty tracking, dan batch commit ke GitHub REST API.
@@ -549,6 +549,75 @@ const Store = (() => {
     return state.notes[safeName];
   }
 
+  function exportBackup() {
+    return {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      config: state.config,
+      plan: state.plan,
+      resources: state.resources,
+      cards: state.cards,
+      progress: state.progress,
+      labs: state.labs,
+      decisions: state.decisions,
+      examHistory: state.examHistory,
+      exams: state.exams,
+      notes: state.notes
+    };
+  }
+
+  function importBackup(data) {
+    if (!data || typeof data !== 'object') {
+      throw new Error('Format file cadangan tidak valid (harus berupa JSON object).');
+    }
+
+    if (data.config && typeof data.config === 'object') {
+      state.config = { ...state.config, ...data.config };
+      markDirty('config', 'restore: config from backup');
+    }
+    if (data.plan && typeof data.plan === 'object' && Array.isArray(data.plan.weeks)) {
+      state.plan = data.plan;
+      markDirty('plan', 'restore: plan from backup');
+    }
+    if (data.resources && Array.isArray(data.resources.resources)) {
+      state.resources = data.resources;
+      markDirty('resources', 'restore: resources from backup');
+    }
+    if (data.cards && Array.isArray(data.cards.cards)) {
+      state.cards = data.cards;
+      markDirty('cards', 'restore: cards from backup');
+    }
+    if (data.progress && typeof data.progress === 'object') {
+      state.progress = data.progress;
+      markDirty('progress', 'restore: progress from backup');
+    }
+    if (data.labs && Array.isArray(data.labs.labs)) {
+      state.labs = data.labs;
+      markDirty('labs', 'restore: labs from backup');
+    }
+    if (data.decisions && Array.isArray(data.decisions.decisions)) {
+      state.decisions = data.decisions;
+      markDirty('decisions', 'restore: decisions from backup');
+    }
+    if (Array.isArray(data.examHistory)) {
+      state.examHistory = data.examHistory;
+      markDirty('examHistory', 'restore: exam history from backup');
+    }
+    if (data.exams && typeof data.exams === 'object') {
+      state.exams = data.exams;
+      saveToLocalCache('exams', state.exams);
+    }
+    if (data.notes && typeof data.notes === 'object') {
+      state.notes = data.notes;
+      saveToLocalCache('notes', state.notes);
+      for (const noteName of Object.keys(state.notes)) {
+        markDirty(`note:${noteName}`, `restore note: ${noteName}`);
+      }
+    }
+
+    return true;
+  }
+
   return {
     init,
     refreshFromGitHub,
@@ -580,7 +649,9 @@ const Store = (() => {
     getExamHistory,
     recordExamResult,
     getNotes,
-    saveNote
+    saveNote,
+    exportBackup,
+    importBackup
   };
 })();
 

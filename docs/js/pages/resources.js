@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pages/resources.js — Halaman "Sumber" (Perpustakaan Lab MS Learn, Video, & Dokumen)
  */
 
@@ -169,7 +169,7 @@ const ResourcesPage = (() => {
         <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-blue);">${title}</h2>
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
           ${items.map(r => `
-            <div class="task-item" style="flex-direction: column; align-items: stretch; gap: 0.5rem; background-color: #f8fafc;">
+            <div class="task-item" style="flex-direction: column; align-items: stretch; gap: 0.5rem; background-color: var(--bg-main);">
               <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
                 <div>
                   <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.25rem;">

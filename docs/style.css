@@ -1,6 +1,6 @@
 ﻿/* ==========================================================================
-   AI-200 Study Hub — Clean, Modern, Friendly Light Theme
-   Inspired by clean Notion / Modern Docs aesthetic.
+   AI-200 Study Hub — Clean, Modern, Friendly Theme System
+   Defaults to light mode with optional dark mode toggle & print support.
    ========================================================================== */
 
 :root {
@@ -49,6 +49,36 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+/* Optional Dark Theme */
+[data-theme="dark"] {
+  --bg-main: #0b101b;
+  --bg-card: #131b2e;
+  --bg-card-hover: #1c2742;
+  --bg-input: #101726;
+  --bg-header: #101726;
+  
+  --border-color: #1e293b;
+  --border-subtle: #192237;
+  
+  --text-main: #f1f5f9;
+  --text-muted: #cbd5e1;
+  --text-dim: #94a3b8;
+  
+  --azure-blue: #38bdf8;
+  --azure-blue-hover: #0284c7;
+  --azure-light: #7dd3fc;
+  --azure-glow: rgba(56, 189, 248, 0.15);
+  
+  --accent-green-bg: rgba(5, 150, 105, 0.15);
+  --accent-green-border: rgba(5, 150, 105, 0.3);
+  
+  --accent-yellow-bg: rgba(217, 119, 6, 0.15);
+  --accent-yellow-border: rgba(217, 119, 6, 0.3);
+  
+  --accent-red-bg: rgba(220, 38, 38, 0.15);
+  --accent-red-border: rgba(220, 38, 38, 0.3);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -65,6 +95,7 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* ==========================================================================
@@ -108,6 +139,10 @@ body {
   letter-spacing: 0.5px;
 }
 
+[data-theme="dark"] .brand-badge {
+  color: #0b101b;
+}
+
 .brand-title {
   font-size: 1.15rem;
   font-weight: 700;
@@ -124,7 +159,7 @@ body {
 .header-search input {
   width: 100%;
   padding: 0.45rem 2.2rem 0.45rem 2.25rem;
-  background-color: #f1f5f9;
+  background-color: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-main);
@@ -134,7 +169,6 @@ body {
 
 .header-search input:focus {
   outline: none;
-  background-color: #ffffff;
   border-color: var(--azure-blue);
   box-shadow: 0 0 0 3px var(--azure-glow);
 }
@@ -197,6 +231,12 @@ body {
   border-color: #bfdbfe;
 }
 
+[data-theme="dark"] .status-saving {
+  background-color: rgba(56, 189, 248, 0.15);
+  color: var(--azure-blue);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
 .status-offline {
   background-color: var(--accent-red-bg);
   color: var(--accent-red);
@@ -227,7 +267,7 @@ body {
 
 /* Quick Action Buttons */
 .btn-quick {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--text-muted);
   border: 1px solid var(--border-color);
   padding: 0.35rem 0.65rem;
@@ -243,19 +283,19 @@ body {
 }
 
 .btn-quick:hover {
-  background-color: #f8fafc;
+  background-color: var(--bg-card-hover);
   color: var(--azure-blue);
   border-color: #cbd5e1;
 }
 
 /* Keyboard Badges & Native Key Styling */
 kbd, .kbd-key {
-  background-color: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-bottom: 2px solid #94a3b8;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-bottom: 2px solid var(--text-dim);
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  color: #1e293b;
+  color: var(--text-main);
   display: inline-block;
   font-family: var(--font-mono);
   font-size: 0.725rem;
@@ -266,7 +306,7 @@ kbd, .kbd-key {
 }
 
 .kbd-shortcut {
-  background-color: #f1f5f9;
+  background-color: var(--bg-input);
   padding: 0.12rem 0.35rem;
   border-radius: 3px;
   font-size: 0.65rem;
@@ -314,13 +354,17 @@ kbd, .kbd-key {
 
 .nav-link:hover {
   color: var(--text-main);
-  background-color: #f1f5f9;
+  background-color: var(--bg-card-hover);
 }
 
 .nav-link.active {
   color: var(--azure-blue);
-  background-color: #eff6ff;
+  background-color: rgba(0, 120, 212, 0.08);
   font-weight: 600;
+}
+
+[data-theme="dark"] .nav-link.active {
+  background-color: rgba(56, 189, 248, 0.12);
 }
 
 /* ==========================================================================
@@ -343,7 +387,7 @@ kbd, .kbd-key {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 0.85rem 1.25rem;
@@ -373,7 +417,7 @@ kbd, .kbd-key {
   font-size: 0.75rem;
   font-weight: 700;
   border: 2px solid var(--border-color);
-  background-color: #f8fafc;
+  background-color: var(--bg-main);
   color: var(--text-dim);
   transition: var(--transition);
 }
@@ -383,6 +427,10 @@ kbd, .kbd-key {
   color: #ffffff;
   border-color: var(--azure-blue);
   box-shadow: 0 0 0 3px var(--azure-glow);
+}
+
+[data-theme="dark"] .week-step.active .week-step-circle {
+  color: #0b101b;
 }
 
 .week-step.completed .week-step-circle {
@@ -432,7 +480,7 @@ kbd, .kbd-key {
 
 .chip {
   padding: 0.35rem 0.75rem;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   font-size: 0.775rem;
@@ -450,7 +498,7 @@ kbd, .kbd-key {
 .chip:hover {
   border-color: var(--azure-blue);
   color: var(--azure-blue);
-  background-color: #f0f9ff;
+  background-color: rgba(0, 120, 212, 0.08);
 }
 
 .chip.active {
@@ -458,6 +506,10 @@ kbd, .kbd-key {
   color: #ffffff;
   border-color: var(--azure-blue);
   box-shadow: 0 1px 3px rgba(0, 120, 212, 0.3);
+}
+
+[data-theme="dark"] .chip.active {
+  color: #0b101b;
 }
 
 /* ==========================================================================
@@ -486,7 +538,7 @@ kbd, .kbd-key {
 }
 
 .rg-alert-title {
-  color: #991b1b;
+  color: var(--accent-red);
   font-weight: 700;
   font-size: 0.95rem;
   display: flex;
@@ -495,7 +547,7 @@ kbd, .kbd-key {
 }
 
 .rg-alert-cmd-box {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border: 1px solid var(--accent-red-border);
   border-radius: var(--radius-sm);
   padding: 0.6rem 0.85rem;
@@ -505,7 +557,7 @@ kbd, .kbd-key {
   gap: 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.825rem;
-  color: #991b1b;
+  color: var(--accent-red);
   overflow-x: auto;
 }
 
@@ -527,7 +579,7 @@ kbd, .kbd-key {
 }
 
 .btn-mark-deleted {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--text-muted);
   border: 1px solid var(--border-color);
   padding: 0.25rem 0.6rem;
@@ -538,7 +590,7 @@ kbd, .kbd-key {
 }
 
 .btn-mark-deleted:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-card-hover);
   color: var(--text-main);
 }
 
@@ -595,8 +647,8 @@ kbd, .kbd-key {
 
 /* Countdown Card Accent */
 .card-countdown {
-  background: linear-gradient(135deg, #f0f9ff, #ffffff);
-  border-color: #bae6fd;
+  background: linear-gradient(135deg, rgba(0, 120, 212, 0.06), var(--bg-card));
+  border-color: rgba(0, 120, 212, 0.3);
 }
 
 .card-countdown .card-value {
@@ -618,7 +670,7 @@ kbd, .kbd-key {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  background-color: #f8fafc;
+  background-color: var(--bg-main);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 0.65rem 0.85rem;
@@ -627,12 +679,12 @@ kbd, .kbd-key {
 
 .task-item:hover {
   border-color: #cbd5e1;
-  background-color: #f1f5f9;
+  background-color: var(--bg-card-hover);
 }
 
 .task-item.task-done {
   opacity: 0.65;
-  background-color: #f8fafc;
+  background-color: var(--bg-main);
 }
 
 .task-item.task-done .task-text {
@@ -680,7 +732,7 @@ kbd, .kbd-key {
 .progress-bar-container {
   width: 100%;
   height: 8px;
-  background-color: #e2e8f0;
+  background-color: var(--border-color);
   border-radius: 9999px;
   overflow: hidden;
   margin: 0.5rem 0;
@@ -718,18 +770,22 @@ kbd, .kbd-key {
   color: #ffffff;
 }
 
+[data-theme="dark"] .btn-primary {
+  color: #0b101b;
+}
+
 .btn-primary:hover {
   background-color: var(--azure-blue-hover);
 }
 
 .btn-secondary {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--text-main);
   border-color: var(--border-color);
 }
 
 .btn-secondary:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-card-hover);
   border-color: #cbd5e1;
 }
 
@@ -820,16 +876,16 @@ kbd, .kbd-key {
   font-weight: 600;
 }
 
-.badge-lab { background-color: #e0f2fe; color: #0369a1; }
-.badge-doc { background-color: #f3e8ff; color: #6b21a8; }
-.badge-video { background-color: #fef3c7; color: #92400e; }
-.badge-article { background-color: #d1fae5; color: #065f46; }
+.badge-lab { background-color: rgba(3, 105, 161, 0.12); color: #0284c7; }
+.badge-doc { background-color: rgba(107, 33, 168, 0.12); color: #a855f7; }
+.badge-video { background-color: rgba(146, 64, 14, 0.12); color: #f59e0b; }
+.badge-article { background-color: rgba(6, 95, 70, 0.12); color: #10b981; }
 
-.badge-containers { background-color: #e0f2fe; color: #075985; }
-.badge-data { background-color: #ede9fe; color: #5b21b6; }
-.badge-integration { background-color: #ccfbf1; color: #115e59; }
-.badge-ops { background-color: #fee2e2; color: #991b1b; }
-.badge-umum { background-color: #f1f5f9; color: #334155; }
+.badge-containers { background-color: rgba(7, 89, 133, 0.12); color: #38bdf8; }
+.badge-data { background-color: rgba(91, 33, 182, 0.12); color: #a78bfa; }
+.badge-integration { background-color: rgba(17, 94, 89, 0.12); color: #2dd4bf; }
+.badge-ops { background-color: rgba(153, 27, 27, 0.12); color: #f87171; }
+.badge-umum { background-color: var(--bg-main); color: var(--text-muted); }
 
 .status-select {
   padding: 0.25rem 0.5rem;
@@ -837,7 +893,7 @@ kbd, .kbd-key {
   font-size: 0.75rem;
   font-weight: 600;
   border: 1px solid var(--border-color);
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--text-main);
   cursor: pointer;
 }
@@ -941,13 +997,13 @@ kbd, .kbd-key {
   justify-content: space-between;
   padding: 0.45rem 0.65rem;
   border-radius: var(--radius-sm);
-  background-color: #f8fafc;
+  background-color: var(--bg-main);
   margin-bottom: 0.35rem;
   font-size: 0.85rem;
 }
 
 .shortcut-row:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-card-hover);
 }
 
 /* Markdown preview typography */
@@ -970,7 +1026,7 @@ kbd, .kbd-key {
 
 .markdown-body pre, .markdown-body code {
   font-family: var(--font-mono);
-  background-color: #f1f5f9;
+  background-color: var(--bg-main);
   border-radius: 4px;
   padding: 0.2rem 0.4rem;
   font-size: 0.85rem;
@@ -1022,29 +1078,29 @@ kbd, .kbd-key {
 }
 
 .toast-success {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--accent-green);
   border-color: var(--accent-green-border);
   border-left: 4px solid var(--accent-green);
 }
 
 .toast-info {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--azure-blue);
-  border-color: #bfdbfe;
+  border-color: rgba(0, 120, 212, 0.3);
   border-left: 4px solid var(--azure-blue);
 }
 
 .toast-warning {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--accent-yellow);
   border-color: var(--accent-yellow-border);
   border-left: 4px solid var(--accent-yellow);
 }
 
 .toast-error {
-  background-color: #ffffff;
-  color: #991b1b;
+  background-color: var(--bg-card);
+  color: var(--accent-red);
   border-color: var(--accent-red-border);
   border-left: 4px solid var(--accent-red);
 }
@@ -1074,6 +1130,38 @@ kbd, .kbd-key {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
+}
+
+/* ==========================================================================
+   Print Optimization
+   ========================================================================== */
+
+@media print {
+  .app-header, 
+  .header-actions, 
+  .nav-scroll, 
+  .filter-bar, 
+  .filter-chips, 
+  .btn, 
+  .kbd-shortcut, 
+  .toast-container, 
+  .modal-backdrop, 
+  #confetti-canvas {
+    display: none !important;
+  }
+  
+  body, .app-main {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+  
+  .card {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 }
 
 /* ==========================================================================
@@ -1135,10 +1223,6 @@ kbd, .kbd-key {
   
   .rg-alert-cmd-box {
     font-size: 0.75rem;
-  }
-  
-  .kbd-shortcut {
-    display: none;
   }
 
   .toast-container {

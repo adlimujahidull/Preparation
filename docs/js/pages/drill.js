@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pages/drill.js — Halaman "Drill" (Spaced Repetition Leitner Flashcards Session)
  */
 
@@ -234,6 +234,11 @@ const DrillPage = (() => {
       isSessionFinished = true;
       Store.flush(`drill: ${sessionStats.total} kartu, ${sessionStats.right} benar`);
       App.toast('✓ Sesi drill selesai & progres tersimpan ke GitHub!', 'success');
+      
+      const accuracy = sessionStats.total > 0 ? Math.round((sessionStats.right / sessionStats.total) * 100) : 0;
+      if (accuracy >= 75 && typeof App.confetti === 'function') {
+        setTimeout(() => App.confetti(), 150);
+      }
     }
 
     const container = document.getElementById('main-content');
@@ -255,15 +260,15 @@ const DrillPage = (() => {
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-            <div style="background-color: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="background-color: var(--bg-main); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Total Kartu</div>
               <div class="card-value" style="font-size: 1.5rem;">${sessionStats.total}</div>
             </div>
-            <div style="background-color: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="background-color: var(--bg-main); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Benar</div>
               <div class="card-value" style="font-size: 1.5rem; color: var(--accent-green);">${sessionStats.right}</div>
             </div>
-            <div style="background-color: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="background-color: var(--bg-main); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
               <div class="card-title">Akurasi</div>
               <div class="card-value" style="font-size: 1.5rem; color: var(--azure-blue);">${rightPercent}%</div>
             </div>
@@ -287,7 +292,7 @@ const DrillPage = (() => {
             </h3>
             <div style="display: flex; flex-direction: column; gap: 1rem;">
               ${sessionStats.failedCards.map(c => `
-                <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+                <div style="background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
                   <div style="display: flex; gap: 0.4rem; margin-bottom: 0.4rem;">
                     <span class="badge badge-${c.domain}">${c.domain}</span>
                     <span class="badge badge-lab">${c.type}</span>
