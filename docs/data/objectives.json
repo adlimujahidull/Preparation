@@ -1,0 +1,994 @@
+[
+  {
+    "id": "obj-01",
+    "domain": "Develop containerized solutions on Azure",
+    "subgroup": "Implement container application hosting",
+    "text": "Build, store, version, and manage container images by using Azure Container Registry",
+    "intro": "Objective ini tentang pengelolaan container image menggunakan Azure Container Registry (ACR). Diuji karena ACR adalah repositori privat utama di Azure untuk menyimpan image sebelum di-deploy ke compute service. Setelah mempelajarinya, kamu harus bisa membangun, menyimpan, memberi versi tag, serta mengelola siklus hidup container image.",
+    "read": [
+      {
+        "title": "Push your first image to your Azure container registry by using the Docker CLI",
+        "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-docker-cli",
+        "minutes": 5,
+        "type": "how-to",
+        "section": "Sign in to your container registry",
+        "covers": [
+          "container",
+          "images",
+          "Azure Container Registry"
+        ]
+      },
+      {
+        "title": "Recommendations for tagging and versioning container images",
+        "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-image-tag-version",
+        "minutes": 4,
+        "type": "concept",
+        "section": "Stable tags",
+        "covers": [
+          "container",
+          "images",
+          "Azure Container Registry",
+          "version"
+        ]
+      }
+    ],
+    "read_minutes": 9,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-02",
+    "domain": "Develop containerized solutions on Azure",
+    "subgroup": "Implement container application hosting",
+    "text": "Build and run images by using Azure Container Registry Tasks",
+    "intro": "Objective ini membahas otomatisasi build dan eksekusi image menggunakan fitur ACR Tasks. Diuji karena pengembang cloud perlu mengotomatiskan patch keamanan dan pembaruan image tanpa memerlukan server build terpisah. Setelah materi ini, kamu harus bisa mengonfigurasi task otomatis saat kode atau base image diperbarui.",
+    "read": [
+      {
+        "title": "Quickstart: Build and run a container image using Azure Container Registry Tasks",
+        "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli",
+        "minutes": 8,
+        "type": "how-to",
+        "section": "Build and push image from a Dockerfile",
+        "covers": [
+          "ACR Tasks",
+          "build",
+          "run",
+          "tasks"
+        ]
+      },
+      {
+        "title": "Tutorial: Automate container image builds when a base image is updated in an Azure container registry",
+        "url": "https://learn.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-base-image-update",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Create a task",
+        "covers": [
+          "ACR Tasks",
+          "build",
+          "run",
+          "tasks"
+        ]
+      }
+    ],
+    "read_minutes": 18,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-03",
+    "domain": "Develop containerized solutions on Azure",
+    "subgroup": "Implement container application hosting",
+    "text": "Deploy containers to Azure App Service, including configuring App Service to supply environment variables and secrets",
+    "intro": "Objective ini berfokus pada deployment container aplikasi ke Azure App Service beserta konfigurasi runtime-nya. Diuji karena App Service adalah PaaS populer untuk web app yang membutuhkan integrasi konfigurasi dan rahasia yang aman. Setelah ini kamu harus bisa men-deploy custom container serta menyuntikkan environment variable dan secret ke dalamnya.",
+    "read": [
+      {
+        "title": "Migrate custom software to Azure App Service by using a custom container",
+        "url": "https://learn.microsoft.com/en-us/azure/app-service/tutorial-custom-container?pivots=container-linux",
+        "minutes": 26,
+        "type": "how-to",
+        "section": "Configure Windows container",
+        "covers": [
+          "container",
+          "App Service",
+          "environment variables"
+        ]
+      },
+      {
+        "title": "Use Key Vault references as app settings in Azure App Service, Azure Functions, and Azure Logic Apps (Standard)",
+        "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-key-vault-references",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Grant your app access to a key vault",
+        "covers": [
+          "App Service",
+          "environment variables",
+          "secrets"
+        ]
+      }
+    ],
+    "read_minutes": 36,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-04",
+    "domain": "Develop containerized solutions on Azure",
+    "subgroup": "Implement container-orchestrated solutions",
+    "text": "Deploy applications to Azure Container Apps, including environment configuration and revision management",
+    "intro": "Objective ini tentang menjalankan aplikasi container di Azure Container Apps. Diuji karena Container Apps adalah platform serverless container default untuk microservices modern tanpa kompleksitas manajemen Kubernetes. Setelah mempelajarinya, kamu harus bisa men-deploy aplikasi, mengelola environment, dan mengendalikan revisi aktif.",
+    "read": [
+      {
+        "title": "Quickstart: Deploy your first container app with containerapp up",
+        "url": "https://learn.microsoft.com/en-us/azure/container-apps/get-started?tabs=bash",
+        "minutes": 3,
+        "type": "how-to",
+        "section": "Create and deploy the container app",
+        "covers": [
+          "Container Apps",
+          "environment",
+          "deploy"
+        ]
+      },
+      {
+        "title": "Update and deploy changes in Azure Container Apps",
+        "url": "https://learn.microsoft.com/en-us/azure/container-apps/revisions",
+        "minutes": 10,
+        "type": "concept",
+        "section": "Change inactive revision limit (preview)",
+        "covers": [
+          "Container Apps",
+          "revision",
+          "environment",
+          "deploy"
+        ]
+      }
+    ],
+    "read_minutes": 13,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-05",
+    "domain": "Develop containerized solutions on Azure",
+    "subgroup": "Implement container-orchestrated solutions",
+    "text": "Implement event-driven scaling by using Kubernetes Event‑driven Autoscaling (KEDA) in Container Apps",
+    "intro": "Objective ini membahas penskalaan otomatis berbasis event menggunakan KEDA pada Azure Container Apps. Diuji karena aplikasi cerdas berbasis event harus dapat menyesuaikan kapasitas secara dinamis bahkan hingga nol replika saat idle. Setelah ini kamu harus bisa menerapkan aturan skala berbasis metrik antrean atau event eksternal.",
+    "read": [
+      {
+        "title": "Set scaling rules in Azure Container Apps",
+        "url": "https://learn.microsoft.com/en-us/azure/container-apps/scale-app?pivots=azure-cli",
+        "minutes": 23,
+        "type": "how-to",
+        "section": "Scale rules",
+        "covers": [
+          "KEDA",
+          "scaling",
+          "Container Apps",
+          "rules"
+        ]
+      }
+    ],
+    "read_minutes": 23,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-06",
+    "domain": "Develop containerized solutions on Azure",
+    "subgroup": "Implement container-orchestrated solutions",
+    "text": "Deploy and manage applications to Azure Kubernetes Service (AKS) by using manifest files",
+    "intro": "Objective ini tentang penyebaran dan pengelolaan beban kerja di Azure Kubernetes Service (AKS) menggunakan file manifes deklaratif. Diuji karena AKS menangani orkestrasi container skala enterprise dengan kontrol infrastruktur penuh. Setelah menguasainya, kamu harus bisa menyiapkan dan menerapkan manifes untuk menjalankan serta mengatur siklus hidup aplikasi di kluster.",
+    "read": [
+      {
+        "title": "Quickstart: Deploy an Azure Kubernetes Service (AKS) cluster using Azure CLI",
+        "url": "https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-cli",
+        "minutes": 12,
+        "type": "how-to",
+        "section": "Create an AKS cluster",
+        "covers": [
+          "manifest",
+          "Azure Kubernetes Service",
+          "AKS",
+          "deploy"
+        ]
+      },
+      {
+        "title": "Core concepts for Azure Kubernetes Service (AKS)",
+        "url": "https://learn.microsoft.com/en-us/azure/aks/core-aks-concepts",
+        "minutes": 10,
+        "type": "concept",
+        "section": "What is AKS?",
+        "covers": [
+          "Azure Kubernetes Service",
+          "AKS",
+          "deploy"
+        ]
+      }
+    ],
+    "read_minutes": 22,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-07",
+    "domain": "Develop containerized solutions on Azure",
+    "subgroup": "Implement container-orchestrated solutions",
+    "text": "Monitor and troubleshoot solutions on AKS and Container Apps by inspecting logs, events, and end-to-end connectivity",
+    "intro": "Objective ini berfokus pada teknik pemantauan dan investigasi masalah pada AKS serta Container Apps. Diuji karena keandalan aplikasi microservices bergantung pada kemampuan melacak kendala jaringan, event kegagalan, dan aliran log. Setelah ini kamu harus bisa memeriksa log kontainer, menganalisis event sistem, dan menguji konektivitas menyeluruh.",
+    "read": [
+      {
+        "title": "View log streams in Azure Container Apps",
+        "url": "https://learn.microsoft.com/en-us/azure/container-apps/log-streaming?pivots=azure-cli",
+        "minutes": 5,
+        "type": "how-to",
+        "section": "View log streams via the Azure portal",
+        "covers": [
+          "logs",
+          "troubleshoot"
+        ]
+      },
+      {
+        "title": "Azure Kubernetes Service (AKS) troubleshooting documentation",
+        "url": "https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/welcome-azure-kubernetes",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Troubleshoot create operations",
+        "covers": [
+          "troubleshoot",
+          "connectivity"
+        ]
+      }
+    ],
+    "read_minutes": 15,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: events.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-08",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Cosmos DB for NoSQL",
+    "text": "Connect to Azure Cosmos DB for NoSQL by using the SDK and run queries",
+    "intro": "Objective ini membahas integrasi aplikasi dengan Azure Cosmos DB for NoSQL menggunakan SDK resmi untuk mengeksekusi query data. Diuji karena Cosmos DB adalah database transaksional berkecepatan tinggi yang menjadi fondasi penyimpanan data aplikasi AI. Setelah materi ini, kamu harus bisa menginisialisasi koneksi klien SDK dan menjalankan operasi pembacaan data dokumen.",
+    "read": [
+      {
+        "title": "Quickstart: Use Azure Cosmos DB for NoSQL with Azure SDK for Python",
+        "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/quickstart-python",
+        "minutes": 5,
+        "type": "how-to",
+        "section": "Code examples",
+        "covers": [
+          "Cosmos DB",
+          "SDK",
+          "queries",
+          "NoSQL"
+        ]
+      },
+      {
+        "title": "Query language for Cosmos DB (in Azure and Fabric) documentation",
+        "url": "https://learn.microsoft.com/en-us/cosmos-db/query/",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Basic queries",
+        "covers": [
+          "Cosmos DB",
+          "queries"
+        ]
+      }
+    ],
+    "read_minutes": 15,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-09",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Cosmos DB for NoSQL",
+    "text": "Optimize query performance and Request Units (RUs) consumption by using indexing policies and consistency levels",
+    "intro": "Objective ini berfokus pada optimasi biaya dan performa database Cosmos DB melalui kebijakan indeks dan tingkat konsistensi. Diuji karena efisiensi konsumsi Request Units (RU) sangat menentukan skalabilitas dan anggaran sistem cloud berskala besar. Setelah ini kamu harus bisa merancang kebijakan pengindeksan yang hemat serta memilih tingkat konsistensi data yang sesuai kebutuhan sistem.",
+    "read": [
+      {
+        "title": "Manage indexing policies in Azure Cosmos DB",
+        "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-manage-indexing-policy?tabs=dotnet",
+        "minutes": 16,
+        "type": "how-to",
+        "section": "Indexing policy examples",
+        "covers": [
+          "indexing policies",
+          "performance"
+        ]
+      },
+      {
+        "title": "Consistency levels in Azure Cosmos DB",
+        "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels",
+        "minutes": 17,
+        "type": "concept",
+        "section": "Consistency levels and Azure Cosmos DB APIs",
+        "covers": [
+          "Request Units",
+          "consistency levels",
+          "performance"
+        ]
+      }
+    ],
+    "read_minutes": 33,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-10",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Cosmos DB for NoSQL",
+    "text": "Store and retrieve embeddings and execute vector similarity search for semantic retrieval",
+    "intro": "Objective ini tentang kapabilitas vector search pada Azure Cosmos DB for NoSQL untuk kebutuhan semantic retrieval. Diuji karena aplikasi AI generatif membutuhkan penyimpanan embedding terintegrasi langsung di layer database operasional. Setelah mempelajarinya, kamu harus bisa mendefinisikan embedding vektor pada dokumen serta mengeksekusi query pencarian kesamaan vektor.",
+    "read": [
+      {
+        "title": "Vector search in Azure Cosmos DB for NoSQL",
+        "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/vector-search",
+        "minutes": 13,
+        "type": "how-to",
+        "section": "Vector indexing policies",
+        "covers": [
+          "embeddings",
+          "semantic retrieval",
+          "Cosmos DB"
+        ]
+      }
+    ],
+    "read_minutes": 13,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: vector similarity search.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-11",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Cosmos DB for NoSQL",
+    "text": "Implement a change feed processor to detect and handle new or updated items",
+    "intro": "Objective ini membahas pemanfaatan Change Feed Processor di Azure Cosmos DB untuk mendeteksi perubahan data secara real-time. Diuji karena arsitektur AI event-driven membutuhkan pemrosesan aliran data otomatis saat dokumen baru ditambahkan atau diubah. Setelah ini kamu harus bisa mengimplementasikan processor untuk menangkap dan mengalirkan event perubahan data ke sistem hilir.",
+    "read": [
+      {
+        "title": "Change feed processor in Azure Cosmos DB",
+        "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/change-feed-processor",
+        "minutes": 26,
+        "type": "concept",
+        "section": "Components of the change feed processor",
+        "covers": [
+          "change feed processor",
+          "detect",
+          "items",
+          "Cosmos DB"
+        ]
+      },
+      {
+        "title": "Change feed pull model in Azure Cosmos DB",
+        "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/change-feed-pull-model",
+        "minutes": 23,
+        "type": "how-to",
+        "section": "Compare to the change feed processor",
+        "covers": [
+          "change feed processor",
+          "items",
+          "Cosmos DB"
+        ]
+      }
+    ],
+    "read_minutes": 49,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-12",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Database for PostgreSQL",
+    "text": "Connect and query Azure Database for PostgreSQL by using SDKs",
+    "intro": "Objective ini berfokus pada konektivitas dan interaksi aplikasi ke Azure Database for PostgreSQL Flexible Server melalui SDK pemrograman. Diuji karena PostgreSQL adalah database relasional open-source terkemuka yang banyak diadopsi untuk beban kerja data enterprise. Setelah menguasainya, kamu harus bisa membangun koneksi yang aman dari kode dan menjalankan kueri data relasional.",
+    "read": [
+      {
+        "title": "Quickstart: Use Python to connect and query data in Azure Database for PostgreSQL flexible server",
+        "url": "https://learn.microsoft.com/en-us/azure/postgresql/connectivity/connect-python",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Prerequisites",
+        "covers": [
+          "PostgreSQL",
+          "connect",
+          "query"
+        ]
+      }
+    ],
+    "read_minutes": 10,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: SDKs.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-13",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Database for PostgreSQL",
+    "text": "Model schemas and implement indexing strategies, including designing tables and choosing appropriate data types",
+    "intro": "Objective ini tentang perancangan skema tabel dan strategi pengindeksan data pada PostgreSQL untuk aplikasi modern. Diuji karena efisiensi kueri dan skalabilitas penyimpanan sangat dipengaruhi oleh kecocokan tipe data serta struktur tabel yang efisien. Setelah ini kamu harus bisa merancang skema tabel yang optimal, memilih tipe data yang tepat, dan membuat indeks penunjang performa.",
+    "read": [
+      {
+        "title": "Optimize data layout",
+        "url": "https://learn.microsoft.com/en-us/training/modules/optimize-vector-search-azure-database-postgresql/4-optimize-data-layout",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Vector storage considerations",
+        "covers": [
+          "indexing",
+          "tables",
+          "data types",
+          "PostgreSQL"
+        ]
+      }
+    ],
+    "read_minutes": 10,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: schemas.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-14",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Database for PostgreSQL",
+    "text": "Implement indexing strategies, including optimizing query latency and reducing pgvector compute overhead",
+    "intro": "Objective ini berfokus pada optimasi pengindeksan pgvector di PostgreSQL untuk meminimalkan latensi dan beban komputasi. Diuji karena pencarian vektor pada dataset besar memerlukan penyeimbangan presisi dan konsumsi sumber daya CPU. Setelah mempelajarinya, kamu harus bisa memilih serta mengonfigurasi indeks vektor yang tepat untuk menekan waktu respons kueri.",
+    "read": [
+      {
+        "title": "Choose and configure vector indexes",
+        "url": "https://learn.microsoft.com/en-us/training/modules/optimize-vector-search-azure-database-postgresql/3-choose-configure-vector-indexes",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "IVFFlat indexes",
+        "covers": [
+          "pgvector",
+          "indexing",
+          "query latency"
+        ]
+      },
+      {
+        "title": "Enable and use pgvector in Azure Database for PostgreSQL flexible server",
+        "url": "https://learn.microsoft.com/en-us/azure/postgresql/extensions/how-to-use-pgvector",
+        "minutes": 6,
+        "type": "how-to",
+        "section": "Enable extension",
+        "covers": [
+          "pgvector"
+        ]
+      }
+    ],
+    "read_minutes": 16,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: compute overhead.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-15",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Database for PostgreSQL",
+    "text": "Configure compute, memory, and storage resources to support vector workloads",
+    "intro": "Objective ini membahas penyesuaian alokasi komputasi, memori kerja, dan kapasitas penyimpanan pada Azure Database for PostgreSQL. Diuji karena beban kerja vektor membutuhkan alokasi memori yang cukup agar kalkulasi vektor berjalan optimal tanpa hambatan I/O. Setelah materi ini, kamu harus bisa menentukan kapasitas server dan parameter memori yang sesuai untuk operasional vektor.",
+    "read": [
+      {
+        "title": "Tune PostgreSQL for pgvector",
+        "url": "https://learn.microsoft.com/en-us/training/modules/optimize-vector-search-azure-database-postgresql/2-tune-postgresql-pgvector",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Memory configuration for vector workloads",
+        "covers": [
+          "compute",
+          "memory",
+          "storage",
+          "vector workloads"
+        ]
+      },
+      {
+        "title": "Scale for high-volume workloads",
+        "url": "https://learn.microsoft.com/en-us/training/modules/optimize-vector-search-azure-database-postgresql/5-scale-high-volume-workloads",
+        "minutes": 10,
+        "type": "concept",
+        "section": "Vertical scaling on Azure",
+        "covers": [
+          "compute",
+          "memory",
+          "storage",
+          "vector workloads"
+        ]
+      }
+    ],
+    "read_minutes": 20,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-16",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Database for PostgreSQL",
+    "text": "Run vector similarity search, including storing embeddings, semantic retrieval, and implementing retrieval-augmented generation (RAG) patterns by using metadata filter",
+    "intro": "Objective ini tentang implementasi pencarian kesamaan vektor dan pola RAG berbasis metadata filter di PostgreSQL. Diuji karena penyaringan metadata kontekstual adalah kunci akurasi informasi yang dikirimkan ke model bahasa. Setelah ini kamu harus bisa menyimpan embedding, menjalankan kueri kesamaan semantik, dan menggabungkannya dengan filter atribut metadata.",
+    "read": [
+      {
+        "title": "Enable and use pgvector in Azure Database for PostgreSQL flexible server",
+        "url": "https://learn.microsoft.com/en-us/azure/postgresql/extensions/how-to-use-pgvector",
+        "minutes": 6,
+        "type": "how-to",
+        "section": "Embeddings",
+        "covers": [
+          "vector similarity search",
+          "embeddings"
+        ]
+      },
+      {
+        "title": "Generative AI with Azure Database for PostgreSQL flexible server",
+        "url": "https://learn.microsoft.com/en-us/azure/postgresql/azure-ai/generative-ai-overview",
+        "minutes": 9,
+        "type": "concept",
+        "section": "Embeddings",
+        "covers": [
+          "embeddings"
+        ]
+      }
+    ],
+    "read_minutes": 15,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: semantic retrieval, RAG, metadata filter.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-17",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Develop AI solutions by using Azure Database for PostgreSQL",
+    "text": "Implement connection optimization to improve throughput and minimize latency",
+    "intro": "Objective ini berfokus pada optimalisasi pengelolaan koneksi database PostgreSQL menggunakan connection pooling seperti PgBouncer. Diuji karena lonjakan koneksi bersamaan dapat membebani memori server dan memperlambat throughput aplikasi. Setelah menguasainya, kamu harus bisa mengonfigurasi mekanisme pooling untuk menjaga stabilitas dan latensi koneksi tetap rendah.",
+    "read": [
+      {
+        "title": "Connection optimization",
+        "url": "https://learn.microsoft.com/en-us/training/modules/optimize-vector-search-azure-database-postgresql/6-connection-optimization",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Connection pooling with PgBouncer",
+        "covers": [
+          "connection",
+          "throughput",
+          "latency",
+          "PgBouncer"
+        ]
+      },
+      {
+        "title": "PgBouncer in Azure Database for PostgreSQL flexible server",
+        "url": "https://learn.microsoft.com/en-us/azure/postgresql/connectivity/concepts-pgbouncer",
+        "minutes": 12,
+        "type": "concept",
+        "section": "Enable and configure PgBouncer",
+        "covers": [
+          "connection",
+          "PgBouncer"
+        ]
+      }
+    ],
+    "read_minutes": 22,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-18",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Integrate Azure Managed Redis in AI solutions",
+    "text": "Implement Azure Managed Redis data operations, including caching, expiration, and invalidation",
+    "intro": "Objective ini membahas operasi data in-memory di Azure Managed Redis untuk strategi caching, kedaluwarsa, dan pembatalan cache. Diuji karena kecepatan respons sistem AI bergantung pada efektivitas lapisan cache dalam mengurangi beban database utama. Setelah materi ini, kamu harus bisa mengelola siklus hidup data cache, menetapkan TTL, dan mengimplementasikan invalidasi data.",
+    "read": [
+      {
+        "title": "What is Azure Managed Redis?",
+        "url": "https://learn.microsoft.com/en-us/azure/redis/overview",
+        "minutes": 10,
+        "type": "concept",
+        "section": "Key scenarios",
+        "covers": [
+          "Azure Managed Redis",
+          "expiration"
+        ]
+      },
+      {
+        "title": "Caching guidance",
+        "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+        "minutes": 43,
+        "type": "concept",
+        "section": "Considerations for using caching",
+        "covers": [
+          "Azure Managed Redis",
+          "caching",
+          "expiration"
+        ]
+      }
+    ],
+    "read_minutes": 53,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: invalidation.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-19",
+    "domain": "Develop AI solutions by using Azure data management services",
+    "subgroup": "Integrate Azure Managed Redis in AI solutions",
+    "text": "Implement vector indexing to enable similarity search",
+    "intro": "Objective ini tentang implementasi indeks vektor pada Azure Managed Redis menggunakan modul RediSearch untuk pencarian berkecepatan ultra-tinggi. Diuji karena use case seperti semantic caching dan memori agen AI menuntut latensi pencarian vektor tingkat milidetik. Setelah ini kamu harus bisa mengonfigurasi indeks vektor pada cache dan mengeksekusi kueri kesamaan vektor secara efisien.",
+    "read": [
+      {
+        "title": "What are vector embeddings and vector search in Azure Managed Redis?",
+        "url": "https://learn.microsoft.com/en-us/azure/redis/overview-vector-similarity",
+        "minutes": 7,
+        "type": "concept",
+        "section": "Plan an Azure Managed Redis instance for vector search",
+        "covers": [
+          "vector indexing",
+          "similarity search",
+          "Redis",
+          "vector"
+        ]
+      },
+      {
+        "title": "Use Redis modules with Azure Managed Redis",
+        "url": "https://learn.microsoft.com/en-us/azure/redis/redis-modules",
+        "minutes": 5,
+        "type": "how-to",
+        "section": "Scope of Redis modules",
+        "covers": [
+          "Redis",
+          "vector"
+        ]
+      }
+    ],
+    "read_minutes": 12,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-20",
+    "domain": "Connect to and consume Azure services",
+    "subgroup": "Develop event- and message-based AI solutions",
+    "text": "Queue and process back-end operations by using Azure Service Bus, including dead-letter queue handling, messages, topics, and subscriptions",
+    "intro": "Objective ini berfokus pada pengiriman pesan andal dan asinkron menggunakan Azure Service Bus melalui antrean, topik, dan penanganan dead-letter. Diuji karena komunikasi antar-komponen backend enterprise memerlukan jaminan pengiriman, decoupling, dan isolasi pesan bermasalah. Setelah mempelajarinya, kamu harus bisa mengalirkan pesan, mengelola langganan topik, dan menangani antrean surat mati.",
+    "read": [
+      {
+        "title": "Quickstart: Send messages to and receive messages from Azure Service Bus queues (Python)",
+        "url": "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-python-how-to-use-queues",
+        "minutes": 16,
+        "type": "how-to",
+        "section": "Send messages to a queue",
+        "covers": [
+          "Service Bus",
+          "messages",
+          "topics",
+          "subscriptions"
+        ]
+      },
+      {
+        "title": "Overview of Service Bus dead-letter queues",
+        "url": "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues",
+        "minutes": 12,
+        "type": "concept",
+        "section": "The dead-letter queue",
+        "covers": [
+          "Service Bus",
+          "dead-letter queue",
+          "messages",
+          "topics",
+          "subscriptions"
+        ]
+      }
+    ],
+    "read_minutes": 28,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-21",
+    "domain": "Connect to and consume Azure services",
+    "subgroup": "Develop event- and message-based AI solutions",
+    "text": "Implement event-driven workflows by using Azure Event Grid, including filters, custom events, and retries",
+    "intro": "Objective ini membahas orkestrasi alur kerja reaktif menggunakan Azure Event Grid dengan event kustom, penyaringan, dan kebijakan percobaan ulang. Diuji karena arsitektur cloud cerdas mengandalkan distribusi event berlatensi rendah untuk memicu aksi otomatis lintas layanan. Setelah ini kamu harus bisa menerbitkan event kustom, memasang filter langganan, serta mengatur strategi retry jika pengiriman gagal.",
+    "read": [
+      {
+        "title": "Quickstart: Route custom events to web endpoint with Azure CLI and Event Grid",
+        "url": "https://learn.microsoft.com/en-us/azure/event-grid/custom-event-quickstart",
+        "minutes": 7,
+        "type": "how-to",
+        "section": "Create a custom topic",
+        "covers": [
+          "Event Grid",
+          "custom events"
+        ]
+      },
+      {
+        "title": "Understand event filtering for Event Grid subscriptions",
+        "url": "https://learn.microsoft.com/en-us/azure/event-grid/event-filtering",
+        "minutes": 19,
+        "type": "concept",
+        "section": "Advanced filtering",
+        "covers": [
+          "Event Grid",
+          "filters",
+          "custom events"
+        ]
+      },
+      {
+        "title": "Event Grid message delivery and retry",
+        "url": "https://learn.microsoft.com/en-us/azure/event-grid/delivery-and-retry",
+        "minutes": 14,
+        "type": "concept",
+        "section": "Retry schedule",
+        "covers": [
+          "Event Grid",
+          "retries"
+        ]
+      }
+    ],
+    "read_minutes": 40,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-22",
+    "domain": "Connect to and consume Azure services",
+    "subgroup": "Develop and implement Azure Functions",
+    "text": "Build serverless APIs, including implementing triggers and bindings",
+    "intro": "Objective ini tentang pembangunan API serverless menggunakan Azure Functions yang memanfaatkan pemicu (triggers) dan pengikat data (bindings). Diuji karena fungsi serverless adalah pola standar komputasi mikro yang skalabel tanpa overhead pengelolaan server. Setelah ini kamu harus bisa membuat endpoint API dan menghubungkan alur input/output data melalui deklarasi binding.",
+    "read": [
+      {
+        "title": "Azure Functions binding expressions and patterns",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-expressions-patterns",
+        "minutes": 8,
+        "type": "concept",
+        "section": "App settings",
+        "covers": [
+          "triggers",
+          "bindings",
+          "Azure Functions"
+        ]
+      },
+      {
+        "title": "Azure Functions HTTP trigger",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?pivots=programming-language-python",
+        "minutes": 36,
+        "type": "how-to",
+        "section": "Usage",
+        "covers": [
+          "triggers",
+          "bindings",
+          "Azure Functions",
+          "APIs"
+        ]
+      }
+    ],
+    "read_minutes": 44,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-23",
+    "domain": "Connect to and consume Azure services",
+    "subgroup": "Develop and implement Azure Functions",
+    "text": "Configure and deploy function apps",
+    "intro": "Objective ini berfokus pada manajemen konfigurasi lingkungan dan mekanisme deployment aplikasi Azure Functions. Diuji karena integritas runtime fungsi di cloud bergantung pada pengaturan aplikasi, versi runtime, dan pipeline deployment yang andal. Setelah mempelajarinya, kamu harus bisa mengatur application settings serta men-deploy paket aplikasi fungsi ke Azure.",
+    "read": [
+      {
+        "title": "Manage your function app",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings",
+        "minutes": 18,
+        "type": "how-to",
+        "section": "Work with application settings",
+        "covers": [
+          "configure",
+          "deploy",
+          "function apps"
+        ]
+      },
+      {
+        "title": "Deployment technologies in Azure Functions",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-functions/functions-deployment-technologies",
+        "minutes": 19,
+        "type": "concept",
+        "section": "Deployment methods",
+        "covers": [
+          "configure",
+          "deploy",
+          "function apps"
+        ]
+      }
+    ],
+    "read_minutes": 37,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-24",
+    "domain": "Secure, monitor, and troubleshoot Azure solutions",
+    "subgroup": "Implement secure Azure solutions",
+    "text": "Secure secrets by using Azure Key Vault, including rotation and retrieval",
+    "intro": "Objective ini membahas pengamanan kredensial dan rahasia aplikasi menggunakan Azure Key Vault, termasuk pengambilan dan rotasi berkala. Diuji karena perlindungan kunci rahasia secara tersentralisasi dan rotasi otomatis adalah pilar utama postur keamanan cloud. Setelah materi ini, kamu harus bisa mengambil rahasia secara aman dari aplikasi dan mengonfigurasi alur rotasi kredensial otomatis.",
+    "read": [
+      {
+        "title": "Quickstart: Azure Key Vault secret client library for Python",
+        "url": "https://learn.microsoft.com/en-us/azure/key-vault/secrets/quick-create-python",
+        "minutes": 7,
+        "type": "how-to",
+        "section": "Retrieve a secret",
+        "covers": [
+          "Key Vault",
+          "secrets"
+        ]
+      },
+      {
+        "title": "Automate the rotation of a secret for resources that use one set of authentication credentials",
+        "url": "https://learn.microsoft.com/en-us/azure/key-vault/secrets/tutorial-rotation",
+        "minutes": 9,
+        "type": "how-to",
+        "section": "Create and deploy the SQL Server password rotation function",
+        "covers": [
+          "Key Vault",
+          "secrets",
+          "rotation"
+        ]
+      }
+    ],
+    "read_minutes": 16,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: retrieval.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-25",
+    "domain": "Secure, monitor, and troubleshoot Azure solutions",
+    "subgroup": "Implement secure Azure solutions",
+    "text": "Store and retrieve app configuration information by using Azure App Configuration",
+    "intro": "Objective ini berfokus pada sentralisasi pengelolaan parameter dan pengaturan aplikasi dinamis menggunakan Azure App Configuration. Diuji karena aplikasi modern perlu mengubah konfigurasi runtime tanpa harus melakukan rebuild atau restart seluruh layanan. Setelah menguasainya, kamu harus bisa menyimpan nilai kunci konfigurasi dan mengambil pembaruannya secara dinamis dari kode.",
+    "read": [
+      {
+        "title": "Create a Python app with the Azure SDK for Python",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-app-configuration/quickstart-python",
+        "minutes": 10,
+        "type": "how-to",
+        "section": "Code samples",
+        "covers": [
+          "App Configuration",
+          "store",
+          "retrieve",
+          "configuration"
+        ]
+      },
+      {
+        "title": "Tutorial: Use dynamic configuration in Python",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-app-configuration/enable-dynamic-configuration-python",
+        "minutes": 5,
+        "type": "how-to",
+        "section": "Prerequisites",
+        "covers": [
+          "App Configuration",
+          "store",
+          "configuration"
+        ]
+      }
+    ],
+    "read_minutes": 15,
+    "read_note": "",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-26",
+    "domain": "Secure, monitor, and troubleshoot Azure solutions",
+    "subgroup": "Monitor and troubleshoot Azure solutions",
+    "text": "Trace distributed systems by using OpenTelemetry SDKs",
+    "intro": "Objective ini tentang implementasi penelusuran terdistribusi (distributed tracing) pada sistem microservices menggunakan SDK OpenTelemetry. Diuji karena pemantauan alur permintaan lintas komponen sangat vital untuk menemukan bottleneck latensi dan titik kegagalan pada arsitektur terdistribusi. Setelah ini kamu harus bisa menginstrumentasi kode aplikasi agar memancarkan telemetri jejak korelasi ke backend pemantau.",
+    "read": [
+      {
+        "title": "Enable Azure Monitor OpenTelemetry for .NET, Node.js, Python, and Java applications",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/app/opentelemetry-enable?tabs=python",
+        "minutes": 14,
+        "type": "how-to",
+        "section": "Enable OpenTelemetry with Application Insights",
+        "covers": [
+          "OpenTelemetry",
+          "SDKs",
+          "trace"
+        ]
+      },
+      {
+        "title": "Application map: Triage distributed applications",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-map",
+        "minutes": 20,
+        "type": "concept",
+        "section": "Go to details and stack trace",
+        "covers": [
+          "OpenTelemetry",
+          "trace"
+        ]
+      }
+    ],
+    "read_minutes": 34,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: distributed systems.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  },
+  {
+    "id": "obj-27",
+    "domain": "Secure, monitor, and troubleshoot Azure solutions",
+    "subgroup": "Monitor and troubleshoot Azure solutions",
+    "text": "Write KQL queries to analyze logs and metrics",
+    "intro": "Objective ini membahas penulisan kueri Kusto Query Language (KQL) di Azure Monitor untuk menganalisis data log dan metrik operasional. Diuji karena analisis analitik log secara mendalam diperlukan untuk mendiagnosis anomali dan mengevaluasi performa sistem produksi. Setelah materi ini, kamu harus bisa menyusun kueri KQL terstruktur untuk memfilter, mengagregasi, dan memvisualisasikan data telemetri.",
+    "read": [
+      {
+        "title": "Get started with log queries in Azure Monitor Logs",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/get-started-queries",
+        "minutes": 15,
+        "type": "how-to",
+        "section": "Table-based queries",
+        "covers": [
+          "KQL",
+          "queries",
+          "logs"
+        ]
+      },
+      {
+        "title": "Tutorial: Use Log Analytics",
+        "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-tutorial",
+        "minutes": 12,
+        "type": "how-to",
+        "section": "Prerequisites",
+        "covers": [
+          "KQL",
+          "queries",
+          "logs"
+        ]
+      }
+    ],
+    "read_minutes": 27,
+    "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: metrics.",
+    "lab_urls": [],
+    "status": "belum",
+    "confidence": 0
+  }
+]

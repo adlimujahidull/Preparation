@@ -1,4 +1,4 @@
-﻿/**
+/**
  * app.js — Router, Global Modals, Shortcuts, Toast, Confetti, Themes, & Multi-Device Sync
  */
 
@@ -9,6 +9,7 @@ const App = (() => {
   const routes = {
     'today': TodayPage,
     'plan': PlanPage,
+    'learn': LearnPage,
     'resources': ResourcesPage,
     'notes': NotesPage,
     'drill': DrillPage,
@@ -632,7 +633,14 @@ const App = (() => {
     const resources = Store.getResources();
     const decisions = Store.getDecisions();
     const notes = Store.getNotes();
+    const objectives = Store.getObjectives();
 
+    const matchedObjectives = objectives.filter(o => 
+      o.id.toLowerCase().includes(query) || 
+      o.text.toLowerCase().includes(query) || 
+      (o.intro && o.intro.toLowerCase().includes(query)) ||
+      (o.subgroup && o.subgroup.toLowerCase().includes(query))
+    );
     const matchedCards = cards.filter(c => 
       c.question.toLowerCase().includes(query) || c.answer.toLowerCase().includes(query)
     );
@@ -646,7 +654,7 @@ const App = (() => {
       n.name.toLowerCase().includes(query) || (n.content && n.content.toLowerCase().includes(query))
     );
 
-    const totalMatches = matchedCards.length + matchedResources.length + matchedDecisions.length + matchedNotes.length;
+    const totalMatches = matchedObjectives.length + matchedCards.length + matchedResources.length + matchedDecisions.length + matchedNotes.length;
 
     const modalBackdrop = document.getElementById('global-modal-backdrop');
     const modalContainer = document.getElementById('global-modal-content');
@@ -661,6 +669,25 @@ const App = (() => {
         Ditemukan <strong>${totalMatches}</strong> hasil di seluruh materi belajar.
       </div>
       <div style="display: flex; flex-direction: column; gap: 1rem; max-height: 60vh; overflow-y: auto;">
+        
+        <!-- Objectives AI-200 -->
+        ${matchedObjectives.length > 0 ? `
+          <div>
+            <h4 style="font-size: 0.85rem; color: var(--azure-blue); margin-bottom: 0.4rem; text-transform: uppercase; font-weight: 700;">Objective Resmi AI-200 (${matchedObjectives.length})</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              ${matchedObjectives.map(o => `
+                <div style="background-color: var(--bg-main); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem;">
+                    <span class="badge badge-primary" style="font-size: 0.7rem;">${o.id}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-dim);">⏱️ ${o.read_minutes}m</span>
+                  </div>
+                  <a href="#learn?obj=${o.id}" onclick="App.closeModal()" style="color: var(--azure-blue); font-weight: 600; text-decoration: none;">${escapeHtml(o.text)} &rarr;</a>
+                  <div style="color: var(--text-dim); font-size: 0.75rem; margin-top: 0.2rem;">${escapeHtml(o.subgroup)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
         
         <!-- Sumber -->
         ${matchedResources.length > 0 ? `

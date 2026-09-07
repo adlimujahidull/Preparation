@@ -25,7 +25,8 @@ const Store = (() => {
     decisions: { decisions: [] },
     examHistory: [],
     exams: {},       // { [id]: examData }
-    notes: {}        // { [fileName]: { content, sha, path } }
+    notes: {},       // { [fileName]: { content, sha, path } }
+    objectives: []   // 27 official AI-200 objectives
   };
 
   // State Change Notification
@@ -109,6 +110,20 @@ const Store = (() => {
     state.examHistory = loadFromLocalCache('examHistory', state.examHistory);
     state.exams = loadFromLocalCache('exams', state.exams);
     state.notes = loadFromLocalCache('notes', state.notes);
+    state.objectives = loadFromLocalCache('objectives', []);
+
+    // Load static objectives if cache is empty
+    if (!state.objectives || state.objectives.length === 0) {
+      try {
+        const staticRes = await fetch('data/objectives.json');
+        if (staticRes.ok) {
+          state.objectives = await staticRes.json();
+          saveToLocalCache('objectives', state.objectives);
+        }
+      } catch (e) {
+        // quiet fallback
+      }
+    }
 
     // 2. If configured and online, refresh in background
     if (GitHubAPI.hasConfig() && navigator.onLine) {
@@ -149,7 +164,8 @@ const Store = (() => {
         progressData,
         labsData,
         decisionsData,
-        examHistoryData
+        examHistoryData,
+        objectivesData
       ] = await Promise.all([
         fetchFile('data/config.json', 'config', { examDate: '', passingScore: 700 }),
         fetchFile('data/plan.json', 'plan', { weeks: [] }),
@@ -158,7 +174,8 @@ const Store = (() => {
         fetchFile('data/progress.json', 'progress', {}),
         fetchFile('data/labs.json', 'labs', { labs: [] }),
         fetchFile('data/decisions.json', 'decisions', { decisions: [] }),
-        fetchFile('data/exam-history.json', 'examHistory', [])
+        fetchFile('data/exam-history.json', 'examHistory', []),
+        fetchFile('data/objectives.json', 'objectives', state.objectives || [])
       ]);
 
       state.config = cfg || { examDate: '', passingScore: 700 };
@@ -169,6 +186,9 @@ const Store = (() => {
       state.labs = labsData || { labs: [] };
       state.decisions = decisionsData || { decisions: [] };
       state.examHistory = Array.isArray(examHistoryData) ? examHistoryData : [];
+      if (Array.isArray(objectivesData) && objectivesData.length > 0) {
+        state.objectives = objectivesData;
+      }
 
       // List and fetch exams
       try {
@@ -266,6 +286,9 @@ const Store = (() => {
         } else if (key === 'examHistory') {
           filePath = 'data/exam-history.json';
           content = JSON.stringify(state.examHistory, null, 2);
+        } else if (key === 'objectives') {
+          filePath = 'data/objectives.json';
+          content = JSON.stringify(state.objectives, null, 2);
         } else if (key.startsWith('note:')) {
           const noteName = key.replace('note:', '');
           const noteObj = state.notes[noteName];
@@ -549,6 +572,24 @@ const Store = (() => {
     return state.notes[safeName];
   }
 
+  // Objectives (AI-200 official 27 objectives)
+  function getObjectives() {
+    return state.objectives || [];
+  }
+
+  function getObjectiveById(id) {
+    return (state.objectives || []).find(o => o.id === id);
+  }
+
+  function updateObjectiveStatus(id, newStatus, newConfidence) {
+    const obj = getObjectiveById(id);
+    if (!obj) return;
+    if (newStatus !== undefined) obj.status = newStatus;
+    if (newConfidence !== undefined) obj.confidence = newConfidence;
+    saveToLocalCache('objectives', state.objectives);
+    markDirty('objectives', `Update status/confidence ${id}`);
+  }
+
   function exportBackup() {
     return {
       version: 1,
@@ -651,7 +692,12 @@ const Store = (() => {
     getNotes,
     saveNote,
     exportBackup,
-    importBackup
+    importBackup,
+
+    // Objectives (AI-200 official 27 objectives)
+    getObjectives,
+    getObjectiveById,
+    updateObjectiveStatus
   };
 })();
 
