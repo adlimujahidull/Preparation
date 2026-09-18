@@ -15,7 +15,7 @@
           "id": "w1_2",
           "text": "Install Docker di laptop. Pahami: image, layer, Dockerfile, tag, registry",
           "url": "",
-          "done": false
+          "done": true
         },
         {
           "id": "w1_3",
