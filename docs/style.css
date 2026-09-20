@@ -1871,4 +1871,38 @@ kbd, .kbd-key {
   }
 }
 
+/* Overflow Navigation Dropdown & Items */
+.nav-overflow-dropdown {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 0.35rem 0;
+  min-width: 170px;
+}
+
+.overflow-item {
+  display: block;
+  padding: 0.55rem 1rem;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.overflow-item:hover {
+  background: var(--bg-card-hover);
+  color: var(--azure-blue);
+}
+
+.btn-overflow {
+  color: var(--text-dim);
+  transition: var(--transition);
+}
+
+.btn-overflow:hover {
+  color: var(--azure-blue);
+}
+
 
