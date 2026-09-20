@@ -495,6 +495,22 @@ const ExamsPage = (() => {
     const scaledScore = totalQ > 0 ? Math.round((correctCount / totalQ) * 1000) : 0;
     const elapsedMinutes = Math.ceil(((activeExam.minutes || 30) * 60 - secondsRemaining) / 60);
 
+    // B3 & S5: Demote objectives on wrong answer
+    const questionsForDemote = activeExam.questions.map(q => {
+      const userChoice = userAnswers[q.id];
+      const isCorrect = userChoice && userChoice.toLowerCase() === q.answer.toLowerCase();
+      return {
+        id: q.id,
+        objective: q.objective,
+        question: q.stem,
+        isCorrect
+      };
+    });
+
+    const demotedList = (typeof Store.saatUjianDiselesaikan === 'function')
+      ? Store.saatUjianDiselesaikan({ questions: questionsForDemote }, activeExamKey || activeExam.title)
+      : [];
+
     examResult = {
       set: activeExam.title || activeExamKey,
       date: new Date().toISOString().split('T')[0],
@@ -503,7 +519,8 @@ const ExamsPage = (() => {
       correct: correctCount,
       minutes: Math.max(1, elapsedMinutes),
       wrong_domains: Array.from(wrongDomainSet),
-      wrongQuestions
+      wrongQuestions,
+      demotedList
     };
 
     Store.recordExamResult({
@@ -573,6 +590,34 @@ const ExamsPage = (() => {
             </a>
           </div>
         </div>
+
+        <!-- B3: Status Diturunkan Section -->
+        ${examResult.demotedList && examResult.demotedList.length > 0 ? `
+          <div class="card" style="margin-bottom: 1.5rem; border: 1px solid var(--accent-red-border); background: var(--accent-red-bg);">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--accent-red); margin-bottom: 0.75rem;">
+              ⚠️ Status Diturunkan (${examResult.demotedList.length} Objective)
+            </h3>
+            <p style="font-size: 0.875rem; color: var(--text-main); margin-bottom: 1rem; line-height: 1.5;">
+              Karena Anda salah menjawab soal terkait, status objective berikut diturunkan dari <strong>KUASAI</strong> kembali ke <strong>DIPRAKTIKKAN</strong>, dan progres kartu hafalannya di-reset agar jatuh tempo untuk diulang:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              ${examResult.demotedList.map(item => `
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.85rem 1rem;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <strong>Objective ${item.objectiveId.replace('obj-', 'o')}</strong>
+                    <span class="badge badge-decision">Status Baru: dipraktikkan</span>
+                  </div>
+                  <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">
+                    ${escapeHtml(item.objectiveText || '')}
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--accent-red);">
+                    Penyebab: Salah pada soal <strong>${escapeHtml(item.questionId)}</strong> ("${escapeHtml(item.questionText ? item.questionText.slice(0, 80) + '...' : '')}")
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
 
         <!-- Wrong Answers Review & Explanations -->
         ${examResult.wrongQuestions.length > 0 ? `

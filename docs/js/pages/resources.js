@@ -1,5 +1,7 @@
 /**
- * pages/resources.js — Halaman "Sumber" (Perpustakaan Lab MS Learn, Video, & Dokumen)
+ * pages/resources.js — Halaman "Sumber" (Perpustakaan Lab MS Learn, Dokumen, & Referensi Tambahan)
+ * Mengimplementasikan A11: Perpustakaan sumber belajar dengan tag objective,
+ * dan sumber yang belum terkait dikelompokkan di bawah dengan label "Belum Terkait".
  */
 
 const ResourcesPage = (() => {
@@ -35,23 +37,30 @@ const ResourcesPage = (() => {
         const q = filters.search.toLowerCase();
         const titleMatch = r.title.toLowerCase().includes(q);
         const noteMatch = r.note && r.note.toLowerCase().includes(q);
-        if (!titleMatch && !noteMatch) return false;
+        const objMatch = r.objective && r.objective.toLowerCase().includes(q);
+        if (!titleMatch && !noteMatch && !objMatch) return false;
       }
 
       return true;
     });
 
-    // Group by week
+    // Grouping per A11:
+    // Items with objective -> grouped by week 1..6
+    // Items without objective -> placed in "Belum Terkait" section at the bottom
     const grouped = {};
     for (let w = 1; w <= 6; w++) {
       grouped[w] = [];
     }
-    grouped['umum'] = [];
+    const unlinked = [];
 
     filtered.forEach(r => {
-      const w = r.week || 'umum';
-      if (!grouped[w]) grouped[w] = [];
-      grouped[w].push(r);
+      if (!r.objective) {
+        unlinked.push(r);
+      } else {
+        const w = (typeof r.week === 'number') ? r.week : 1;
+        if (!grouped[w]) grouped[w] = [];
+        grouped[w].push(r);
+      }
     });
 
     const chipsHtml = `
@@ -79,13 +88,12 @@ const ResourcesPage = (() => {
 
     const filterBarHtml = `
       <div class="filter-bar">
-        <!-- In-page resource search -->
         <div style="flex: 1; min-width: 180px;">
           <input 
             type="text" 
             class="input-field" 
             style="padding: 0.35rem 0.65rem; font-size: 0.8rem;" 
-            placeholder="Filter nama lab / catatan..." 
+            placeholder="Filter nama sumber / catatan..." 
             value="${escapeHtml(filters.search)}" 
             oninput="ResourcesPage.setSearch(this.value)"
           >
@@ -132,8 +140,10 @@ const ResourcesPage = (() => {
         groupsHtml += renderGroupSection(`Minggu ${w}`, items);
       }
     }
-    if (grouped['umum'] && grouped['umum'].length > 0) {
-      groupsHtml += renderGroupSection('Materi Rujukan & Panduan Arsitektur', grouped['umum']);
+
+    // A11: Unlinked resources at bottom
+    if (unlinked.length > 0) {
+      groupsHtml += renderGroupSection('Belum Terkait', unlinked, true);
     }
 
     if (!groupsHtml) {
@@ -148,8 +158,8 @@ const ResourcesPage = (() => {
       <div class="page-container">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
-            <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">Perpustakaan Sumber Belajar</h1>
-            <div class="card-subtitle">Lab hands-on Microsoft Learn terverifikasi, materi resmi, dan dokumen arsitektur</div>
+            <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">📚 Perpustakaan Sumber Belajar</h1>
+            <div class="card-subtitle">Koleksi lab hands-on, referensi arsitektur, dan panduan belajar mandiri</div>
           </div>
           <div style="font-size: 0.85rem; color: var(--text-muted);">
             Menampilkan <strong>${filtered.length}</strong> dari <strong>${resources.length}</strong> sumber
@@ -163,18 +173,24 @@ const ResourcesPage = (() => {
     `;
   }
 
-  function renderGroupSection(title, items) {
+  function renderGroupSection(title, items, isUnlinked = false) {
     return `
-      <div class="card" style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--azure-blue);">${title}</h2>
+      <div class="card" style="margin-bottom: 1.5rem; ${isUnlinked ? 'border: 1px dashed var(--border-color);' : ''}">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <h2 style="font-size: 1.1rem; font-weight: 700; color: ${isUnlinked ? 'var(--text-dim)' : 'var(--azure-blue)'}; margin: 0;">
+            ${title} (${items.length})
+          </h2>
+          ${isUnlinked ? `<span class="badge badge-decision" style="font-size: 0.75rem;">Belum Terkait Objective</span>` : ''}
+        </div>
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
           ${items.map(r => `
             <div class="task-item" style="flex-direction: column; align-items: stretch; gap: 0.5rem; background-color: var(--bg-main);">
               <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
                 <div>
-                  <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.25rem;">
+                  <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.25rem; flex-wrap: wrap;">
                     <span class="badge badge-${r.type}">${r.type.toUpperCase()}</span>
                     <span class="badge badge-${r.domain}">${r.domain}</span>
+                    ${r.objective ? `<span class="badge badge-lab" style="font-weight: 700;">${escapeHtml(r.objective.replace('obj-', 'o'))}</span>` : ''}
                     ${r.minutes ? `<span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">⏱️ ${r.minutes} menit</span>` : ''}
                   </div>
                   <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">
@@ -213,8 +229,8 @@ const ResourcesPage = (() => {
                 <input 
                   type="text" 
                   class="input-field" 
-                  style="font-size: 0.8rem; padding: 0.35rem 0.6rem; background-color: #ffffff;" 
-                  placeholder="Catatan singkat (misal: review bagian 3 lagi)..." 
+                  style="font-size: 0.8rem; padding: 0.35rem 0.6rem; background-color: var(--bg-card);" 
+                  placeholder="Catatan singkat..." 
                   value="${escapeHtml(r.note || '')}" 
                   onchange="ResourcesPage.updateNote('${r.id}', this.value)"
                 >
@@ -226,8 +242,8 @@ const ResourcesPage = (() => {
     `;
   }
 
-  function setChip(chipKey) {
-    filters.chip = chipKey;
+  function setChip(chipVal) {
+    filters.chip = chipVal;
     const container = document.getElementById('main-content');
     if (container) render(container);
   }
@@ -238,26 +254,26 @@ const ResourcesPage = (() => {
     if (container) render(container);
   }
 
-  function setSearch(query) {
-    filters.search = query;
+  function setSearch(val) {
+    filters.search = val;
     const container = document.getElementById('main-content');
     if (container) render(container);
   }
 
-  function updateStatus(id, status) {
-    Store.updateResource(id, { status });
-    App.toast('✓ Status sumber berhasil diperbarui', 'success', 1800);
+  function updateStatus(id, newStatus) {
+    Store.updateResource(id, { status: newStatus });
+    App.toast(`Status sumber diubah menjadi: ${newStatus}`, 'info', 1800);
   }
 
-  function updateRating(id, ratingVal) {
-    const rating = ratingVal ? Number(ratingVal) : null;
-    Store.updateResource(id, { rating });
-    App.toast('✓ Rating berhasil disimpan', 'success', 1800);
+  function updateRating(id, newRating) {
+    const val = newRating ? Number(newRating) : null;
+    Store.updateResource(id, { rating: val });
+    App.toast(`Rating sumber diperbarui.`, 'info', 1800);
   }
 
-  function updateNote(id, note) {
-    Store.updateResource(id, { note });
-    App.toast('✓ Catatan singkat tersimpan', 'success', 1800);
+  function updateNote(id, newNote) {
+    Store.updateResource(id, { note: newNote });
+    App.toast(`Catatan sumber tersimpan.`, 'info', 1800);
   }
 
   function openAddModal() {
@@ -265,32 +281,45 @@ const ResourcesPage = (() => {
     const modalContainer = document.getElementById('global-modal-content');
     if (!modalBackdrop || !modalContainer) return;
 
+    const objectives = Store.getObjectives();
+    const objOptions = objectives.map(o => {
+      const oNorm = o.id.replace('obj-', 'o');
+      return `<option value="${oNorm}">${oNorm} — ${escapeHtml(o.text.slice(0, 50))}...</option>`;
+    }).join('');
+
     modalContainer.innerHTML = `
       <div class="modal-header">
         <h3 class="modal-title">Tambah Sumber Belajar Baru</h3>
         <button class="modal-close" onclick="App.closeModal()">&times;</button>
       </div>
-      <form id="add-resource-form" onsubmit="ResourcesPage.handleAddSubmit(event)">
+      <form onsubmit="ResourcesPage.handleAddSubmit(event)">
         <div class="form-group">
-          <label class="form-label">Judul Sumber / Lab *</label>
-          <input type="text" id="new-res-title" class="input-field" required placeholder="Contoh: Implementasi Vector Search di AKS">
+          <label class="form-label">Judul Sumber *</label>
+          <input type="text" id="new-res-title" class="input-field" required placeholder="Contoh: Hands-on Lab: ACR Build & Run">
         </div>
         <div class="form-group">
-          <label class="form-label">URL / Tautan *</label>
-          <input type="url" id="new-res-url" class="input-field" required placeholder="https://...">
+          <label class="form-label">Terkait Objective AI-200 (A11)</label>
+          <select id="new-res-objective" class="select-field">
+            <option value="">-- Belum Terkait (Umum) --</option>
+            ${objOptions}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">URL / Tautan Materi *</label>
+          <input type="url" id="new-res-url" class="input-field" required placeholder="https://learn.microsoft.com/...">
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
-            <label class="form-label">Tipe</label>
+            <label class="form-label">Tipe Sumber</label>
             <select id="new-res-type" class="select-field">
-              <option value="lab">Lab</option>
-              <option value="doc">Dokumentasi</option>
-              <option value="video">Video</option>
-              <option value="article">Artikel</option>
+              <option value="lab">🧪 Lab Praktik</option>
+              <option value="doc">📖 Dokumentasi</option>
+              <option value="video">🎥 Video / Tutorial</option>
+              <option value="tool">🛠️ Tool / CLI</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Domain</label>
+            <label class="form-label">Domain AI-200</label>
             <select id="new-res-domain" class="select-field">
               <option value="containers">Containers</option>
               <option value="data">Data Management</option>
@@ -310,7 +339,6 @@ const ResourcesPage = (() => {
               <option value="4">Minggu 4</option>
               <option value="5">Minggu 5</option>
               <option value="6">Minggu 6</option>
-              <option value="umum">Umum / Rujukan</option>
             </select>
           </div>
           <div class="form-group">
@@ -335,16 +363,18 @@ const ResourcesPage = (() => {
   function handleAddSubmit(e) {
     e.preventDefault();
     const title = document.getElementById('new-res-title').value;
+    const objective = document.getElementById('new-res-objective').value || null;
     const url = document.getElementById('new-res-url').value;
     const type = document.getElementById('new-res-type').value;
     const domain = document.getElementById('new-res-domain').value;
     const weekVal = document.getElementById('new-res-week').value;
-    const week = weekVal === 'umum' ? 'umum' : Number(weekVal);
-    const minutes = Number(document.getElementById('new-res-minutes').value);
+    const week = Number(weekVal) || 1;
+    const minutes = Number(document.getElementById('new-res-minutes').value) || 30;
     const note = document.getElementById('new-res-note').value;
 
     Store.addResource({
       title,
+      objective,
       url,
       type,
       domain,

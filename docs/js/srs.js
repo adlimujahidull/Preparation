@@ -1,85 +1,147 @@
-﻿/**
- * srs.js — Spaced Repetition System (Leitner 5-box)
- * Box intervals: 1, 2, 4, 8, 16 hari.
- * Kartu type: decision memakai interval lebih rapat: dikalikan 0.6 (dibulatkan ke bawah, minimal 1 hari).
+/**
+ * srs.js — Spaced Repetition System (Leitner 5-box) & Status Objective Filter
+ * Mengimplementasikan Spesifikasi Teknis S1 secara presisi.
  */
 
 const SRS = (() => {
-  const BASE_INTERVALS = {
-    1: 1,
-    2: 2,
-    3: 4,
-    4: 8,
-    5: 16
-  };
-
-  function getInterval(box, cardType) {
-    const b = Math.min(Math.max(Number(box) || 1, 1), 5);
-    const base = BASE_INTERVALS[b] || 1;
-    if (cardType === 'decision') {
-      return Math.max(1, Math.floor(base * 0.6));
-    }
-    return base;
-  }
+  const OBJ_TERBUKA = ['dibaca', 'dipraktikkan', 'kuasai'];
 
   function parseDate(dateStr) {
     if (!dateStr) return null;
-    const parts = dateStr.split('-');
+    if (dateStr instanceof Date) {
+      const d = new Date(dateStr);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+    const parts = String(dateStr).split('-');
     if (parts.length !== 3) return null;
     return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
   }
 
   function formatDate(d) {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    if (!d) return '';
+    const dateObj = d instanceof Date ? d : new Date(d);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
 
-  function isCardDue(card, progressEntry, todayDate) {
-    const today = todayDate ? new Date(todayDate) : new Date();
-    today.setHours(0, 0, 0, 0);
+  // Normalisasi lookup map untuk objective: dukung baik 'obj-01' maupun 'o01'
+  function getObjectiveMap(objectiveById) {
+    if (!objectiveById) {
+      if (typeof Store !== 'undefined' && Store.getObjectives) {
+        const list = Store.getObjectives();
+        const map = {};
+        list.forEach(o => {
+          map[o.id] = o;
+          map[o.id.replace('obj-', 'o')] = o;
+        });
+        return map;
+      }
+      return {};
+    }
+    // Jika sudah berupa map/object
+    return objectiveById;
+  }
 
-    if (!progressEntry || !progressEntry.last) {
-      // Kartu baru langsung jatuh tempo hari ini
+  function lookupObjective(objId, objMap) {
+    if (!objId || !objMap) return null;
+    if (objMap[objId]) return objMap[objId];
+    const alt = objId.startsWith('obj-') ? objId.replace('obj-', 'o') : (objId.startsWith('o') ? 'obj-' + objId.slice(1).padStart(2, '0') : objId);
+    return objMap[alt] || null;
+  }
+
+  // S1: kartuAktif
+  function kartuAktif(kartu, objectiveById) {
+    if (!kartu.objective) return true; // kosong atau null -> true
+    const objMap = getObjectiveMap(objectiveById);
+    const obj = lookupObjective(kartu.objective, objMap);
+    if (!obj) return true; // yatim, muncul di Diagnostik
+    return OBJ_TERBUKA.includes(obj.status);
+  }
+
+  // S1: intervalHari
+  function intervalHari(box, tipeKartu) {
+    const b = Math.min(Math.max(Number(box) || 1, 1), 5);
+    const dasar = [1, 2, 4, 8, 16][b - 1];
+    if (tipeKartu === 'decision') {
+      return Math.max(1, Math.floor(dasar * 0.6));
+    }
+    return dasar;
+  }
+
+  // S1: jatuhTempo
+  function jatuhTempo(kartu, progress, objectiveById, hariIni) {
+    // WAJIB diperiksa paling awal: jika BUKAN kartuAktif -> false
+    if (!kartuAktif(kartu, objectiveById)) {
+      return false;
+    }
+
+    const p = progress ? progress[kartu.id] : null;
+    // Jika belum pernah didrill -> langsung jatuh tempo
+    if (!p || !p.last) {
       return true;
     }
 
-    const lastDate = parseDate(progressEntry.last);
+    const lastDate = parseDate(p.last);
     if (!lastDate) return true;
 
-    const interval = getInterval(progressEntry.box || 1, card.type);
+    const interval = intervalHari(p.box || 1, kartu.type);
     const dueDate = new Date(lastDate);
     dueDate.setDate(dueDate.getDate() + interval);
     dueDate.setHours(0, 0, 0, 0);
 
+    const today = hariIni ? parseDate(hariIni) : new Date();
+    today.setHours(0, 0, 0, 0);
+
     return dueDate <= today;
   }
 
-  function getDueCards(cards, progress, filters = {}) {
-    const todayStr = formatDate(new Date());
-    const all = filters.all === true || filters.all === '1';
+  // Satu-satunya fungsi perolehan kartu jatuh tempo
+  function getDueCards(cards, progress, objectiveById, filters = {}, hariIni = null) {
+    const objMap = getObjectiveMap(objectiveById);
+    const todayStr = hariIni || formatDate(new Date());
 
-    return cards.filter(card => {
+    return (cards || []).filter(card => {
       // Filter domain
-      if (filters.domain && card.domain !== filters.domain) return false;
+      if (filters.domain && filters.domain !== 'all' && card.domain !== filters.domain) return false;
       // Filter type
-      if (filters.type && card.type !== filters.type) return false;
-      // Filter week (if card has week property)
-      if (filters.week && card.week && String(card.week) !== String(filters.week)) return false;
+      if (filters.type && filters.type !== 'all' && card.type !== filters.type) return false;
+      // Filter objective
+      if (filters.objective && filters.objective !== 'all' && card.objective !== filters.objective) return false;
 
-      if (all) return true;
+      // Jika meminta seluruh kartu aktif (misal untuk drill all)
+      if (filters.all === true || filters.all === '1') {
+        return kartuAktif(card, objMap);
+      }
 
-      const p = progress[card.id];
-      return isCardDue(card, p, todayStr);
+      return jatuhTempo(card, progress, objMap, todayStr);
     });
   }
 
+  function getActiveCards(cards, objectiveById) {
+    const objMap = getObjectiveMap(objectiveById);
+    return (cards || []).filter(c => kartuAktif(c, objMap));
+  }
+
+  function getDormantCards(cards, objectiveById) {
+    const objMap = getObjectiveMap(objectiveById);
+    return (cards || []).filter(c => !kartuAktif(c, objMap));
+  }
+
   return {
-    getInterval,
-    isCardDue,
+    OBJ_TERBUKA,
+    parseDate,
+    formatDate,
+    kartuAktif,
+    intervalHari,
+    getInterval: intervalHari, // alias kompatibilitas
+    jatuhTempo,
+    isCardDue: (card, p, today, objById) => jatuhTempo(card, { [card.id]: p }, objById, today),
     getDueCards,
-    formatDate
+    getActiveCards,
+    getDormantCards
   };
 })();
 

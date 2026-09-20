@@ -26,7 +26,8 @@ const Store = (() => {
     examHistory: [],
     exams: {},       // { [id]: examData }
     notes: {},       // { [fileName]: { content, sha, path } }
-    objectives: []   // 27 official AI-200 objectives
+    objectives: [],  // 27 official AI-200 objectives
+    setup: { items: [] }
   };
 
   // State Change Notification
@@ -46,6 +47,15 @@ const Store = (() => {
     listeners.add(fn);
     fn(lastSaveStatus, lastErrorMessage);
     return () => listeners.delete(fn);
+  }
+
+  // Date format helper (local YYYY-MM-DD)
+  function getTodayString() {
+    if (typeof SRS !== 'undefined' && SRS.formatDate) {
+      return SRS.formatDate(new Date());
+    }
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
   // LocalStorage Cache Helpers
@@ -111,6 +121,7 @@ const Store = (() => {
     state.exams = loadFromLocalCache('exams', state.exams);
     state.notes = loadFromLocalCache('notes', state.notes);
     state.objectives = loadFromLocalCache('objectives', []);
+    state.setup = loadFromLocalCache('setup', { items: [] });
 
     // Load static objectives if cache is empty
     if (!state.objectives || state.objectives.length === 0) {
@@ -123,6 +134,28 @@ const Store = (() => {
       } catch (e) {
         // quiet fallback
       }
+    }
+
+    // Load static setup if cache is empty
+    if (!state.setup || !state.setup.items || state.setup.items.length === 0) {
+      try {
+        const setupRes = await fetch('data/setup.json');
+        if (setupRes.ok) {
+          state.setup = await setupRes.json();
+          saveToLocalCache('setup', state.setup);
+        }
+      } catch (e) {
+        // quiet fallback
+      }
+    }
+
+    // B1/S3: Ensure startDate is present in config
+    if (!state.config.startDate) {
+      state.config.startDate = (typeof SRS !== 'undefined' && SRS.formatDate) 
+        ? SRS.formatDate(new Date()) 
+        : getTodayString();
+      saveToLocalCache('config', state.config);
+      markDirty('config', 'init: set default startDate');
     }
 
     // 2. If configured and online, refresh in background
@@ -165,7 +198,8 @@ const Store = (() => {
         labsData,
         decisionsData,
         examHistoryData,
-        objectivesData
+        objectivesData,
+        setupData
       ] = await Promise.all([
         fetchFile('data/config.json', 'config', { examDate: '', passingScore: 700 }),
         fetchFile('data/plan.json', 'plan', { weeks: [] }),
@@ -175,10 +209,16 @@ const Store = (() => {
         fetchFile('data/labs.json', 'labs', { labs: [] }),
         fetchFile('data/decisions.json', 'decisions', { decisions: [] }),
         fetchFile('data/exam-history.json', 'examHistory', []),
-        fetchFile('data/objectives.json', 'objectives', state.objectives || [])
+        fetchFile('data/objectives.json', 'objectives', state.objectives || []),
+        fetchFile('data/setup.json', 'setup', state.setup || { items: [] })
       ]);
 
       state.config = cfg || { examDate: '', passingScore: 700 };
+      if (!state.config.startDate) {
+        state.config.startDate = (typeof SRS !== 'undefined' && SRS.formatDate) 
+          ? SRS.formatDate(new Date()) 
+          : getTodayString();
+      }
       state.plan = planData || { weeks: [] };
       state.resources = resData || { resources: [] };
       state.cards = cardsData || { cards: [] };
@@ -188,6 +228,9 @@ const Store = (() => {
       state.examHistory = Array.isArray(examHistoryData) ? examHistoryData : [];
       if (Array.isArray(objectivesData) && objectivesData.length > 0) {
         state.objectives = objectivesData;
+      }
+      if (setupData && setupData.items) {
+        state.setup = setupData;
       }
 
       // List and fetch exams
@@ -289,6 +332,9 @@ const Store = (() => {
         } else if (key === 'objectives') {
           filePath = 'data/objectives.json';
           content = JSON.stringify(state.objectives, null, 2);
+        } else if (key === 'setup') {
+          filePath = 'data/setup.json';
+          content = JSON.stringify(state.setup, null, 2);
         } else if (key.startsWith('note:')) {
           const noteName = key.replace('note:', '');
           const noteObj = state.notes[noteName];
@@ -414,10 +460,11 @@ const Store = (() => {
     
     const nextNum = state.cards.cards.length + 1;
     const id = newCard.id || `c${String(nextNum).padStart(3, '0')}`;
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayString();
     
     const entry = {
       id,
+      objective: newCard.objective || null,
       domain: newCard.domain || 'containers',
       type: newCard.type || 'recall', // 'recall' | 'decision'
       question: newCard.question || '',
@@ -438,7 +485,7 @@ const Store = (() => {
   function updateCardProgress(cardId, isRight) {
     if (!state.progress) state.progress = {};
     const curr = state.progress[cardId] || { box: 1, last: null, right: 0, wrong: 0 };
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayString();
 
     if (isRight) {
       curr.box = Math.min((curr.box || 1) + 1, 5);
@@ -462,7 +509,7 @@ const Store = (() => {
     if (!state.labs) state.labs = { labs: [] };
     if (!state.labs.labs) state.labs.labs = [];
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayString();
     const entry = {
       lab: labEntry.lab || 'unnamed-lab',
       date: labEntry.date || today,
@@ -495,7 +542,7 @@ const Store = (() => {
   function addDecision(dec) {
     if (!state.decisions) state.decisions = { decisions: [] };
     if (!state.decisions.decisions) state.decisions.decisions = [];
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayString();
     const entry = {
       id: dec.id || `d${state.decisions.decisions.length + 1}`,
       title: dec.title || 'New Decision Table',
@@ -512,7 +559,7 @@ const Store = (() => {
     const item = list.find(d => d.id === id);
     if (item) {
       Object.assign(item, decUpdates);
-      item.updated = new Date().toISOString().split('T')[0];
+      item.updated = getTodayString();
       markDirty('decisions', `decisions: update ${item.title}`);
       return true;
     }
@@ -544,7 +591,7 @@ const Store = (() => {
     if (!Array.isArray(state.examHistory)) state.examHistory = [];
     state.examHistory.push({
       set: result.set,
-      date: result.date || new Date().toISOString().split('T')[0],
+      date: result.date || getTodayString(),
       score: result.score,
       total: result.total,
       minutes: result.minutes,
@@ -578,7 +625,96 @@ const Store = (() => {
   }
 
   function getObjectiveById(id) {
-    return (state.objectives || []).find(o => o.id === id);
+    if (!id) return null;
+    const clean = String(id).toLowerCase().trim();
+    const norm = clean.replace('obj-', 'o');
+    return (state.objectives || []).find(o => {
+      const oNorm = o.id.toLowerCase().replace('obj-', 'o');
+      return o.id.toLowerCase() === clean || oNorm === norm;
+    });
+  }
+
+  function setLastTouchedObjective(id) {
+    if (!id) return;
+    const obj = getObjectiveById(id);
+    const objId = obj ? obj.id.replace('obj-', 'o') : id;
+    state.config.lastTouchedObjective = objId;
+    saveToLocalCache('config', state.config);
+    markDirty('config', `config: set lastTouchedObjective ${objId}`);
+  }
+
+  function advanceObjective(id) {
+    const obj = getObjectiveById(id);
+    if (!obj) return false;
+    if (obj.status === 'belum') {
+      obj.status = 'dibaca';
+    } else if (obj.status === 'dibaca') {
+      obj.status = 'dipraktikkan';
+    }
+    setLastTouchedObjective(obj.id);
+    saveToLocalCache('objectives', state.objectives);
+    markDirty('objectives', `advance objective ${obj.id} to ${obj.status}`);
+    return true;
+  }
+
+  function skipObjectiveStep(id, targetStatus) {
+    const obj = getObjectiveById(id);
+    if (!obj) return false;
+    const valid = ['belum', 'dibaca', 'dipraktikkan', 'kuasai'];
+    if (!valid.includes(targetStatus)) return false;
+    obj.status = targetStatus;
+    setLastTouchedObjective(obj.id);
+    saveToLocalCache('objectives', state.objectives);
+    markDirty('objectives', `skip objective ${obj.id} to ${targetStatus}`);
+    return true;
+  }
+
+  function demoteObjectiveStep(id) {
+    const obj = getObjectiveById(id);
+    if (!obj) return false;
+    if (obj.status === 'kuasai') obj.status = 'dipraktikkan';
+    else if (obj.status === 'dipraktikkan') obj.status = 'dibaca';
+    else if (obj.status === 'dibaca') obj.status = 'belum';
+    setLastTouchedObjective(obj.id);
+    saveToLocalCache('objectives', state.objectives);
+    markDirty('objectives', `demote objective ${obj.id} to ${obj.status}`);
+    return true;
+  }
+
+  // S4: Validasi explanation
+  function validasiExplanation(teks, objective) {
+    const t = (teks || '').trim();
+    if (t.length < 80) {
+      return { valid: false, error: 'Terlalu pendek. Tulis minimal 80 karakter dengan kalimatmu sendiri.' };
+    }
+    const tLower = t.toLowerCase();
+    const objText = (objective && objective.text ? objective.text.trim().toLowerCase() : '');
+    if (objText && (tLower.includes(objText) || objText.includes(tLower))) {
+      return { valid: false, error: 'Ini menyalin teks objective. Tulis dengan kalimatmu sendiri.' };
+    }
+    if (objective && objective.intro) {
+      const introText = objective.intro.trim().toLowerCase();
+      if (introText && introText.includes(tLower)) {
+        return { valid: false, error: 'Ini menyalin pengantar. Tulis dengan kalimatmu sendiri.' };
+      }
+    }
+    return { valid: true };
+  }
+
+  function completeObjectiveKuasai(id, explanation, confidence) {
+    const obj = getObjectiveById(id);
+    if (!obj) return { success: false, error: 'Objective tidak ditemukan' };
+    const v = validasiExplanation(explanation, obj);
+    if (!v.valid) return { success: false, error: v.error };
+
+    obj.status = 'kuasai';
+    obj.explanation = (explanation || '').trim();
+    obj.explanation_date = getTodayString();
+    if (confidence !== undefined) obj.confidence = confidence;
+    setLastTouchedObjective(obj.id);
+    saveToLocalCache('objectives', state.objectives);
+    markDirty('objectives', `complete kuasai for ${obj.id}`);
+    return { success: true };
   }
 
   function updateObjectiveStatus(id, newStatus, newConfidence) {
@@ -586,8 +722,247 @@ const Store = (() => {
     if (!obj) return;
     if (newStatus !== undefined) obj.status = newStatus;
     if (newConfidence !== undefined) obj.confidence = newConfidence;
+    setLastTouchedObjective(obj.id);
     saveToLocalCache('objectives', state.objectives);
     markDirty('objectives', `Update status/confidence ${id}`);
+  }
+
+  // Setup Items (A9)
+  function getSetup() {
+    return (state.setup && state.setup.items) ? state.setup.items : [];
+  }
+
+  function toggleSetupItem(id) {
+    if (!state.setup || !state.setup.items) return false;
+    const item = state.setup.items.find(s => s.id === id);
+    if (item) {
+      item.done = !item.done;
+      saveToLocalCache('setup', state.setup);
+      markDirty('setup', `setup: toggle item ${id}`);
+      return true;
+    }
+    return false;
+  }
+
+  // S3: Pacing Indicator
+  function getPacingMetrics() {
+    const cfg = getConfig();
+    if (!cfg.examDate) return null;
+
+    const objectives = getObjectives();
+    const total = 27;
+    const selesai = objectives.filter(o => o.status === 'kuasai').length;
+    const sisa = total - selesai;
+
+    const hariIni = new Date();
+    hariIni.setHours(0, 0, 0, 0);
+
+    const examD = new Date(cfg.examDate);
+    examD.setHours(0, 0, 0, 0);
+
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const diffDays = Math.ceil((examD - hariIni) / msPerDay);
+    const hariSisa = diffDays;
+    const mingguSisa = Math.max(hariSisa / 7, 0.5);
+    const lajuDibutuhkan = sisa / mingguSisa;
+
+    const startD = cfg.startDate ? new Date(cfg.startDate) : new Date(hariIni);
+    startD.setHours(0, 0, 0, 0);
+    const diffStart = (hariIni - startD) / msPerDay;
+    const hariBerjalan = Math.max(diffStart, 1);
+    const mingguBerjalan = Math.max(hariBerjalan / 7, 0.5);
+    const lajuAktual = selesai / mingguBerjalan;
+
+    const proyeksi = selesai + (lajuAktual * mingguSisa);
+    const selisih = Math.round(total - proyeksi);
+
+    let statusText = '';
+    if (selisih <= 0) {
+      statusText = 'Sesuai jadwal';
+    } else if (selisih >= 1 && selisih <= 3) {
+      statusText = 'Sedikit tertinggal';
+    } else {
+      statusText = `Tertinggal ${selisih} objective`;
+    }
+
+    const reqStr = lajuDibutuhkan.toFixed(1).replace('.', ',');
+    const actStr = lajuAktual.toFixed(1).replace('.', ',');
+
+    return {
+      total,
+      selesai,
+      sisa,
+      hariSisa,
+      mingguSisa,
+      lajuDibutuhkan,
+      hariBerjalan,
+      mingguBerjalan,
+      lajuAktual,
+      proyeksi,
+      selisih,
+      statusText,
+      formattedString: `${selesai}/${total} objective · butuh ${reqStr}/minggu · laju kamu ${actStr}/minggu · ${statusText}`
+    };
+  }
+
+  // S2: Tindakan Berikutnya di Hari Ini
+  function tindakanBerikutnya() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const msPerDay = 1000 * 60 * 60 * 24;
+
+    // 1 — biaya, selalu menang
+    const labs = getLabs();
+    const uncleanedRgs = [];
+    labs.forEach((lab, idx) => {
+      if (lab.resource_group && lab.deleted === false) {
+        const labDate = new Date(lab.date);
+        labDate.setHours(0, 0, 0, 0);
+        const ageDays = Math.floor((today - labDate) / msPerDay);
+        if (ageDays >= 1) {
+          uncleanedRgs.push({ ...lab, labIndex: idx, ageDays });
+        }
+      }
+    });
+
+    if (uncleanedRgs.length > 0) {
+      uncleanedRgs.sort((a, b) => b.ageDays - a.ageDays);
+      const oldest = uncleanedRgs[0];
+      return {
+        jenis: 'hapus_rg',
+        rg: oldest.resource_group,
+        perintah: `az group delete --name ${oldest.resource_group} --yes --no-wait`,
+        labIndex: oldest.labIndex,
+        labName: oldest.lab,
+        ageDays: oldest.ageDays
+      };
+    }
+
+    // 2 — setup
+    const setupItems = getSetup();
+    const undoneSetup = setupItems.find(s => !s.done);
+    if (undoneSetup) {
+      return {
+        jenis: 'setup',
+        item: undoneSetup
+      };
+    }
+
+    // 3 — tanggal ujian
+    const cfg = getConfig();
+    if (!cfg.examDate) {
+      return { jenis: 'isi_tanggal' };
+    }
+
+    // 4 — drill
+    const cards = getCards();
+    const progress = getProgress();
+    const objMap = {};
+    (state.objectives || []).forEach(o => {
+      objMap[o.id] = o;
+      objMap[o.id.replace('obj-', 'o')] = o;
+    });
+    const dueCards = (typeof SRS !== 'undefined' && SRS.getDueCards)
+      ? SRS.getDueCards(cards, progress, objMap)
+      : [];
+    const n = dueCards.length;
+    if (n >= 10) {
+      return { jenis: 'drill', jumlah: n };
+    }
+
+    // 5 — objective berikutnya
+    let mingguIni = 1;
+    const plan = getPlan();
+    if (plan.weeks && plan.weeks.length > 0) {
+      for (const w of plan.weeks) {
+        if (w.tasks && w.tasks.some(t => !t.done)) {
+          mingguIni = w.n;
+          break;
+        }
+      }
+    }
+
+    const objectives = getObjectives();
+    let kandidat = objectives.filter(o => o.week === mingguIni && o.status !== 'kuasai');
+    if (kandidat.length === 0) {
+      const unmastered = objectives.filter(o => o.status !== 'kuasai');
+      if (unmastered.length > 0) {
+        const minWeek = Math.min(...unmastered.map(o => o.week || 99));
+        kandidat = unmastered.filter(o => o.week === minWeek);
+      }
+    }
+
+    if (kandidat.length === 0) {
+      return { jenis: 'selesai' };
+    }
+
+    kandidat.sort((a, b) => a.id.localeCompare(b.id));
+    const o = kandidat[0];
+    let langkah = 'baca';
+    if (o.status === 'dibaca') langkah = 'praktik';
+    else if (o.status === 'dipraktikkan') langkah = 'kuasai';
+
+    return { jenis: 'objective', objective: o, langkah };
+  }
+
+  // S5: Penurunan status dari ujian
+  function saatUjianDiselesaikan(hasil, setId) {
+    const diturunkan = [];
+    const today = getTodayString();
+    let objChanged = false;
+    let progressChanged = false;
+
+    let wrongList = [];
+    if (Array.isArray(hasil)) {
+      wrongList = hasil.filter(q => q && !q.isCorrect);
+    } else if (hasil && Array.isArray(hasil.wrongQuestions)) {
+      wrongList = hasil.wrongQuestions.map(wq => wq.question || wq);
+    } else if (hasil && Array.isArray(hasil.questions)) {
+      wrongList = hasil.questions.filter(q => !q.isCorrect);
+    }
+
+    for (const s of wrongList) {
+      if (!s.objective) continue;
+      const o = getObjectiveById(s.objective);
+      if (!o) continue;
+      if (o.status !== 'kuasai') continue; // tidak pernah turun di bawah dipraktikkan
+
+      o.status = 'dipraktikkan';
+      o.demoted_at = today;
+      o.demoted_reason = `salah di ujian ${setId || 'ujian'} soal ${s.id}`;
+      objChanged = true;
+
+      const oNorm = o.id.replace('obj-', 'o');
+      const cards = getCards();
+      for (const k of cards) {
+        if (k.objective) {
+          const kNorm = k.objective.replace('obj-', 'o');
+          if (kNorm === oNorm || k.objective === o.id) {
+            if (state.progress[k.id]) {
+              delete state.progress[k.id];
+              progressChanged = true;
+            }
+          }
+        }
+      }
+      diturunkan.push({
+        objectiveId: o.id,
+        objectiveText: o.text,
+        questionId: s.id,
+        questionText: s.question || s.text
+      });
+    }
+
+    if (objChanged) {
+      saveToLocalCache('objectives', state.objectives);
+      markDirty('objectives', `demote objectives from exam ${setId || ''}`);
+    }
+    if (progressChanged) {
+      saveToLocalCache('progress', state.progress);
+      markDirty('progress', `reset card progress for demoted objectives`);
+    }
+
+    return diturunkan;
   }
 
   function exportBackup() {
@@ -697,7 +1072,22 @@ const Store = (() => {
     // Objectives (AI-200 official 27 objectives)
     getObjectives,
     getObjectiveById,
-    updateObjectiveStatus
+    updateObjectiveStatus,
+    setLastTouchedObjective,
+    advanceObjective,
+    skipObjectiveStep,
+    demoteObjectiveStep,
+    validasiExplanation,
+    completeObjectiveKuasai,
+
+    // Setup Items (A9)
+    getSetup,
+    toggleSetupItem,
+
+    // S2, S3, S5 Helpers
+    getPacingMetrics,
+    tindakanBerikutnya,
+    saatUjianDiselesaikan
   };
 })();
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * github.js — Satu-satunya modul pemanggil GitHub REST API
  * Menangani otentikasi PAT, pembacaan file dengan cache SHA, penulisan file aman base64 UTF-8,
  * dan deteksi konflik HTTP 409.
@@ -126,6 +126,18 @@ const GitHubAPI = (() => {
       headers: getHeaders()
     });
 
+    if (resp.status === 401) {
+      const err = new Error('Token kadaluarsa atau telah dicabut (401). Silakan perbarui token Anda.');
+      err.isAuthError = true;
+      err.status = 401;
+      throw err;
+    }
+    if (resp.status === 403) {
+      const err = new Error('Akses ditolak (403). Periksa permission token (Contents: Read and write) atau limit API.');
+      err.isForbidden = true;
+      err.status = 403;
+      throw err;
+    }
     if (resp.status === 404) {
       return null;
     }
@@ -169,6 +181,20 @@ const GitHubAPI = (() => {
       body: JSON.stringify(payload)
     });
 
+    if (resp.status === 401) {
+      const err = new Error('Token kadaluarsa atau telah dicabut (401). Silakan perbarui token Anda.');
+      err.isAuthError = true;
+      err.status = 401;
+      throw err;
+    }
+
+    if (resp.status === 403) {
+      const err = new Error('Akses ditolak (403). Periksa permission token (Contents: Read and write) atau limit API.');
+      err.isForbidden = true;
+      err.status = 403;
+      throw err;
+    }
+
     if (resp.status === 409) {
       const err = new Error(`Konflik commit (409) pada file ${path}. Data di repositori telah diubah dari perangkat lain.`);
       err.isConflict = true;
@@ -199,6 +225,18 @@ const GitHubAPI = (() => {
       headers: getHeaders()
     });
 
+    if (resp.status === 401) {
+      const err = new Error('Token kadaluarsa atau telah dicabut (401). Silakan perbarui token Anda.');
+      err.isAuthError = true;
+      err.status = 401;
+      throw err;
+    }
+    if (resp.status === 403) {
+      const err = new Error('Akses ditolak (403). Periksa permission token (Contents: Read and write) atau limit API.');
+      err.isForbidden = true;
+      err.status = 403;
+      throw err;
+    }
     if (resp.status === 404) return [];
     if (!resp.ok) {
       throw new Error(`Gagal melist direktori ${path} (HTTP ${resp.status})`);
@@ -214,6 +252,40 @@ const GitHubAPI = (() => {
       return data;
     }
     return [];
+  }
+
+  // B6: Update token without touching owner, repo, branch
+  function updateToken(newToken) {
+    const cfg = getConfig();
+    if (!cfg) return false;
+    cfg.token = newToken.trim();
+    setConfig(cfg);
+    return true;
+  }
+
+  // B7: Fetch last 10 commits touching path
+  async function getCommits(path = 'data', limit = 10) {
+    const cfg = getConfig();
+    if (!cfg) return [];
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/commits?path=${encodeURIComponent(path)}&per_page=${limit}&sha=${cfg.branch}`;
+    try {
+      const resp = await fetch(url, {
+        method: 'GET',
+        headers: getHeaders()
+      });
+      if (resp.status === 401) {
+        const err = new Error('Token kadaluarsa atau telah dicabut (401).');
+        err.isAuthError = true;
+        err.status = 401;
+        throw err;
+      }
+      if (!resp.ok) return [];
+      return await resp.json();
+    } catch (e) {
+      if (e.isAuthError) throw e;
+      console.warn('Gagal memuat daftar commit:', e);
+      return [];
+    }
   }
 
   function setCachedSha(path, sha) {
@@ -234,6 +306,8 @@ const GitHubAPI = (() => {
     getFile,
     putFile,
     listDir,
+    updateToken,
+    getCommits,
     setCachedSha,
     getCachedSha
   };

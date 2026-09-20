@@ -86,6 +86,27 @@ const SettingsPage = (() => {
           </div>
         </div>
 
+        <!-- B7: Git Commit History for data/ -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0; color: var(--azure-blue);">Riwayat Perubahan Data (Git Commits)</h2>
+            <div style="font-size: 0.8rem;">
+              ${ghConfig && ghConfig.owner && ghConfig.repo ? `
+                <a href="https://github.com/${escapeHtml(ghConfig.owner)}/${escapeHtml(ghConfig.repo)}/commits/${escapeHtml(ghConfig.branch || 'main')}/data" target="_blank" rel="noopener noreferrer" style="color: var(--azure-blue); text-decoration: underline;">
+                  Buka riwayat folder data/ di GitHub ↗
+                </a>
+              ` : ''}
+            </div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5;">
+            10 commit terakhir yang menyentuh direktori <code>data/</code> di repositori Anda.
+          </p>
+
+          <div id="git-commits-container">
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Memuat riwayat commit...</div>
+          </div>
+        </div>
+
         <!-- Data Backup & Restore Section -->
         <div class="card" style="margin-bottom: 1.5rem;">
           <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--azure-blue);">Cadangan & Pemulihan Data (Offline Backup)</h2>
@@ -123,6 +144,7 @@ const SettingsPage = (() => {
         </div>
       </div>
     `;
+    loadCommits();
   }
 
   function handleSaveExamConfig(e) {
@@ -252,6 +274,76 @@ const SettingsPage = (() => {
     });
   }
 
+  async function loadCommits() {
+    const el = document.getElementById('git-commits-container');
+    if (!el) return;
+
+    const cfg = GitHubAPI.getConfig();
+    if (!cfg || !cfg.token || !cfg.owner || !cfg.repo) {
+      el.innerHTML = `
+        <div style="font-size: 0.85rem; color: var(--text-muted); padding: 0.75rem; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+          Kredensial GitHub belum dikonfigurasi. Hubungkan repositori untuk melihat riwayat commit.
+        </div>
+      `;
+      return;
+    }
+
+    try {
+      const commits = await GitHubAPI.getCommits('data', 10);
+      if (!commits || commits.length === 0) {
+        el.innerHTML = `
+          <div style="font-size: 0.85rem; color: var(--text-muted); padding: 0.75rem; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+            Belum ada riwayat commit untuk folder <code>data/</code> atau akses dibatasi.
+          </div>
+        `;
+        return;
+      }
+
+      el.innerHTML = `
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                <th style="padding: 0.5rem; color: var(--text-muted); font-weight: 600;">Tanggal</th>
+                <th style="padding: 0.5rem; color: var(--text-muted); font-weight: 600;">Pesan Commit</th>
+                <th style="padding: 0.5rem; color: var(--text-muted); font-weight: 600;">Penulis</th>
+                <th style="padding: 0.5rem; text-align: right; color: var(--text-muted); font-weight: 600;">Tautan</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${commits.map(c => {
+                const dateStr = c.commit && c.commit.author && c.commit.author.date ? new Date(c.commit.author.date).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+                const authorName = (c.author && c.author.login) || (c.commit && c.commit.author && c.commit.author.name) || '—';
+                const msg = (c.commit && c.commit.message) || '';
+                const shortMsg = msg.split('\n')[0];
+                const shaShort = c.sha ? c.sha.substring(0, 7) : '';
+                return `
+                  <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 0.5rem; white-space: nowrap; color: var(--text-muted);">${escapeHtml(dateStr)}</td>
+                    <td style="padding: 0.5rem; font-weight: 500; color: var(--text-main); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(msg)}">${escapeHtml(shortMsg)}</td>
+                    <td style="padding: 0.5rem; color: var(--text-muted);">${escapeHtml(authorName)}</td>
+                    <td style="padding: 0.5rem; text-align: right;">
+                      <a href="${c.html_url}" target="_blank" rel="noopener noreferrer" style="font-family: var(--font-mono); color: var(--azure-blue); text-decoration: none; font-weight: 600;">
+                        ${shaShort} ↗
+                      </a>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    } catch (err) {
+      console.warn('Gagal memuat commit:', err);
+      el.innerHTML = `
+        <div style="font-size: 0.85rem; color: var(--accent-red); padding: 0.75rem; background: var(--accent-red-bg); border: 1px solid var(--accent-red-border); border-radius: var(--radius-sm);">
+          Gagal memuat riwayat commit: ${escapeHtml(err.message || 'Error koneksi')}
+        </div>
+      `;
+    }
+  }
+
   function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -263,6 +355,7 @@ const SettingsPage = (() => {
 
   return {
     render,
+    loadCommits,
     handleSaveExamConfig,
     testConnection,
     handleRemoveToken,

@@ -36,7 +36,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 2
   },
   {
     "id": "obj-02",
@@ -76,7 +77,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 2
   },
   {
     "id": "obj-03",
@@ -114,7 +116,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 2
   },
   {
     "id": "obj-04",
@@ -153,7 +156,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 2
   },
   {
     "id": "obj-05",
@@ -180,7 +184,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 2
   },
   {
     "id": "obj-06",
@@ -219,7 +224,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 2
   },
   {
     "id": "obj-07",
@@ -255,7 +261,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: events.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 2
   },
   {
     "id": "obj-08",
@@ -293,7 +300,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 3
   },
   {
     "id": "obj-09",
@@ -330,7 +338,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 3
   },
   {
     "id": "obj-10",
@@ -356,7 +365,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: vector similarity search.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 3
   },
   {
     "id": "obj-11",
@@ -395,7 +405,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 3
   },
   {
     "id": "obj-12",
@@ -421,7 +432,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: SDKs.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-13",
@@ -448,7 +460,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: schemas.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-14",
@@ -484,7 +497,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: compute overhead.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-15",
@@ -524,7 +538,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-16",
@@ -559,7 +574,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: semantic retrieval, RAG, metadata filter.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-17",
@@ -597,7 +613,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-18",
@@ -634,7 +651,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: invalidation.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-19",
@@ -672,7 +690,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 4
   },
   {
     "id": "obj-20",
@@ -713,7 +732,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   },
   {
     "id": "obj-21",
@@ -761,7 +781,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   },
   {
     "id": "obj-22",
@@ -800,7 +821,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   },
   {
     "id": "obj-23",
@@ -838,7 +860,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   },
   {
     "id": "obj-24",
@@ -875,7 +898,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: retrieval.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   },
   {
     "id": "obj-25",
@@ -914,7 +938,8 @@
     "read_note": "",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   },
   {
     "id": "obj-26",
@@ -951,7 +976,8 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: distributed systems.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   },
   {
     "id": "obj-27",
@@ -989,6 +1015,7 @@
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: metrics.",
     "lab_urls": [],
     "status": "belum",
-    "confidence": 0
+    "confidence": 0,
+    "week": 5
   }
 ]

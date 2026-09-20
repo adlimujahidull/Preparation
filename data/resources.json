@@ -25,42 +25,6 @@
       "note": "Silabus modul resmi Microsoft"
     },
     {
-      "id": "r003",
-      "title": "Halaman Sertifikasi Azure AI Cloud Developer Associate",
-      "type": "doc",
-      "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-cloud-developer-associate/",
-      "domain": "umum",
-      "week": 1,
-      "minutes": 10,
-      "status": "belum",
-      "rating": null,
-      "note": "Detail durasi, passing score, format ujian"
-    },
-    {
-      "id": "r004",
-      "title": "Azure Free Account ( Credit)",
-      "type": "doc",
-      "url": "https://azure.microsoft.com/free",
-      "domain": "umum",
-      "week": 2,
-      "minutes": 15,
-      "status": "belum",
-      "rating": null,
-      "note": "Aktifkan di awal Minggu 2"
-    },
-    {
-      "id": "r005",
-      "title": "Microsoft Exam Sandbox Experience",
-      "type": "doc",
-      "url": "https://go.microsoft.com/fwlink/?linkid=2226877",
-      "domain": "umum",
-      "week": 6,
-      "minutes": 20,
-      "status": "belum",
-      "rating": null,
-      "note": "Simulasi antarmuka ujian resmi Microsoft"
-    },
-    {
       "id": "r006",
       "title": "Build and run a container image with ACR Tasks",
       "type": "lab",
@@ -419,18 +383,6 @@
       "status": "belum",
       "rating": null,
       "note": "Panduan tuning index HNSW vs IVFFlat, m & ef_construction parameters"
-    },
-    {
-      "id": "r036",
-      "title": "Microsoft Learn: AI-200 Official Exam Sandbox",
-      "type": "doc",
-      "url": "https://go.microsoft.com/fwlink/?linkid=2226877",
-      "domain": "umum",
-      "week": 6,
-      "minutes": 30,
-      "status": "belum",
-      "rating": null,
-      "note": "Simulasi antarmuka ujian resmi Microsoft sebelum hari H ujian"
     }
   ]
 }

@@ -33,8 +33,18 @@ const DrillPage = (() => {
     const filters = parseHashFilters();
     const cards = Store.getCards();
     const progress = Store.getProgress();
+    const objectives = Store.getObjectives();
+    const objMap = {};
+    objectives.forEach(o => {
+      objMap[o.id] = o;
+      objMap[o.id.replace('obj-', 'o')] = o;
+    });
 
-    sessionCards = SRS.getDueCards(cards, progress, filters);
+    if (filters.all) {
+      sessionCards = SRS.getActiveCards(cards, objMap);
+    } else {
+      sessionCards = SRS.getDueCards(cards, progress, objMap, filters);
+    }
     // Shuffle cards randomly
     sessionCards.sort(() => Math.random() - 0.5);
 
@@ -60,7 +70,7 @@ const DrillPage = (() => {
       if (tag === 'input' || tag === 'textarea') return;
       const modal = document.getElementById('global-modal-backdrop');
       if (modal && modal.classList.contains('active')) return;
-      if (window.location.hash.split('?')[0] !== '#drill') return;
+      if (!window.location.hash.startsWith('#drill') && !window.location.hash.startsWith('#practice')) return;
 
       if (isSessionFinished) return;
 
@@ -91,25 +101,63 @@ const DrillPage = (() => {
     }
 
     if (sessionCards.length === 0 && !isSessionFinished) {
+      const cards = Store.getCards();
+      const objectives = Store.getObjectives();
+      const objMap = {};
+      objectives.forEach(o => {
+        objMap[o.id] = o;
+        objMap[o.id.replace('obj-', 'o')] = o;
+      });
+      const dormantCards = SRS.getDormantCards(cards, objMap);
+      const dormantCount = dormantCards.length;
+
+      const unreadObjSet = new Set();
+      dormantCards.forEach(c => {
+        if (c.objective) {
+          unreadObjSet.add(c.objective.replace('obj-', 'o'));
+        }
+      });
+      const unreadObjList = Array.from(unreadObjSet).sort();
+      let unreadSuggestion = '';
+      if (unreadObjList.length === 1) {
+        unreadSuggestion = unreadObjList[0];
+      } else if (unreadObjList.length === 2) {
+        unreadSuggestion = `${unreadObjList[0]} atau ${unreadObjList[1]}`;
+      } else if (unreadObjList.length >= 3) {
+        unreadSuggestion = `${unreadObjList[0]}, ${unreadObjList[1]}, atau ${unreadObjList[2]}`;
+      }
+
+      let emptyMessageHtml = '';
+      if (dormantCount > 0) {
+        emptyMessageHtml = `
+          <div style="font-size: 1.05rem; line-height: 1.6; color: var(--text-main); margin-bottom: 1.5rem;">
+            Tidak ada kartu jatuh tempo. <strong>${dormantCount} kartu masih terkunci</strong> karena objective-nya belum dibaca. Buka ${escapeHtml(unreadSuggestion)} untuk mengaktifkannya.
+          </div>
+          <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="#learn" class="btn btn-primary">Ke halaman Belajar &rarr;</a>
+            <button class="btn btn-secondary" onclick="App.openQuickCardModal()">+ Tambah kartu sendiri</button>
+          </div>
+        `;
+      } else {
+        emptyMessageHtml = `
+          <div style="font-size: 1.05rem; line-height: 1.6; color: var(--text-main); margin-bottom: 1.5rem;">
+            Tidak ada kartu jatuh tempo. Seluruh ${cards.length} kartu aktif telah tuntas di-drill sesuai jadwal.
+          </div>
+          <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="#practice?tab=drill" class="btn btn-primary" onclick="setTimeout(() => DrillPage.restartWithAll(), 50)">
+              ⚡ Tinjau Semua Kartu (Latihan Bebas)
+            </a>
+            <button class="btn btn-secondary" onclick="App.openQuickCardModal()">+ Tambah kartu sendiri</button>
+          </div>
+        `;
+      }
+
       container.innerHTML = `
         <div class="page-container" style="max-width: 680px; margin: 0 auto; text-align: center; padding-top: 2rem;">
           <div class="card" style="padding: 2.5rem 1.5rem;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
-            <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Tidak Ada Kartu Jatuh Tempo!</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
-              Semua kartu pada filter ini sudah dipelajari sesuai interval Leitner hari ini.
-            </p>
-            <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
-              <a href="#drill?all=1" class="btn btn-primary btn-sm" onclick="setTimeout(() => DrillPage.restartWithAll(), 50)">
-                ⚡ Tinjau Semua Kartu (Latihan Bebas)
-              </a>
-              <button class="btn btn-secondary btn-sm" onclick="App.openQuickCardModal()">
-                + Tambah Kartu Baru (Alt+N)
-              </button>
-              <a href="#today" class="btn btn-secondary btn-sm">
-                Kembali ke Hari Ini
-              </a>
-            </div>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Sesi Drill Flashcard</h2>
+            ${emptyMessageHtml}
           </div>
         </div>
       `;

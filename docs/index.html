@@ -57,18 +57,23 @@
       </div>
     </div>
 
-    <!-- Scrollable Navigation Tabs -->
+    <!-- 4 Main Nav Tabs + Overflow Menu (A1) -->
     <nav class="nav-scroll">
-      <a href="#today" class="nav-link active">📅 Hari Ini</a>
-      <a href="#plan" class="nav-link">📋 Rencana</a>
-      <a href="#learn" class="nav-link">🎯 Belajar</a>
-      <a href="#resources" class="nav-link">📚 Sumber</a>
-      <a href="#notes" class="nav-link">📝 Catatan</a>
-      <a href="#drill" class="nav-link">⚡ Drill</a>
-      <a href="#exams" class="nav-link">🎯 Ujian</a>
-      <a href="#decisions" class="nav-link">⚖️ Keputusan</a>
-      <a href="#stats" class="nav-link">📊 Statistik</a>
-      <a href="#settings" class="nav-link">⚙️ Pengaturan</a>
+      <a href="#today" class="nav-link active" id="nav-today">📅 Hari Ini</a>
+      <a href="#learn" class="nav-link" id="nav-learn">🎯 Belajar</a>
+      <a href="#practice" class="nav-link" id="nav-practice">⚡ Latihan</a>
+      <a href="#notes" class="nav-link" id="nav-notes">📝 Catatan</a>
+      <div class="nav-overflow-container" style="position: relative; display: inline-flex; align-items: center;">
+        <button id="nav-overflow-btn" class="nav-link btn-overflow" onclick="App.toggleNavOverflow(event)" title="Menu Lainnya" style="background: transparent; border: none; cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 0.45rem 0.65rem;">
+          ⋯
+        </button>
+        <div id="nav-overflow-menu" class="nav-overflow-dropdown" style="display: none; position: absolute; right: 0; top: 100%; min-width: 170px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 1000; padding: 0.35rem 0; margin-top: 0.25rem;">
+          <a href="#resources" class="overflow-item" onclick="App.closeNavOverflow()" style="display: block; padding: 0.5rem 1rem; color: var(--text-main); text-decoration: none; font-size: 0.85rem; font-weight: 500;">📚 Sumber</a>
+          <a href="#stats" class="overflow-item" onclick="App.closeNavOverflow()" style="display: block; padding: 0.5rem 1rem; color: var(--text-main); text-decoration: none; font-size: 0.85rem; font-weight: 500;">📊 Statistik</a>
+          <a href="#settings" class="overflow-item" onclick="App.closeNavOverflow()" style="display: block; padding: 0.5rem 1rem; color: var(--text-main); text-decoration: none; font-size: 0.85rem; font-weight: 500;">⚙️ Pengaturan</a>
+          <a href="#diagnostics" class="overflow-item" onclick="App.closeNavOverflow()" style="display: block; padding: 0.5rem 1rem; color: var(--text-main); text-decoration: none; font-size: 0.85rem; font-weight: 500;">🩺 Diagnostik</a>
+        </div>
+      </div>
     </nav>
   </header>
 
@@ -107,8 +112,10 @@
   <script src="js/pages/drill.js"></script>
   <script src="js/pages/exams.js"></script>
   <script src="js/pages/decisions.js"></script>
+  <script src="js/pages/practice.js"></script>
   <script src="js/pages/stats.js"></script>
   <script src="js/pages/settings.js"></script>
+  <script src="js/pages/diagnostics.js"></script>
   
   <!-- Bootstrap -->
   <script src="js/app.js"></script>

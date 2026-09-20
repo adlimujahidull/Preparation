@@ -8,15 +8,18 @@ const App = (() => {
 
   const routes = {
     'today': TodayPage,
-    'plan': PlanPage,
     'learn': LearnPage,
-    'resources': ResourcesPage,
+    'practice': PracticePage,
     'notes': NotesPage,
-    'drill': DrillPage,
-    'exams': ExamsPage,
-    'decisions': DecisionsPage,
+    'resources': ResourcesPage,
     'stats': StatsPage,
-    'settings': SettingsPage
+    'settings': SettingsPage,
+    'diagnostics': DiagnosticsPage,
+    // Legacy hash fallbacks
+    'plan': LearnPage,
+    'drill': PracticePage,
+    'exams': PracticePage,
+    'decisions': PracticePage
   };
 
   async function init() {
@@ -31,6 +34,14 @@ const App = (() => {
     setupShortcuts();
     setupSearch();
     setupMultiDeviceSync();
+
+    // Close overflow menu on outside click
+    document.addEventListener('click', (e) => {
+      const container = document.querySelector('.nav-overflow-container');
+      if (container && !container.contains(e.target)) {
+        closeNavOverflow();
+      }
+    });
 
     window.addEventListener('hashchange', handleRouting);
     handleRouting();
@@ -55,10 +66,30 @@ const App = (() => {
   }
 
   function handleRouting() {
-    const hash = window.location.hash.slice(1) || 'today';
-    const routeKey = hash.split('?')[0] || 'today';
-    activeRoute = routes[routeKey] ? routeKey : 'today';
+    const rawHash = window.location.hash.slice(1) || 'today';
+    const hash = rawHash.split('?')[0] || 'today';
 
+    // A1: Backward compatibility redirects
+    if (hash === 'plan') {
+      window.location.hash = '#learn';
+      return;
+    }
+    if (hash === 'drill') {
+      window.location.hash = '#practice?tab=drill';
+      return;
+    }
+    if (hash === 'exams') {
+      window.location.hash = '#practice?tab=exams';
+      return;
+    }
+    if (hash === 'decisions') {
+      window.location.hash = '#practice?tab=decisions';
+      return;
+    }
+
+    activeRoute = routes[hash] ? hash : 'today';
+
+    // Highlight main nav
     document.querySelectorAll('.nav-link').forEach(link => {
       const href = link.getAttribute('href');
       if (href === `#${activeRoute}`) {
@@ -67,6 +98,16 @@ const App = (() => {
         link.classList.remove('active');
       }
     });
+
+    // Handle overflow button active state
+    const overflowBtn = document.getElementById('nav-overflow-btn');
+    if (overflowBtn) {
+      if (['resources', 'stats', 'settings', 'diagnostics'].includes(activeRoute)) {
+        overflowBtn.classList.add('active');
+      } else {
+        overflowBtn.classList.remove('active');
+      }
+    }
 
     const container = document.getElementById('main-content');
     if (container && routes[activeRoute]) {
@@ -434,12 +475,29 @@ const App = (() => {
     const modalContainer = document.getElementById('global-modal-content');
     if (!modalBackdrop || !modalContainer) return;
 
+    const objectives = Store.getObjectives();
+    const lastTouched = (Store.getConfig().lastTouchedObjective || '').toLowerCase().replace('obj-', 'o');
+
+    const objOptions = objectives.map(o => {
+      const oNorm = o.id.toLowerCase().replace('obj-', 'o');
+      const isSelected = (lastTouched && (lastTouched === oNorm || lastTouched === o.id.toLowerCase())) ? 'selected' : '';
+      return `<option value="${oNorm}" ${isSelected}>${oNorm} — ${escapeHtml(o.text.slice(0, 50))}...</option>`;
+    }).join('');
+
     modalContainer.innerHTML = `
       <div class="modal-header">
         <h3 class="modal-title">💡 Tambah Kartu Hafalan Cepat</h3>
         <button class="modal-close" onclick="App.closeModal()">&times;</button>
       </div>
       <form onsubmit="App.handleQuickCardSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Terkait Objective AI-200 (A7)</label>
+          <select id="qcard-objective" class="select-field">
+            <option value="">-- Tanpa Objective --</option>
+            ${objOptions}
+          </select>
+          <div class="form-hint">Otomatis terisi dari objective terakhir yang Anda sentuh.</div>
+        </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
             <label class="form-label">Domain *</label>
@@ -482,14 +540,103 @@ const App = (() => {
 
   function handleQuickCardSubmit(e) {
     e.preventDefault();
+    const objective = document.getElementById('qcard-objective').value || null;
     const domain = document.getElementById('qcard-domain').value;
     const type = document.getElementById('qcard-type').value;
     const question = document.getElementById('qcard-q').value.trim();
     const answer = document.getElementById('qcard-a').value.trim();
 
-    Store.addCard({ domain, type, question, answer });
+    Store.addCard({ objective, domain, type, question, answer });
     closeModal();
     toast('✓ Kartu hafalan baru berhasil dibuat!', 'success');
+    handleRouting();
+  }
+
+  // Overflow Navigation Menu (A1)
+  function toggleNavOverflow(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('nav-overflow-menu');
+    if (!menu) return;
+    const isHidden = menu.style.display === 'none' || !menu.style.display;
+    menu.style.display = isHidden ? 'block' : 'none';
+  }
+
+  function closeNavOverflow() {
+    const menu = document.getElementById('nav-overflow-menu');
+    if (menu) menu.style.display = 'none';
+  }
+
+  // B6: Token Renewal Modal for 401
+  function showTokenUpdateModal() {
+    const existing = GitHubAPI.getConfig() || { owner: 'adlimujahidull', repo: 'Preparation', branch: 'main' };
+    const modalBackdrop = document.getElementById('global-modal-backdrop');
+    const modalContainer = document.getElementById('global-modal-content');
+    if (!modalBackdrop || !modalContainer) return;
+
+    modalContainer.innerHTML = `
+      <div class="modal-header">
+        <h3 class="modal-title">🔑 Perbarui Personal Access Token (PAT)</h3>
+        <button class="modal-close" onclick="App.closeModal()">&times;</button>
+      </div>
+      <div style="background-color: var(--accent-red-bg); color: var(--accent-red); border: 1px solid var(--accent-red-border); padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1rem;">
+        <strong>Token Kedaluwarsa atau Dicabut (401)</strong><br>
+        Fine-Grained PAT Anda telah habis masa berlakunya atau dicabut. Konfigurasi repositori <code>${escapeHtml(existing.owner)}/${escapeHtml(existing.repo)} (${escapeHtml(existing.branch)})</code> tetap dipertahankan.
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Buat token baru di GitHub: 
+        <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener" style="color: var(--azure-blue); text-decoration: underline; font-weight: 600;">
+          GitHub Personal Access Tokens (Beta) &rarr;
+        </a>
+      </div>
+      <div id="token-update-error" style="display: none; color: var(--accent-red); font-size: 0.825rem; margin-bottom: 0.75rem;"></div>
+      <form onsubmit="App.handleTokenUpdateSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Personal Access Token Baru *</label>
+          <input type="password" id="new-token-input" class="input-field" required placeholder="github_pat_...">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Batal</button>
+          <button type="submit" id="btn-save-new-token" class="btn btn-primary">Simpan Token Baru</button>
+        </div>
+      </form>
+    `;
+
+    modalBackdrop.classList.add('active');
+    setTimeout(() => {
+      const inp = document.getElementById('new-token-input');
+      if (inp) inp.focus();
+    }, 100);
+  }
+
+  async function handleTokenUpdateSubmit(e) {
+    e.preventDefault();
+    const tokenInput = document.getElementById('new-token-input');
+    const errBox = document.getElementById('token-update-error');
+    const btn = document.getElementById('btn-save-new-token');
+    if (!tokenInput) return;
+
+    const newToken = tokenInput.value.trim();
+    if (!newToken) return;
+
+    btn.textContent = 'Memvalidasi...';
+    btn.disabled = true;
+    errBox.style.display = 'none';
+
+    const cfg = GitHubAPI.getConfig() || { owner: 'adlimujahidull', repo: 'Preparation', branch: 'main' };
+    const valid = await GitHubAPI.validateRepo(cfg.owner, cfg.repo, cfg.branch, newToken);
+
+    if (!valid.ok) {
+      errBox.textContent = valid.error;
+      errBox.style.display = 'block';
+      btn.textContent = 'Simpan Token Baru';
+      btn.disabled = false;
+      return;
+    }
+
+    GitHubAPI.updateToken(newToken);
+    closeModal();
+    toast('✓ Token baru berhasil disimpan dan terverifikasi!', 'success');
+    await Store.refreshFromGitHub();
     handleRouting();
   }
 
@@ -781,7 +928,11 @@ const App = (() => {
     syncData,
     toast,
     confetti,
-    toggleTheme
+    toggleTheme,
+    toggleNavOverflow,
+    closeNavOverflow,
+    showTokenUpdateModal,
+    handleTokenUpdateSubmit
   };
 })();
 

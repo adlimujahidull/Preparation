@@ -3,7 +3,22 @@
   "minutes": 15,
   "questions": [
     {
+      "id": "q0",
+      "objective": "o01",
+      "domain": "containers",
+      "stem": "You are managing container images in Azure Container Registry (ACR). You need to ensure image deployments always reference the immutable binary content rather than a mutable tag that could be overwritten. What should you use to identify the container image?",
+      "options": {
+        "a": "The repository name with latest tag",
+        "b": "The unique image manifest SHA-256 digest",
+        "c": "The subscription resource ID",
+        "d": "The webhook event identifier"
+      },
+      "answer": "b",
+      "explain": "An image digest uniquely and immutably identifies the container image manifest and layers via SHA-256 hash in ACR, preventing unexpected changes caused by tag overwrites."
+    },
+    {
       "id": "q1",
+      "objective": "o04",
       "domain": "containers",
       "stem": "You are designing an AI inference application that needs to scale from zero to many instances based on HTTP traffic and queue length, without managing complex Kubernetes infrastructure. Which compute service should you select?",
       "options": {
@@ -17,6 +32,7 @@
     },
     {
       "id": "q2",
+      "objective": "o10",
       "domain": "data",
       "stem": "You are implementing semantic search over a catalog of support tickets using Azure Cosmos DB for NoSQL. You need to store vector embeddings for each document and perform similarity search with the lowest latency and RU consumption. What indexing policy should you configure?",
       "options": {
@@ -30,6 +46,7 @@
     },
     {
       "id": "q3",
+      "objective": "o22",
       "domain": "ops",
       "stem": "Your Python AI application deployed on Azure Container Apps needs to securely load database connection strings and API keys. The keys must be dynamically refreshed without restarting the container when updated in the cloud. Which architecture should you use?",
       "options": {
