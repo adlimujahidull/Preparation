@@ -556,9 +556,20 @@ const App = (() => {
   function toggleNavOverflow(e) {
     if (e) e.stopPropagation();
     const menu = document.getElementById('nav-overflow-menu');
-    if (!menu) return;
+    const btn = document.getElementById('nav-overflow-btn');
+    if (!menu || !btn) return;
     const isHidden = menu.style.display === 'none' || !menu.style.display;
-    menu.style.display = isHidden ? 'block' : 'none';
+    if (isHidden) {
+      const rect = btn.getBoundingClientRect();
+      menu.style.position = 'fixed';
+      menu.style.top = `${rect.bottom + 6}px`;
+      menu.style.left = 'auto';
+      menu.style.right = `${Math.max(8, window.innerWidth - rect.right)}px`;
+      menu.style.display = 'block';
+      menu.style.zIndex = '99999';
+    } else {
+      menu.style.display = 'none';
+    }
   }
 
   function closeNavOverflow() {
