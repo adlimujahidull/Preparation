@@ -4,7 +4,7 @@
       "id": "s1",
       "title": "Aktifkan Azure free account",
       "url": "https://azure.microsoft.com/free",
-      "done": false
+      "done": true
     },
     {
       "id": "s2",
