@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "set": "Latihan Soal Contoh AI-200",
+    "date": "2026-09-21",
+    "score": 750,
+    "total": 4,
+    "minutes": 2,
+    "wrong_domains": [
+      "data"
+    ]
+  }
+]
