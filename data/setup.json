@@ -10,19 +10,19 @@
       "id": "s2",
       "title": "Isi tanggal ujian di Pengaturan",
       "url": "",
-      "done": false
+      "done": true
     },
     {
       "id": "s3",
       "title": "Coba exam sandbox",
       "url": "https://go.microsoft.com/fwlink/?linkid=2226877",
-      "done": false
+      "done": true
     },
     {
       "id": "s4",
       "title": "Baca halaman sertifikasi: biaya, masa berlaku, perpanjangan",
       "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-cloud-developer-associate/",
-      "done": false
+      "done": true
     },
     {
       "id": "s5",
