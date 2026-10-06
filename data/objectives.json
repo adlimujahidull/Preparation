@@ -155,7 +155,7 @@
     "read_minutes": 13,
     "read_note": "",
     "lab_urls": [],
-    "status": "kuasai",
+    "status": "dipraktikkan",
     "confidence": 3,
     "week": 2,
     "explanation": "revision adalah banyaknya revisi atau perubahan pada system jadi jika ada beberapa perubahan maka revision juga akan makin banyak, replica adalah berapa banyak versi atau bagian yang dijalankkan dari versi revision ini, misalnya jika kita upload atau pus v2 dari system kita, agar system tidak lgsg mati dan user lsgs kehilangan akses, kita buat 2 replica dan transfer user perlahan lahan, sementara instance adalah sebutan untuk system atau sesuatu yang seadng berjalan, 1 replica bisa dikatakan satu instace",
