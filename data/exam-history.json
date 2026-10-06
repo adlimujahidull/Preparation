@@ -8,5 +8,13 @@
     "wrong_domains": [
       "data"
     ]
+  },
+  {
+    "set": "Latihan Soal Contoh AI-200",
+    "date": "2026-10-06",
+    "score": 1000,
+    "total": 4,
+    "minutes": 3,
+    "wrong_domains": []
   }
 ]
