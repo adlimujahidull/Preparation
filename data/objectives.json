@@ -185,9 +185,11 @@
     "read_minutes": 23,
     "read_note": "",
     "lab_urls": [],
-    "status": "dipraktikkan",
-    "confidence": 0,
-    "week": 2
+    "status": "kuasai",
+    "confidence": 4,
+    "week": 2,
+    "explanation": "pada dasarnya ini adalah materi tentang bagiamana kita mengendalikan berapa banyak revision dan replica yang ktia punya, baik menggunakan rule rule dari keda yan gbisa berisi tentang penggunaan quee, cpu, dan sejenisnya, scaling juga terbagi menjadi beberapa point seperti scaling down dan lain",
+    "explanation_date": "2026-10-08"
   },
   {
     "id": "obj-06",
