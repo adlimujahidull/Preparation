@@ -16,5 +16,13 @@
     "total": 4,
     "minutes": 3,
     "wrong_domains": []
+  },
+  {
+    "set": "Latihan Soal Contoh AI-200",
+    "date": "2026-10-13",
+    "score": 1000,
+    "total": 4,
+    "minutes": 2,
+    "wrong_domains": []
   }
 ]
