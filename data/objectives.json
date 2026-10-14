@@ -227,9 +227,11 @@
     "read_minutes": 22,
     "read_note": "",
     "lab_urls": [],
-    "status": "dipraktikkan",
-    "confidence": 0,
-    "week": 2
+    "status": "kuasai",
+    "confidence": 3,
+    "week": 2,
+    "explanation": "AKS atau azure kubernetes service adalah software yang bisa kita gunakan untuk  mengelola kubernetes lebih dalam lagi, jadi konfigurasinya bisa di atur sesuai yang kita mau di banding dnegan ACA, AKS juga dibagi dua, automatic dan standar dimana automatic masih ada beberapa hal yang langsung di kerjakan atau di defiisikan lgsg oleh system, sedangkan standard kita lebih memiliki kebebasan untuk mengontrol nya",
+    "explanation_date": "2026-10-14"
   },
   {
     "id": "obj-07",
