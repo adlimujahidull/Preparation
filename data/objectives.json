@@ -266,9 +266,11 @@
     "read_minutes": 15,
     "read_note": "Konsep spesifik berikut dijelaskan sebagai bagian dari panduan praktis: events.",
     "lab_urls": [],
-    "status": "dipraktikkan",
-    "confidence": 0,
-    "week": 2
+    "status": "kuasai",
+    "confidence": 3,
+    "week": 2,
+    "explanation": "di materi ini kita belajar bagaiman cara membaca log untuk ACA dan AKS, ada console log yang berisi informasi tentang system aplikasinya berjalan dengan user, ada system log yang berisi log untuk system (database,backend) dll, mempelajair cara memahami masalah dan bagaimana kita mencari log untuk kasus kasus tertentu",
+    "explanation_date": "2026-10-15"
   },
   {
     "id": "obj-08",
